@@ -1,0 +1,54 @@
+
+                                _aaa
+                          _j?\aj?  )?46/
+                        aP'        _j? Q/
+                       )W4aa        )?QQ
+                        )6P'   _aaa _J' 6
+                         J?6aaj?46)?6  aP
+                         Qa/ )Q aP4aj6Jga/
+                           ?????'    f   f
+      aaaa/    aaaa  aaaa   aaa _aaaaf   f aaaa/     _aaaa/
+    aJ?   ??6aP'  ?4P?  )46P' )?Q    f   fj'   6    _P   j'
+   _f        ]            P          f   Q'   J4/  _P   ]'
+   )6   ??Q6aj            f   _a/    f   '   J  4/_P   j'
+    jQaa    ?Q   ]    f   f   ]_f    f      )/   4P   ]'
+   ]'  ??'   4   ]    f   f   )?     f   6   )/      j(
+  _f        _Q   ]    f   6     _    f   P6   ?/    ]'
+   ???6aaaj??]aaajaaaa6aaaP?4aP?4aaaa6aaaf)6aaaJ   a'
+                                              J   a'
+                                             jaaaj'
+
+
+FOSFAT
+~~~~~~
+
+Fosfat is a library for a read-only access on Smaky FOS
+(File Operating System). Floppy disk and hard disk are
+supported.
+
+A tool, "fosread" can be used with this library for list
+directories and get files from a disk.
+
+
+BUILD
+~~~~~
+
+make
+make install
+
+It will install the library and the tool in your local
+directory. You can specify an other destination in the
+config.mak file.
+
+For use this library, add an include on fosfat.h.
+For more informations, consult the comments
+in the sources.
+
+You can found others informations on the website :
+http://www.gamesover.ch/~fosfat/index.htm
+
+
+AUTHOR
+~~~~~~
+
+Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
