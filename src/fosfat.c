@@ -370,7 +370,7 @@ FOSFAT_BD *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block) {
 /** Get a file and put this in a location on the PC. This function
  *  read all BD->DATA of a file BD, and write the data in a
  *  new file on your disk. An output variable can be used for
- *  that a '*' is printed for each EACH_BLK.
+ *  that the current size is printed for each PTS.
  *  The properties like "Creation Date" are not saved in the new
  *  file. All Linux file system are the same attributes for them
  *  files. And for example, ext2/3 have no "Creation Date".
