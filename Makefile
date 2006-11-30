@@ -1,32 +1,26 @@
 include config.mak
 
-APP = fosread
-SRCS = fosread.c
+all: libfos read
 
-CFLAGS += -Isrc
-LDFLAGS += -Lsrc -lfosfat
+libfos:
+	$(MAKE) -C libfosfat
 
-all: libfosfat fosread
-
-libfosfat:
-	$(MAKE) -C src
-
-fosread:
-	$(CC) $(SRCS) $(CFLAGS) $(LDFLAGS) -o $(APP)
+read:
+	$(MAKE) -C fosread
 
 clean:
-	$(MAKE) -C src clean
-	rm -f $(APP)
+	$(MAKE) -C libfosfat clean
+	$(MAKE) -C fosread clean
 
 install:
-	$(MAKE) -C src install
-	$(INSTALL) -c $(APP) $(PREFIX)/bin
+	$(MAKE) -C libfosfat install
+	$(MAKE) -C fosread install
 
 install-lib:
-	$(MAKE) -C src install
+	$(MAKE) -C libfosfat install
 
 uninstall:
-	$(MAKE) -C src uninstall
-	rm -f $(PREFIX)/bin/$(APP)
+	$(MAKE) -C libfosfat uninstall
+	$(MAKE) -C fosread uninstall
 
 .phony: clean
