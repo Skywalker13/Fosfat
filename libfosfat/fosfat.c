@@ -563,6 +563,27 @@ FOSFAT_BD *fosfat_search_bd_insys(FOSFAT_DEV *dev, const char *location) {
     return NULL;
 }
 
+/** Test two blocks.
+ * @param b1 block 1
+ * @param b2 block 2
+ * @return a boolean (true for success)
+ */
+static inline int fosfat_blkcmp(const void *b1, const void *b2) {
+    return (memcmp(b1, b2, FOSFAT_BLK) == 0) ? 1 : 0;
+}
+
+/** Test if the BD is the first SYS_LIST.
+ * @param dev pointer on the device
+ * @param bd BD tested
+ * @return a boolean (true for success)
+ */
+int fosfat_isbdsys(FOSFAT_DEV *dev, FOSFAT_BD *bd) {
+    FOSFAT_BD *sys;
+
+    sys = fosfat_read_dir(dev, FOSFAT_SYSLIST);
+    return fosfat_blkcmp(bd, sys);
+}
+
 /** Open the device. That hides the fopen processing.
  *  A device can be read like a file.
  * @param dev the device name
