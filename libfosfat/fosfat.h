@@ -34,6 +34,7 @@
 
 #define FOSFAT_DEV      FILE
 #define FOSFAT_NAMELGT  17
+#define FOSFAT_NBL      4
 
 /** Disk types */
 typedef enum disk_type {
