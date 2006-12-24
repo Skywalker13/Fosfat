@@ -1,6 +1,6 @@
 include ../config.mak
 
-LIBNAME = libfosfat.so
+LIBNAME = libfosfat.a
 
 SRCS = fosfat.c
 
@@ -16,7 +16,8 @@ all: depend $(LIBNAME)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 $(LIBNAME): $(OBJS)
-	$(CC) -shared $(OBJS) $(LDFLAGS) -o $(LIBNAME)
+	$(AR) r $(LIBNAME) $(OBJS)
+	$(RANLIB) $(LIBNAME)
 
 clean:
 	rm -f *.o *.a *.so

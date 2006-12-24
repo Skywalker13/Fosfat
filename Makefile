@@ -13,7 +13,6 @@ clean:
 	$(MAKE) -C fosread clean
 
 install:
-	$(MAKE) -C libfosfat install
 	$(MAKE) -C fosread install
 
 install-lib:
