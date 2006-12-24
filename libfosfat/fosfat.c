@@ -551,12 +551,14 @@ FOSFAT_BD *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, FOSFAT_BL *fi
  * @return the BD or NULL is nothing found
  */
 FOSFAT_BD *fosfat_search_bd_insys(FOSFAT_DEV *dev, const char *location) {
-    FOSFAT_BD *syslist;
+    FOSFAT_BD *syslist, *dir;
     FOSFAT_BL *files;
 
     if ((syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST))) {
         files = syslist->first_bl;
-        return fosfat_search_bd(dev, location, files);
+        if ((dir = fosfat_search_bd(dev, location, files)))
+            return dir;
+        return syslist;
     }
     return NULL;
 }
