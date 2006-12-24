@@ -38,8 +38,8 @@
 
 /** Disk types */
 typedef enum disk_type {
-    eFD,                        //!< Floppy Disk
-    eHD                         //!< Hard Disk
+    eFD,                         //!< Floppy Disk
+    eHD                          //!< Hard Disk
 } e_fosfat_disk;
 
 /** Data Block (256 bytes) */
@@ -85,7 +85,7 @@ typedef struct block_listf {
 
 /** Block List (256 bytes) */
 typedef struct block_list {
-    s_fosfat_blf file[4];          //!< 4 BL files (240 bytes)
+    s_fosfat_blf file[4];        //!< 4 BL files (240 bytes)
     unsigned char next[4];       //!< Next BL
     unsigned char chk[4];        //!< Check control
     unsigned char prev[4];       //!< Previous BL
