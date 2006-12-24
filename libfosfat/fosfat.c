@@ -512,7 +512,7 @@ s_fosfat_bd *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, s_fosfat_bl
             for (j = 0; j < FOSFAT_NBL; j++) {
                 if (fosfat_isopenexm(&loop->file[j]) && !fosfat_issystem(&loop->file[j])) {
                     /* Test if it is a directory */
-                    if (fosfat_isdir(&loop->file[j]) && !strncasecmp(loop->file[j].name, dir[i], strlen(dir[i]))) {
+                    if (fosfat_isdir(&loop->file[j]) && !strncasecmp(loop->file[j].name, dir[i], strlen(loop->file[j].name) - 4)) {
                         if (loop_bd)
                             fosfat_free_dir(loop_bd);
                         loop_bd = fosfat_read_dir(dev, c2l(loop->file[j].pt, sizeof(loop->file[j].pt)));
