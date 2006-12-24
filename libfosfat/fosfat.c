@@ -544,6 +544,23 @@ FOSFAT_BD *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, FOSFAT_BL *fi
     return NULL;
 }
 
+/** Search a BD from a location in the first SYS_LIST.
+ *  It uses fosfat_search_bd().
+ * @param dev pointer on the device
+ * @param location path for found the BD (foo/bar/file)
+ * @return the BD or NULL is nothing found
+ */
+FOSFAT_BD *fosfat_search_bd_insys(FOSFAT_DEV *dev, const char *location) {
+    FOSFAT_BD *syslist;
+    FOSFAT_BL *files;
+
+    if ((syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST))) {
+        files = syslist->first_bl;
+        return fosfat_search_bd(dev, location, files);
+    }
+    return NULL;
+}
+
 /** Open the device. That hides the fopen processing.
  *  A device can be read like a file.
  * @param dev the device name

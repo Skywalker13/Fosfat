@@ -137,6 +137,7 @@ int fosfat_get_file(FOSFAT_DEV *dev, FOSFAT_BD *file, const char *dst, int outpu
 
 /* Search */
 FOSFAT_BD *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, FOSFAT_BL *files);
+FOSFAT_BD *fosfat_search_bd_insys(FOSFAT_DEV *dev, const char *location);
 
 /* Open and close the device */
 FOSFAT_DEV *fosfat_opendev(const char *dev, FOSFAT_DISK disk);
