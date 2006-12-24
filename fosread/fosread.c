@@ -110,20 +110,16 @@ void print_file(FOSFAT_BLF *file) {
  */
 int list_dir(FOSFAT_DEV *dev, const char *path) {
     int i, empty = 1;
-    FOSFAT_BD *syslist, *dir;
+    FOSFAT_BD *dir;
     FOSFAT_BL *files;
 
-    if ((syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST))) {
-        files = syslist->first_bl;
-        dir = fosfat_search_bd_insys(dev, path);
-        if (dir && dir->first_bl) {
-            files = dir->first_bl;
-            printf("path: %s\n", path);
-        }
-        else if (strcmp(path, "/"))
-            printf("ERROR: path \"%s\" not found or system!\n", path);
+    if ((dir = fosfat_search_bd_insys(dev, path))) {
+        files = dir->first_bl;
+        printf("path: ");
+        if (fosfat_isbdsys(dev, dir))
+            printf("/\n");
         else
-            printf("root directory\n");
+            printf("%s\n", path);
         printf("\n           size creation         last change      last view        filename\n");
         printf("           ---- --------         -----------      ---------        --------\n");
         do {
@@ -137,10 +133,7 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
         } while ((files = files->next_bl));
         if (!empty)
             printf("\nd:directory  h:hidden  s:system  e:encoded\n");
-        /* Freed variables */
-        fosfat_free_dir(syslist);
-        if (dir)
-            fosfat_free_dir(dir);
+        fosfat_free_dir(dir);
     }
     else {
         printf("ERROR: I can't read the SYS_LIST!\n");
