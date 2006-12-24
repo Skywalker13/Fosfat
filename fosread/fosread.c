@@ -115,7 +115,7 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
 
     if ((syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST))) {
         files = syslist->first_bl;
-        dir = fosfat_search_bd(dev, path, files);
+        dir = fosfat_search_bd_insys(dev, path);
         if (dir && dir->first_bl) {
             files = dir->first_bl;
             printf("path: %s\n", path);
