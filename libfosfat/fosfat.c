@@ -37,7 +37,7 @@ typedef enum block_type {
     eBL,                //!< Block List
     eBD,                //!< Block Description
     eDATA               //!< Only DATA
-} FOSFAT_TYPE;
+} e_fosfat_type;
 
 /** Global variable for the FOSBOOT address */
 static int g_fosboot = 0x10;
@@ -94,8 +94,8 @@ unsigned long int c2l(unsigned char *value, int size) {
  *  each block after each write.
  * @param var pointer on the data block
  */
-static void fosfat_free_data(FOSFAT_DATA *var) {
-    FOSFAT_DATA *d, *free_d;
+static void fosfat_free_data(s_fosfat_data *var) {
+    s_fosfat_data *d, *free_d;
 
     d = var;
     while (d) {
@@ -111,8 +111,8 @@ static void fosfat_free_data(FOSFAT_DATA *var) {
  *  This function must be used after all fosfat_read_file()!
  * @param var pointer on the description block
  */
-void fosfat_free_file(FOSFAT_BD *var) {
-    FOSFAT_BD *bd, *free_bd;
+void fosfat_free_file(s_fosfat_bd *var) {
+    s_fosfat_bd *bd, *free_bd;
 
     bd = var;
     while (bd) {
@@ -128,9 +128,9 @@ void fosfat_free_file(FOSFAT_BD *var) {
  *  This function must be used after all fosfat_read_dir()!
  * @param var pointer on the description block
  */
-void fosfat_free_dir(FOSFAT_BD *var) {
-    FOSFAT_BL *bl, *free_bl;
-    FOSFAT_BD *bd, *free_bd;
+void fosfat_free_dir(s_fosfat_bd *var) {
+    s_fosfat_bl *bl, *free_bl;
+    s_fosfat_bd *bd, *free_bd;
 
     bd = var;
     do {
@@ -153,7 +153,7 @@ void fosfat_free_dir(FOSFAT_BD *var) {
  * @param file pointer on the file (in the BL)
  * @return a boolean (true for success)
  */
-int fosfat_isdir(FOSFAT_BLF *file) {
+int fosfat_isdir(s_fosfat_blf *file) {
     return (((int)c2l(file->att, sizeof(file->att)) & 0x1000));
 }
 
@@ -162,7 +162,7 @@ int fosfat_isdir(FOSFAT_BLF *file) {
  * @param file pointer on the file (in the BL)
  * @return a boolean (true for success)
  */
-int fosfat_isvisible(FOSFAT_BLF *file) {
+int fosfat_isvisible(s_fosfat_blf *file) {
     return (((int)c2l(file->att, sizeof(file->att)) & 0x2000));
 }
 
@@ -172,7 +172,7 @@ int fosfat_isvisible(FOSFAT_BLF *file) {
  * @param file pointer on the file (in the BL)
  * @return a boolean (true for success)
  */
-int fosfat_isopenexm(FOSFAT_BLF *file) {
+int fosfat_isopenexm(s_fosfat_blf *file) {
     return (((int)c2l(file->att, sizeof(file->att)) & 0x1)) ||
            (((int)c2l(file->att, sizeof(file->att)) & 0x2));
 }
@@ -182,7 +182,7 @@ int fosfat_isopenexm(FOSFAT_BLF *file) {
  * @param file pointer on the file (in the BL)
  * @return a boolean (true for success)
  */
-int fosfat_isencoded(FOSFAT_BLF *file) {
+int fosfat_isencoded(s_fosfat_blf *file) {
     return (((int)c2l(file->att, sizeof(file->att)) & 0x20000));
 }
 
@@ -191,7 +191,7 @@ int fosfat_isencoded(FOSFAT_BLF *file) {
  * @param file pointer on the file (in the BL)
  * @return a boolean (true for success)
  */
-int fosfat_issystem(FOSFAT_BLF *file) {
+int fosfat_issystem(s_fosfat_blf *file) {
     return ((int)(file->typ & 0xF8));
 }
 
@@ -206,42 +206,42 @@ int fosfat_issystem(FOSFAT_BLF *file) {
  * @param type type of this block (eB0, eBL, eBD or eDATA)
  * @return a pointer on the new block or NULL if broken
  */
-static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned long int block, FOSFAT_TYPE type) {
+static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned long int block, e_fosfat_type type) {
     /* Move the pointer on the block */
     if (!fseek(dev, blk2add(block), SEEK_SET)) {
         switch (type) {
             case eB0: {
-                FOSFAT_B0 *blk;
-                blk = (FOSFAT_B0 *)malloc(sizeof(FOSFAT_B0));
-                if (fread((FOSFAT_B0 *)blk, (size_t)sizeof(unsigned char), (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
-                    return (FOSFAT_B0 *)blk;
+                s_fosfat_b0 *blk;
+                blk = (s_fosfat_b0 *)malloc(sizeof(s_fosfat_b0));
+                if (fread((s_fosfat_b0 *)blk, (size_t)sizeof(unsigned char), (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
+                    return (s_fosfat_b0 *)blk;
                 else
                     free(blk);
                 break;
             }
             case eBL: {
-                FOSFAT_BL *blk;
-                blk = (FOSFAT_BL *)malloc(sizeof(FOSFAT_BL));
-                if (fread((FOSFAT_BL *)blk, (size_t)sizeof(unsigned char), (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
-                    return (FOSFAT_BL *)blk;
+                s_fosfat_bl *blk;
+                blk = (s_fosfat_bl *)malloc(sizeof(s_fosfat_bl));
+                if (fread((s_fosfat_bl *)blk, (size_t)sizeof(unsigned char), (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
+                    return (s_fosfat_bl *)blk;
                 else
                     free(blk);
                 break;
             }
             case eBD: {
-                FOSFAT_BD *blk;
-                blk = (FOSFAT_BD *)malloc(sizeof(FOSFAT_BD));
-                if (fread((FOSFAT_BD *)blk, (size_t)sizeof(unsigned char), (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
-                    return (FOSFAT_BD *)blk;
+                s_fosfat_bd *blk;
+                blk = (s_fosfat_bd *)malloc(sizeof(s_fosfat_bd));
+                if (fread((s_fosfat_bd *)blk, (size_t)sizeof(unsigned char), (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
+                    return (s_fosfat_bd *)blk;
                 else
                     free(blk);
                 break;
             }
             case eDATA: {
-                FOSFAT_DATA *blk;
-                blk = (FOSFAT_DATA *)malloc(sizeof(FOSFAT_DATA));
-                if (fread((FOSFAT_DATA *)blk, (size_t)sizeof(unsigned char), (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
-                    return (FOSFAT_DATA *)blk;
+                s_fosfat_data *blk;
+                blk = (s_fosfat_data *)malloc(sizeof(s_fosfat_data));
+                if (fread((s_fosfat_data *)blk, (size_t)sizeof(unsigned char), (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
+                    return (s_fosfat_data *)blk;
                 else
                     free(blk);
             }
@@ -257,8 +257,8 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned long int block, FOSFAT_TYPE
  * @param block block position
  * @return the block0 or NULL if broken
  */
-FOSFAT_B0 *fosfat_read_b0(FOSFAT_DEV *dev, unsigned long int block) {
-    return (FOSFAT_B0 *)fosfat_read_b(dev, block, eB0);
+s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev, unsigned long int block) {
+    return (s_fosfat_b0 *)fosfat_read_b(dev, block, eB0);
 }
 
 /** Read data block. This block contents only a char table of
@@ -267,8 +267,8 @@ FOSFAT_B0 *fosfat_read_b0(FOSFAT_DEV *dev, unsigned long int block) {
  * @param block block position
  * @return the data or NULL if broken
  */
-static inline FOSFAT_DATA *fosfat_read_d(FOSFAT_DEV *dev, unsigned long int block) {
-    return (FOSFAT_DATA *)fosfat_read_b(dev, block, eDATA);
+static inline s_fosfat_data *fosfat_read_d(FOSFAT_DEV *dev, unsigned long int block) {
+    return (s_fosfat_data *)fosfat_read_b(dev, block, eDATA);
 }
 
 /** Read a Description Block (BD).
@@ -276,8 +276,8 @@ static inline FOSFAT_DATA *fosfat_read_d(FOSFAT_DEV *dev, unsigned long int bloc
  * @param block block position
  * @return the BD or NULL if broken
  */
-static inline FOSFAT_BD *fosfat_read_bd(FOSFAT_DEV *dev, unsigned long int block) {
-    return (FOSFAT_BD *)fosfat_read_b(dev, block, eBD);
+static inline s_fosfat_bd *fosfat_read_bd(FOSFAT_DEV *dev, unsigned long int block) {
+    return (s_fosfat_bd *)fosfat_read_b(dev, block, eBD);
 }
 
 /** Read a Block List (BL).
@@ -285,8 +285,8 @@ static inline FOSFAT_BD *fosfat_read_bd(FOSFAT_DEV *dev, unsigned long int block
  * @param block block position
  * @return the BL or NULL if broken
  */
-static inline FOSFAT_BL *fosfat_read_bl(FOSFAT_DEV *dev, unsigned long int block) {
-    return (FOSFAT_BL *)fosfat_read_b(dev, block, eBL);
+static inline s_fosfat_bl *fosfat_read_bl(FOSFAT_DEV *dev, unsigned long int block) {
+    return (s_fosfat_bl *)fosfat_read_b(dev, block, eBL);
 }
 
 /** Read data of some blocks and create linked list if necessary.
@@ -300,11 +300,11 @@ static inline FOSFAT_BL *fosfat_read_bl(FOSFAT_DEV *dev, unsigned long int block
  * @param type type of this block (eB0, eBL, eBD or eDATA)
  * @return the first block of the linked list created
  */
-static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block, unsigned char nbs, FOSFAT_TYPE type) {
+static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block, unsigned char nbs, e_fosfat_type type) {
     switch (type) {
         case eBL: {
             unsigned char i;
-            FOSFAT_BL *block_list, *first_bl;
+            s_fosfat_bl *block_list, *first_bl;
 
             if ((first_bl = fosfat_read_bl(dev, block))) {
                 block_list = first_bl;
@@ -313,13 +313,13 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block, unsigned
                     block_list = block_list->next_bl;
                 }
                 block_list->next_bl = NULL;
-                return (FOSFAT_BL *)first_bl;
+                return (s_fosfat_bl *)first_bl;
             }
             break;
         }
         case eDATA: {
             unsigned char i;
-            FOSFAT_DATA *block_data, *first_data;
+            s_fosfat_data *block_data, *first_data;
 
             if ((first_data = fosfat_read_d(dev, block))) {
                 block_data = first_data;
@@ -328,7 +328,7 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block, unsigned
                     block_data = block_data->next_data;
                 }
                 block_data->next_data = NULL;
-                return (FOSFAT_DATA *)first_data;
+                return (s_fosfat_data *)first_data;
             }
             break;
         }
@@ -347,9 +347,9 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block, unsigned
  * @param block the file BD position
  * @return the first BD of the linked list
  */
-FOSFAT_BD *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block) {
+s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block) {
     unsigned long int next;
-    FOSFAT_BD *file_desc, *first_bd;
+    s_fosfat_bd *file_desc, *first_bd;
 
     if ((file_desc = fosfat_read_bd(dev, block))) {
         file_desc->next_bd = NULL;
@@ -380,13 +380,13 @@ FOSFAT_BD *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block) {
  * @param output TRUE for print the size
  * @return a boolean (true for success)
  */
-int fosfat_get_file(FOSFAT_DEV *dev, FOSFAT_BD *file, const char *dst, int output) {
+int fosfat_get_file(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int output) {
     unsigned long int i;
     int res = 1;
     size_t check_last;
     size_t size = 0;
     FILE *f_dst;
-    FOSFAT_DATA *file_d, *first_d;
+    s_fosfat_data *file_d, *first_d;
 
     /* Create or replace a file */
     if ((f_dst = fopen(dst, "w"))) {
@@ -433,11 +433,11 @@ int fosfat_get_file(FOSFAT_DEV *dev, FOSFAT_BD *file, const char *dst, int outpu
  * @param block DIR (or SYS_LIST) BD position
  * @return the first BD of the linked list
  */
-FOSFAT_BD *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
+s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
     unsigned long int i;
     unsigned long int next;
-    FOSFAT_BD *dir_desc, *first_bd;
-    FOSFAT_BL *dir_list;
+    s_fosfat_bd *dir_desc, *first_bd;
+    s_fosfat_bl *dir_list;
 
     if ((dir_desc = fosfat_read_bd(dev, block))) {
         dir_desc->next_bd = NULL;
@@ -483,12 +483,12 @@ FOSFAT_BD *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
  * @param files first BL for start the search
  * @return the BD or NULL is nothing found
  */
-FOSFAT_BD *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, FOSFAT_BL *files) {
+s_fosfat_bd *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *files) {
     int i, j, nb = 0, ontop = 1;
     char *tmp, *path;
     char dir[MAX_SPLIT][FOSFAT_NAMELGT];
-    FOSFAT_BL *loop;
-    FOSFAT_BD *loop_bd = NULL;
+    s_fosfat_bl *loop;
+    s_fosfat_bd *loop_bd = NULL;
 
     loop = files;
     path = strdup(location);
@@ -549,9 +549,9 @@ FOSFAT_BD *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, FOSFAT_BL *fi
  * @param location path for found the BD (foo/bar/file)
  * @return the BD or NULL is nothing found
  */
-FOSFAT_BD *fosfat_search_bd_insys(FOSFAT_DEV *dev, const char *location) {
-    FOSFAT_BD *syslist, *dir;
-    FOSFAT_BL *files;
+s_fosfat_bd *fosfat_search_bd_insys(FOSFAT_DEV *dev, const char *location) {
+    s_fosfat_bd *syslist, *dir;
+    s_fosfat_bl *files;
 
     if ((syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST))) {
         files = syslist->first_bl;
@@ -576,8 +576,8 @@ static inline int fosfat_blkcmp(const void *b1, const void *b2) {
  * @param bd BD tested
  * @return a boolean (true for success)
  */
-int fosfat_isbdsys(FOSFAT_DEV *dev, FOSFAT_BD *bd) {
-    FOSFAT_BD *sys;
+int fosfat_isbdsys(FOSFAT_DEV *dev, s_fosfat_bd *bd) {
+    s_fosfat_bd *sys;
 
     sys = fosfat_read_dir(dev, FOSFAT_SYSLIST);
     return fosfat_blkcmp(bd, sys);
@@ -589,7 +589,7 @@ int fosfat_isbdsys(FOSFAT_DEV *dev, FOSFAT_BD *bd) {
  * @param disk disk type
  * @return the device handle
  */
-FOSFAT_DEV *fosfat_opendev(const char *dev, FOSFAT_DISK disk) {
+FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
     switch (disk) {
         case eFD:
             g_fosboot = 0x10;

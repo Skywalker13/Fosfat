@@ -40,14 +40,14 @@
 typedef enum disk_type {
     eFD,                        //!< Floppy Disk
     eHD                         //!< Hard Disk
-} FOSFAT_DISK;
+} e_fosfat_disk;
 
 /** Data Block (256 bytes) */
 typedef struct block_data {
     unsigned char data[256];     //!< Data
     /* Linked list */
     struct block_data *next_data;
-} FOSFAT_DATA;
+} s_fosfat_data;
 
 /** Block 0 (256 bytes) */
 typedef struct block_0 {
@@ -60,7 +60,7 @@ typedef struct block_0 {
     unsigned char oldchk[4];     //!< Old CHK value
     unsigned char newchk[4];     //!< New CHK value
     unsigned char reserve[10];   //!< Unused
-} FOSFAT_B0;
+} s_fosfat_b0;
 
 /** File in a Block List (60 bytes) */
 typedef struct block_listf {
@@ -81,18 +81,18 @@ typedef struct block_listf {
     unsigned char pt[4];         //!< Pointer on the BD
     unsigned char lgf[4];        //!< File size in bytes
     unsigned char code[2];       //!< Code control
-} FOSFAT_BLF;
+} s_fosfat_blf;
 
 /** Block List (256 bytes) */
 typedef struct block_list {
-    FOSFAT_BLF file[4];          //!< 4 BL files (240 bytes)
+    s_fosfat_blf file[4];          //!< 4 BL files (240 bytes)
     unsigned char next[4];       //!< Next BL
     unsigned char chk[4];        //!< Check control
     unsigned char prev[4];       //!< Previous BL
     unsigned char reserve[4];    //!< Unused
     /* Linked list */
     struct block_list *next_bl;
-} FOSFAT_BL;
+} s_fosfat_bl;
 
 /** Block Description (256 bytes) */
 typedef struct block_desc {
@@ -112,39 +112,39 @@ typedef struct block_desc {
     /* Linked list */
     struct block_desc *next_bd;
     struct block_list *first_bl;
-} FOSFAT_BD;
+} s_fosfat_bd;
 
 
 unsigned long int c2l(unsigned char *value, int size);
 
 /* Read the block 0 */
-FOSFAT_B0 *fosfat_read_b0(FOSFAT_DEV *dev, unsigned long int block);
+s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev, unsigned long int block);
 
 /* Read a folder and a file (LINKED LIST) */
-FOSFAT_BD *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block);
-FOSFAT_BD *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block);
-void fosfat_free_dir(FOSFAT_BD *var);
-void fosfat_free_file(FOSFAT_BD *var);
+s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block);
+s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block);
+void fosfat_free_dir(s_fosfat_bd *var);
+void fosfat_free_file(s_fosfat_bd *var);
 
 /* Test attributes and type on a file */
-int fosfat_isdir(FOSFAT_BLF *file);
-int fosfat_isvisible(FOSFAT_BLF *file);
-int fosfat_isopenexm(FOSFAT_BLF *file);
-int fosfat_isencoded(FOSFAT_BLF *file);
-int fosfat_issystem(FOSFAT_BLF *file);
+int fosfat_isdir(s_fosfat_blf *file);
+int fosfat_isvisible(s_fosfat_blf *file);
+int fosfat_isopenexm(s_fosfat_blf *file);
+int fosfat_isencoded(s_fosfat_blf *file);
+int fosfat_issystem(s_fosfat_blf *file);
 
 /* Get a file */
-int fosfat_get_file(FOSFAT_DEV *dev, FOSFAT_BD *file, const char *dst, int output);
+int fosfat_get_file(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int output);
 
 /* Search */
-FOSFAT_BD *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, FOSFAT_BL *files);
-FOSFAT_BD *fosfat_search_bd_insys(FOSFAT_DEV *dev, const char *location);
+s_fosfat_bd *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *files);
+s_fosfat_bd *fosfat_search_bd_insys(FOSFAT_DEV *dev, const char *location);
 
 /* Test */
-int fosfat_isbdsys(FOSFAT_DEV *dev, FOSFAT_BD *sys);
+int fosfat_isbdsys(FOSFAT_DEV *dev, s_fosfat_bd *sys);
 
 /* Open and close the device */
-FOSFAT_DEV *fosfat_opendev(const char *dev, FOSFAT_DISK disk);
+FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk);
 void fosfat_closedev(FOSFAT_DEV *dev);
 
 #endif /* _FOSFAT_H_ */

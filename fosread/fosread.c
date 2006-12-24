@@ -36,7 +36,7 @@
 
 typedef struct ginfo {
     char name[FOSFAT_NAMELGT];
-} GLOBAL_INFO;
+} s_global_info;
 
 /** Change a string in lower case.
  * @param data the string
@@ -54,12 +54,12 @@ char *lc(char *data) {
  * @param dev pointer on the device
  * @return info
  */
-GLOBAL_INFO *get_ginfo(FOSFAT_DEV *dev) {
-    FOSFAT_B0 *block0;
-    GLOBAL_INFO *ginfo;
+s_global_info *get_ginfo(FOSFAT_DEV *dev) {
+    s_fosfat_b0 *block0;
+    s_global_info *ginfo;
 
     if ((block0 = fosfat_read_b0(dev, FOSFAT_BLOCK0))) {
-        ginfo = (GLOBAL_INFO *)malloc(sizeof(GLOBAL_INFO));
+        ginfo = (s_global_info *)malloc(sizeof(s_global_info));
         strcpy(ginfo->name, block0->nlo);
         ginfo->name[FOSFAT_NAMELGT - 1] = '\0';
         lc(ginfo->name);
@@ -83,7 +83,7 @@ void print_date(unsigned char *dh) {
 /** Print a file in the list.
  * @param file BLF of a file
  */
-void print_file(FOSFAT_BLF *file) {
+void print_file(s_fosfat_blf *file) {
     int i;
     char filename[FOSFAT_NAMELGT];
 
@@ -110,8 +110,8 @@ void print_file(FOSFAT_BLF *file) {
  */
 int list_dir(FOSFAT_DEV *dev, const char *path) {
     int i, empty = 1;
-    FOSFAT_BD *dir;
-    FOSFAT_BL *files;
+    s_fosfat_bd *dir;
+    s_fosfat_bl *files;
 
     if ((dir = fosfat_search_bd_insys(dev, path))) {
         files = dir->first_bl;
@@ -152,8 +152,8 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
 int get_file(FOSFAT_DEV *dev, const char *path, const char *dst) {
     int res = 0;
     char *new_file;
-    FOSFAT_BD *syslist, *file;
-    FOSFAT_BL *files;
+    s_fosfat_bd *syslist, *file;
+    s_fosfat_bl *files;
 
     new_file = strdup(dst);
 
@@ -205,7 +205,7 @@ int main(int argc, char **argv) {
     int res = 0;
     char *path, *choice, *file, *dst;
     FOSFAT_DEV *dev;
-    GLOBAL_INFO *ginfo;
+    s_global_info *ginfo;
 
     if (argc < 3) {
         print_info();
