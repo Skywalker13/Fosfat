@@ -30,6 +30,7 @@
 #include "fosfat.h"
 
 #define MAX_SPLIT       64
+#define FILE_BL         4
 
 /** List of all block types */
 typedef enum block_type {
@@ -508,8 +509,8 @@ FOSFAT_BD *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, FOSFAT_BL *fi
         ontop = 1;
         /* Loop for all BL */
         do {
-            /* Loop for 4 files in the BL */
-            for (j = 0; j < 4; j++) {
+            /* Loop for FILE_BL files in the BL */
+            for (j = 0; j < FILE_BL; j++) {
                 if (fosfat_isopenexm(&loop->file[j]) && !fosfat_issystem(&loop->file[j])) {
                     /* Test if it is a directory */
                     if (fosfat_isdir(&loop->file[j]) && !strncasecmp(loop->file[j].name, dir[i], strlen(dir[i]))) {
