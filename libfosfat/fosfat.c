@@ -621,8 +621,10 @@ int fosfat_p_isdir(FOSFAT_DEV *dev, const char *location) {
     s_fosfat_blf *entry;
 
     if (location && strcmp(location, "/")) {
-        if ((entry = fosfat_search_insys(dev, location, eSBLF))) {
-            return (fosfat_isnotdel(entry) && fosfat_isdir(entry)) ? 1 : 0;
+        if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
+            fosfat_isnotdel(entry) && fosfat_isdir(entry)) {
+            free(entry);
+            return 1;
         }
         return 0;
     }
