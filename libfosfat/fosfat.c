@@ -489,7 +489,10 @@ void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *fil
     char dir[MAX_SPLIT][FOSFAT_NAMELGT];
     s_fosfat_bl *loop;
     s_fosfat_bd *loop_bd = NULL;
-    s_fosfat_blf *loop_blf = NULL;
+    s_fosfat_blf *loop_blf;
+
+    if (type)
+        loop_blf = malloc(sizeof(s_fosfat_blf));
 
     loop = files;
     path = strdup(location);
@@ -514,10 +517,10 @@ void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *fil
                 if (fosfat_isopenexm(&loop->file[j]) && !fosfat_issystem(&loop->file[j])) {
                     /* Test if it is a directory */
                     if (fosfat_isdir(&loop->file[j]) && !strncasecmp(loop->file[j].name, dir[i], strlen(loop->file[j].name) - 4)) {
+                        if (type)
+                            memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
                         if (loop_bd)
                             fosfat_free_dir(loop_bd);
-                        if (type)
-                            loop_blf = &loop->file[j];
                         loop_bd = fosfat_read_dir(dev, c2l(loop->file[j].pt, sizeof(loop->file[j].pt)));
                         loop = loop_bd->first_bl;
                         ontop = 0;  // dir found
@@ -525,10 +528,10 @@ void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *fil
                     }
                     /* Test if it is a file */
                     else if (!fosfat_isdir(&loop->file[j]) && !strcasecmp(loop->file[j].name, dir[i])) {
+                        if (type)
+                            memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
                         if (loop_bd)
                             fosfat_free_dir(loop_bd);
-                        if (type)
-                            loop_blf = &loop->file[j];
                         loop_bd = fosfat_read_file(dev, c2l(loop->file[j].pt, sizeof(loop->file[j].pt)));
                         loop = NULL;
                         ontop = 0;  // file found
