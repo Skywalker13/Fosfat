@@ -113,7 +113,7 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
     s_fosfat_bd *dir;
     s_fosfat_bl *files;
 
-    if ((dir = fosfat_search_bd_insys(dev, path))) {
+    if ((dir = fosfat_search_insys(dev, path, eSBD))) {
         files = dir->first_bl;
         printf("path: ");
         if (fosfat_isbdsys(dev, dir))
@@ -159,7 +159,7 @@ int get_file(FOSFAT_DEV *dev, const char *path, const char *dst) {
 
     if ((syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST))) {
         files = syslist->first_bl;
-        file = fosfat_search_bd(dev, path, files);
+        file = fosfat_search_bdlf(dev, path, files, eSBD);
         if (file && !file->first_bl) {
             if (!strcasecmp(new_file, "./"))
                 new_file = strdup(file->name);

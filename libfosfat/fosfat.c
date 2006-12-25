@@ -483,12 +483,13 @@ s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
  * @param files first BL for start the search
  * @return the BD or NULL is nothing found
  */
-s_fosfat_bd *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *files) {
+void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *files, e_fosfat_search type) {
     int i, j, nb = 0, ontop = 1;
     char *tmp, *path;
     char dir[MAX_SPLIT][FOSFAT_NAMELGT];
     s_fosfat_bl *loop;
     s_fosfat_bd *loop_bd = NULL;
+    s_fosfat_blf *loop_blf = NULL;
 
     loop = files;
     path = strdup(location);
@@ -515,6 +516,8 @@ s_fosfat_bd *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, s_fosfat_bl
                     if (fosfat_isdir(&loop->file[j]) && !strncasecmp(loop->file[j].name, dir[i], strlen(loop->file[j].name) - 4)) {
                         if (loop_bd)
                             fosfat_free_dir(loop_bd);
+                        if (type)
+                            loop_blf = &loop->file[j];
                         loop_bd = fosfat_read_dir(dev, c2l(loop->file[j].pt, sizeof(loop->file[j].pt)));
                         loop = loop_bd->first_bl;
                         ontop = 0;  // dir found
@@ -524,6 +527,8 @@ s_fosfat_bd *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, s_fosfat_bl
                     else if (!fosfat_isdir(&loop->file[j]) && !strcasecmp(loop->file[j].name, dir[i])) {
                         if (loop_bd)
                             fosfat_free_dir(loop_bd);
+                        if (type)
+                            loop_blf = &loop->file[j];
                         loop_bd = fosfat_read_file(dev, c2l(loop->file[j].pt, sizeof(loop->file[j].pt)));
                         loop = NULL;
                         ontop = 0;  // file found
@@ -538,8 +543,14 @@ s_fosfat_bd *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, s_fosfat_bl
         } while (ontop && (loop = loop->next_bl));
     }
     free(path);
-    if (!ontop)
-        return loop_bd;
+    if (!ontop) {
+        if (type) {
+            fosfat_free_dir(loop_bd);
+            return (s_fosfat_blf *)loop_blf;
+        }
+        else
+            return (s_fosfat_bd *)loop_bd;
+    }
     return NULL;
 }
 
@@ -549,15 +560,21 @@ s_fosfat_bd *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, s_fosfat_bl
  * @param location path for found the BD (foo/bar/file)
  * @return the BD or NULL is nothing found
  */
-s_fosfat_bd *fosfat_search_bd_insys(FOSFAT_DEV *dev, const char *location) {
-    s_fosfat_bd *syslist, *dir;
+void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location, e_fosfat_search type) {
+    s_fosfat_bd *syslist;
     s_fosfat_bl *files;
+    void *search;
 
     if ((syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST))) {
         files = syslist->first_bl;
-        if ((dir = fosfat_search_bd(dev, location, files)))
-            return dir;
-        return syslist;
+        if ((search = fosfat_search_bdlf(dev, location, files, type))) {
+            if (type)
+                return (s_fosfat_blf *)search;
+            else
+                return (s_fosfat_bd *)search;
+        }
+        if (!type)
+            return (s_fosfat_bd *)syslist;
     }
     return NULL;
 }

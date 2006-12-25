@@ -42,6 +42,12 @@ typedef enum disk_type {
     eHD                          //!< Hard Disk
 } e_fosfat_disk;
 
+/** Search type */
+typedef enum search_type {
+    eSBD,                        //!< Search BD
+    eSBLF                        //!< Search BL File
+} e_fosfat_search;
+
 /** Data Block (256 bytes) */
 typedef struct block_data {
     unsigned char data[256];     //!< Data
@@ -137,8 +143,8 @@ int fosfat_issystem(s_fosfat_blf *file);
 int fosfat_get_file(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int output);
 
 /* Search */
-s_fosfat_bd *fosfat_search_bd(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *files);
-s_fosfat_bd *fosfat_search_bd_insys(FOSFAT_DEV *dev, const char *location);
+void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *files, e_fosfat_search type);
+void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location, e_fosfat_search type);
 
 /* Test */
 int fosfat_isbdsys(FOSFAT_DEV *dev, s_fosfat_bd *sys);
