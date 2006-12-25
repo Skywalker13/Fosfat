@@ -195,6 +195,14 @@ int fosfat_issystem(s_fosfat_blf *file) {
     return ((int)(file->typ & 0xF8));
 }
 
+/** Test if the file is not deleted.
+ * @param file pointer on the file (in the BL)
+ * @return a boolean (true for success)
+ */
+static inline int fosfat_isnotdel(s_fosfat_blf *file) {
+    return (file && strlen(file->name) > 0) ? 1 : 0;
+}
+
 /** Read a block defined by a type. This function read a block on
  *  the disk and return the structure in function of the type chosen.
  *  Each type use 256 bytes, but the structures are always bigger.
@@ -601,6 +609,24 @@ int fosfat_isbdsys(FOSFAT_DEV *dev, s_fosfat_bd *bd) {
 
     sys = fosfat_read_dir(dev, FOSFAT_SYSLIST);
     return fosfat_blkcmp(bd, sys);
+}
+
+/** Test if the file is a directory.
+ *  This function uses a string location.
+ * @param dev pointer on the device
+ * @param location file in the path
+ * @return a boolean (true for success)
+ */
+int fosfat_p_isdir(FOSFAT_DEV *dev, const char *location) {
+    s_fosfat_blf *entry;
+
+    if (location && strcmp(location, "/")) {
+        if ((entry = fosfat_search_insys(dev, location, eSBLF))) {
+            return (fosfat_isnotdel(entry) && fosfat_isdir(entry)) ? 1 : 0;
+        }
+        return 0;
+    }
+    return 1;
 }
 
 /** Open the device. That hides the fopen processing.
