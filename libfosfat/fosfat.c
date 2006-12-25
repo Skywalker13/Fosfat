@@ -497,7 +497,7 @@ void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *fil
     char dir[MAX_SPLIT][FOSFAT_NAMELGT];
     s_fosfat_bl *loop;
     s_fosfat_bd *loop_bd = NULL;
-    s_fosfat_blf *loop_blf;
+    s_fosfat_blf *loop_blf = NULL;
 
     if (type)
         loop_blf = malloc(sizeof(s_fosfat_blf));
