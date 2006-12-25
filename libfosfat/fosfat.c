@@ -25,7 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>     /* strcasecmp strncasecmp strdup strlen strtok */
+#include <string.h>     /* strcasecmp strncasecmp strdup strlen strtok memcmp memcpy */
 
 #include "fosfat.h"
 
