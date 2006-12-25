@@ -480,8 +480,8 @@ s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
     return NULL;
 }
 
-/** Search a BD from a location. You can not use this function
- *  for found a BD of a system file /!\
+/** Search a BD or a BLF from a location. You can not use this
+ *  function for found a BD of a system file /!\
  *  A good example for use this function, is the BL of the
  *  first SYS_LIST in the disk. It will search the file BD
  *  since this BL.
@@ -489,7 +489,8 @@ s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
  * @param dev pointer on the device
  * @param location path for found the BD (foo/bar/file)
  * @param files first BL for start the search
- * @return the BD or NULL is nothing found
+ * @param type eSBD or eSBLF
+ * @return the BD, BLF or NULL is nothing found
  */
 void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *files, e_fosfat_search type) {
     int i, j, nb = 0, ontop = 1;
@@ -565,11 +566,12 @@ void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *fil
     return NULL;
 }
 
-/** Search a BD from a location in the first SYS_LIST.
+/** Search a BD or a BLF from a location in the first SYS_LIST.
  *  It uses fosfat_search_bd().
  * @param dev pointer on the device
  * @param location path for found the BD (foo/bar/file)
- * @return the BD or NULL is nothing found
+ * @param type eSBD or eSBLF
+ * @return the BD, BLF or NULL is nothing found
  */
 void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location, e_fosfat_search type) {
     s_fosfat_bd *syslist;
