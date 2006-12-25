@@ -114,26 +114,32 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
     s_fosfat_bl *files;
 
     if ((dir = fosfat_search_insys(dev, path, eSBD))) {
-        files = dir->first_bl;
-        printf("path: ");
-        if (fosfat_isbdsys(dev, dir))
-            printf("/\n");
-        else
-            printf("%s\n", path);
-        printf("\n           size creation         last change      last view        filename\n");
-        printf("           ---- --------         -----------      ---------        --------\n");
-        do {
-            /* Check all file in the BL */
-            for (i = 0; i < 4; i++) {
-                if (fosfat_isopenexm(&files->file[i]) && strlen(files->file[i].name) > 0) {
-                    print_file(&files->file[i]);
-                    empty = 0;
+        if (fosfat_p_isdir(dev, path)) {
+            files = dir->first_bl;
+            printf("path: ");
+            if (fosfat_isbdsys(dev, dir))
+                printf("/\n");
+            else
+                printf("%s\n", path);
+            printf("\n           size creation         last change      last view        filename\n");
+            printf("           ---- --------         -----------      ---------        --------\n");
+            do {
+                /* Check all file in the BL */
+                for (i = 0; i < 4; i++) {
+                    if (fosfat_isopenexm(&files->file[i]) && strlen(files->file[i].name) > 0) {
+                        print_file(&files->file[i]);
+                        empty = 0;
+                    }
                 }
-            }
-        } while ((files = files->next_bl));
-        if (!empty)
-            printf("\nd:directory  h:hidden  s:system  e:encoded\n");
-        fosfat_free_dir(dir);
+            } while ((files = files->next_bl));
+            if (!empty)
+                printf("\nd:directory  h:hidden  s:system  e:encoded\n");
+            fosfat_free_dir(dir);
+        }
+        else {
+            printf("ERROR: this path is not a directory!\n");
+            return 0;
+        }
     }
     else {
         printf("ERROR: I can't read the SYS_LIST!\n");
