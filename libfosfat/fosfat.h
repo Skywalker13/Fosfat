@@ -45,6 +45,7 @@ typedef struct time {
     short int second;
 } s_fosfat_time;
 
+/** Attributes for a file (or dir) */
 typedef struct att {
     int isdir     : 1;
     int isvisible : 1;
