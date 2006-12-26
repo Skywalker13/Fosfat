@@ -134,6 +134,7 @@ typedef struct time {
 /** List of files in a directory */
 typedef struct list_dir {
     char name[16];
+    int size;
     s_fosfat_time time_c;
     s_fosfat_time time_w;
     s_fosfat_time time_r;

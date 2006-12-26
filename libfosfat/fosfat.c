@@ -710,6 +710,7 @@ s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
                         }
                         strncpy(listdir->name, files->file[i].name, sizeof(listdir->name));
                         lc(listdir->name);
+                        listdir->size = (int)c2l(files->file[i].lgf, sizeof(files->file[i].lgf));
 
                         /* Creation date */
                         listdir->time_c.year = h2d(files->file[i].cd[2]) + ((h2d(files->file[i].cd[2]) < FOSFAT_Y2K) ? 2000 : 1900);
