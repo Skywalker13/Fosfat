@@ -82,6 +82,7 @@ int fosfat_get_size(FOSFAT_DEV *dev, const char *location);
 
 /* Get a file */
 int fosfat_get_file(FOSFAT_DEV *dev, const char *src, const char *dst, int output);
+char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path, int offset, int size);
 
 /* Open and close the device */
 FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk);

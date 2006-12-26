@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <ctype.h>      /* tolower */
 #include <string.h>     /* strcasecmp strncasecmp strdup strlen strtok memcmp memcpy */
 
@@ -518,18 +519,33 @@ static s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block) {
  * @param file file description block
  * @param dst destination on your PC
  * @param output TRUE for print the size
+ * @param flag use the optional arguments or not
  * @return a boolean (true for success)
  */
-static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int output) {
+static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int output, int flag, ...) {
+    /* optional arguments */
+    va_list pp;
+    va_start(pp, flag);
+    int op_offset = 0;
+    int op_size = 0;
+    char *op_buffer = NULL;
+    int op_inoff = 0;
+    if (flag) {
+        op_offset = va_arg(pp, int);
+        op_size = va_arg(pp, int);
+        op_buffer = va_arg(pp, char *);
+    }
+    va_end(pp);
+
     unsigned long int i;
     int res = 1;
     size_t check_last;
     size_t size = 0;
-    FILE *f_dst;
+    FILE *f_dst = NULL;
     s_fosfat_data *file_d, *first_d;
 
     /* Create or replace a file */
-    if ((f_dst = fopen(dst, "w"))) {
+    if (flag || (f_dst = fopen(dst, "w"))) {
         /* Loop for all BD */
         do {
             /* Loop for all pointers */
@@ -538,11 +554,24 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int o
                     first_d = file_d;
                     /* Loop for all data blocks */
                     do {
-                        /* Write the block */
                         check_last = (i == c2l(file->npt, sizeof(file->npt)) - 1 && !file_d->next_data) ?
                                       (size_t)c2l(file->lst, sizeof(file->lst)) : (size_t)FOSFAT_BLK;
-                        if (fwrite((unsigned char *)file_d->data, (size_t)sizeof(unsigned char), check_last, f_dst) != check_last)
-                            res = 0;
+                        /* When the result is written in a file */
+                        if (!flag) {
+                            /* Write the block */
+                            if (fwrite((unsigned char *)file_d->data, (size_t)sizeof(unsigned char), check_last, f_dst) != check_last)
+                                res = 0;
+                        }
+                        /* When the result is written in RAM (offset and size) */
+                        else if (op_inoff || ((unsigned)op_offset >= size && (unsigned)op_offset < size + check_last)) {
+                            int first_pts = op_offset + op_inoff - (signed)size;
+                            /* Copy the tranche */
+                            memcpy(op_buffer + op_inoff, file_d->data + first_pts,
+                                   (op_size - op_inoff > (signed)check_last - first_pts) ? (signed)check_last - first_pts : op_size - op_inoff);
+                            op_inoff += check_last - first_pts;
+                            if (op_size <= op_inoff)
+                                res = 0;
+                        }
                         size += check_last;
                     } while (res && file_d->next_data && (file_d = file_d->next_data));
                     /* Freed all data */
@@ -554,10 +583,12 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int o
                     res = 0;
             }
         } while (res && file->next_bd && (file = file->next_bd));
-        fclose(f_dst);
-        /* If fails then remove the incomplete file */
-        if (!res)
-            remove(dst);
+        if (!flag) {
+            fclose(f_dst);
+            /* If fails then remove the incomplete file */
+            if (!res)
+                remove(dst);
+        }
     }
     else
         res = 0;
@@ -886,12 +917,40 @@ int fosfat_get_file(FOSFAT_DEV *dev, const char *src, const char *dst, int outpu
     if ((file = fosfat_search_insys(dev, src, eSBLF)) &&
         fosfat_isnotdel(file) && !fosfat_isdir(file)) {
         file2 = fosfat_read_file(dev, c2l(file->pt, sizeof(file->pt)));
-        if (fosfat_get(dev, file2, dst, output))
+        if (fosfat_get(dev, file2, dst, output, 0))
             res = 1;
         free(file);
         fosfat_free_file(file2);
     }
     return res;
+}
+
+/** Get a buffer from a file in the FOS.
+ *  The buffer can be selected with an offset in the
+ *  file dans with the size.
+ * @param dev pointer on the device
+ * @param path source on the Smaky disk
+ * @param offset start address in the file
+ * @param size length of the buffer
+ * @return the buffer with the data
+ */
+char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path, int offset, int size) {
+    char *buffer = NULL;
+    s_fosfat_blf *file;
+    s_fosfat_bd *file2;
+
+    if ((file = fosfat_search_insys(dev, path, eSBLF)) &&
+        fosfat_isnotdel(file) && !fosfat_isdir(file)) {
+        buffer = (char *)malloc(sizeof(char) * size);
+        file2 = fosfat_read_file(dev, c2l(file->pt, sizeof(file->pt)));
+        if (fosfat_get(dev, file2, NULL, 0, 1, offset, size, buffer)) {
+            free(buffer);
+            buffer = NULL;
+        }
+        free(file);
+        fosfat_free_file(file2);
+    }
+    return buffer;
 }
 
 /** Get the name of a disk.
