@@ -724,27 +724,6 @@ static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location, e_fosfat
     return NULL;
 }
 
-/** Test two blocks.
- * @param b1 block 1
- * @param b2 block 2
- * @return a boolean (true for success)
- */
-static inline int fosfat_blkcmp(const void *b1, const void *b2) {
-    return (memcmp(b1, b2, FOSFAT_BLK) == 0) ? 1 : 0;
-}
-
-/** Test if the BD is the first SYS_LIST.
- * @param dev pointer on the device
- * @param bd BD tested
- * @return a boolean (true for success)
- */
-static int fosfat_isbdsys(FOSFAT_DEV *dev, s_fosfat_bd *bd) {
-    s_fosfat_bd *sys;
-
-    sys = fosfat_read_dir(dev, FOSFAT_SYSLIST);
-    return fosfat_blkcmp(bd, sys);
-}
-
 /** Test if the file is a directory.
  *  This function uses a string location.
  * @param dev pointer on the device
