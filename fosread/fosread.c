@@ -35,7 +35,7 @@ typedef struct ginfo {
     char name[FOSFAT_NAMELGT];
 } s_global_info;
 
-/** Get info from the block 0.
+/** Get info from the disk.
  * @param dev pointer on the device
  * @return info
  */
@@ -56,14 +56,15 @@ s_global_info *get_ginfo(FOSFAT_DEV *dev) {
 }
 
 /** Print date and hour.
- * @param dh date
+ * @param time date and hour
  */
 void print_date(s_fosfat_time *time) {
     printf(" %4i-%02i-%02i %02i:%02i", time->year, time->month, time->day, time->hour, time->minute);
 }
 
 /** Print a file in the list.
- * @param file BLF of a file
+ * @param location where
+ * @param file description
  */
 void print_file(const char *location, s_fosfat_listdir *file) {
     char *path;
@@ -121,7 +122,6 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
 
 /** Copy a file from the disk.
  * @param dev pointer on the device
- * @param ginfo informations from the block 0
  * @param path where in the tree
  * @param dst where in local
  * @return true if it is ok
