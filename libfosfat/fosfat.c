@@ -90,6 +90,18 @@ unsigned long int c2l(unsigned char *value, int size) {
     return res;
 }
 
+/** Change a string in lower case.
+ * @param data the string
+ * @return a pointer on this string
+ */
+static char *lc(char *data) {
+    int i;
+
+    for (i = 0; data[i] != '\0'; i++)
+        data[i] = tolower(data[i]);
+    return data;
+}
+
 /** Convert an integer in base 10 with the value shown
  *  in base 16, in an integer with the value shown in base 10.
  * @param val the value
@@ -697,6 +709,7 @@ s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
                             firstfile = listdir;
                         }
                         strncpy(listdir->name, files->file[i].name, sizeof(listdir->name));
+                        lc(listdir->name);
 
                         /* Creation date */
                         listdir->time_c.year = h2d(files->file[i].cd[2]) + ((h2d(files->file[i].cd[2]) < FOSFAT_Y2K) ? 2000 : 1900);
