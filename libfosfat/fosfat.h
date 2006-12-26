@@ -120,6 +120,13 @@ typedef struct block_desc {
     struct block_list *first_bl;
 } s_fosfat_bd;
 
+/** List of files in a directory */
+typedef struct list_dir {
+    char name[16];
+    /* Linked list */
+    struct list_dir *next_file;
+} s_fosfat_listdir;
+
 
 unsigned long int c2l(unsigned char *value, int size);
 
@@ -129,8 +136,10 @@ s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev, unsigned long int block);
 /* Read a folder and a file (LINKED LIST) */
 s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block);
 s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block);
+s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location);
 void fosfat_free_dir(s_fosfat_bd *var);
 void fosfat_free_file(s_fosfat_bd *var);
+void fosfat_free_listdir(s_fosfat_listdir *var);
 
 /* Test attributes and type on a file */
 int fosfat_isdir(s_fosfat_blf *file);

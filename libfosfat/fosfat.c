@@ -148,6 +148,21 @@ void fosfat_free_dir(s_fosfat_bd *var) {
     } while (bd);
 }
 
+/** Free a List Dir variable.
+ *  This function must be used after all fosfat_list_dir()!
+ * @param var pointer on the description block
+ */
+void fosfat_free_listdir(s_fosfat_listdir *var) {
+    s_fosfat_listdir *ld, *free_ld;
+
+    ld = var;
+    while (ld) {
+        free_ld = ld;
+        ld = ld->next_file;
+        free(free_ld);
+    }
+}
+
 /** Test if the file is a directory. This function read the ATT
  *  and return the value of the 12th bit, mask 0x1000.
  * @param file pointer on the file (in the BL)
@@ -586,7 +601,7 @@ void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location, e_fosfat_search
             else
                 return (s_fosfat_bd *)search;
         }
-        if (!type)
+        if (!type && (*location == '\0' || !strcmp(location, "/")))
             return (s_fosfat_bd *)syslist;
     }
     return NULL;
@@ -631,6 +646,47 @@ int fosfat_p_isdir(FOSFAT_DEV *dev, const char *location) {
             return 0;
     }
     return 1;
+}
+
+/** Return a linked list with all files of a directory.
+ *  This function is high level.
+ * @param dev pointer on the device
+ * @param location directory in the path
+ * @return the linked list
+ */
+s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
+    int i;
+    s_fosfat_bd *dir;
+    s_fosfat_bl *files;
+    s_fosfat_listdir *listdir = NULL;
+    s_fosfat_listdir *firstfile = NULL;
+
+    if ((dir = fosfat_search_insys(dev, location, eSBD))) {
+        /* Test if it is a directory */
+        if (fosfat_p_isdir(dev, location)) {
+            files = dir->first_bl;
+            do {
+                /* Check all files in the BL */
+                for (i = 0; i < FOSFAT_NBL; i++) {
+                    if (fosfat_isopenexm(&files->file[i]) && fosfat_isnotdel(&files->file[i])) {
+                        /* Complete the linked list with all files */
+                        if (listdir) {
+                            listdir->next_file = (s_fosfat_listdir *)malloc(sizeof(s_fosfat_listdir));
+                            listdir = listdir->next_file;
+                        }
+                        else {
+                            listdir = (s_fosfat_listdir *)malloc(sizeof(s_fosfat_listdir));
+                            firstfile = listdir;
+                        }
+                        strncpy(listdir->name, files->file[i].name, sizeof(listdir->name));
+                        listdir->next_file = NULL;
+                    }
+                }
+            } while ((files = files->next_bl));
+        }
+        fosfat_free_dir(dir);
+    }
+    return firstfile;
 }
 
 /** Open the device. That hides the fopen processing.
