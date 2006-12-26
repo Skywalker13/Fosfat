@@ -150,8 +150,6 @@ typedef struct list_dir {
 } s_fosfat_listdir;
 
 
-unsigned long int c2l(unsigned char *value, int size);
-
 /* Read the block 0 */
 s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev, unsigned long int block);
 

@@ -81,7 +81,7 @@ static long int lpow(long int x, long int y) {
  * @param size size of the table (number of bytes)
  * @return the long integer value
  */
-unsigned long int c2l(unsigned char *value, int size) {
+static unsigned long int c2l(unsigned char *value, int size) {
     int i, j;
     unsigned long int res = 0;
 
