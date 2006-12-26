@@ -141,7 +141,7 @@ static void fosfat_free_data(s_fosfat_data *var) {
  *  This function must be used after all fosfat_read_file()!
  * @param var pointer on the description block
  */
-void fosfat_free_file(s_fosfat_bd *var) {
+static void fosfat_free_file(s_fosfat_bd *var) {
     s_fosfat_bd *bd, *free_bd;
 
     bd = var;
@@ -158,7 +158,7 @@ void fosfat_free_file(s_fosfat_bd *var) {
  *  This function must be used after all fosfat_read_dir()!
  * @param var pointer on the description block
  */
-void fosfat_free_dir(s_fosfat_bd *var) {
+static void fosfat_free_dir(s_fosfat_bd *var) {
     s_fosfat_bl *bl, *free_bl;
     s_fosfat_bd *bd, *free_bd;
 
