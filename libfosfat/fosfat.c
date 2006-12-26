@@ -780,6 +780,23 @@ int fosfat_p_isencoded(FOSFAT_DEV *dev, const char *location) {
     return 1;
 }
 
+/** Get the size in bytes of a file.
+ * @param dev pointer on the device
+ * @param location file in the path
+ * @return the size
+ */
+int fosfat_get_size(FOSFAT_DEV *dev, const char *location) {
+    int size = 0;
+    s_fosfat_blf *entry;
+
+    if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
+        fosfat_isnotdel(entry)) {
+        size = (int)c2l(entry->lgf, sizeof(entry->lgf));
+        free(entry);
+    }
+    return size;
+}
+
 /** Return a linked list with all files of a directory.
  *  This function is high level.
  * @param dev pointer on the device
