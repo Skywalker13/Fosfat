@@ -207,6 +207,14 @@ static int h2d(int val) {
     return res;
 }
 
+/** Convert the year to y2k.
+ * @param y year on two digits
+ * @return the year on four digits
+ */
+static inline int y2k(int y) {
+    return ((y < FOSFAT_Y2K) ? 2000 : 1900) + y;
+}
+
 /** Free a DATA file variable. It will be used only when
  *  a data is loaded for copy a file on the PC, for freed
  *  each block after each write.
@@ -868,21 +876,21 @@ s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
                         listdir->att.isencoded = fosfat_isencoded(&files->file[i]) ? 1 : 0;
 
                         /* Creation date */
-                        listdir->time_c.year = h2d(files->file[i].cd[2]) + ((h2d(files->file[i].cd[2]) < FOSFAT_Y2K) ? 2000 : 1900);
+                        listdir->time_c.year = y2k(h2d(files->file[i].cd[2]));
                         listdir->time_c.month = h2d(files->file[i].cd[1]);
                         listdir->time_c.day = h2d(files->file[i].cd[0]);
                         listdir->time_c.hour = h2d(files->file[i].ch[0]);
                         listdir->time_c.minute = h2d(files->file[i].ch[1]);
                         listdir->time_c.second = h2d(files->file[i].ch[2]);
                         /* Writing date */
-                        listdir->time_w.year = h2d(files->file[i].wd[2]) + ((h2d(files->file[i].wd[2]) < FOSFAT_Y2K) ? 2000 : 1900);
+                        listdir->time_w.year = y2k(h2d(files->file[i].wd[2]));
                         listdir->time_w.month = h2d(files->file[i].wd[1]);
                         listdir->time_w.day = h2d(files->file[i].wd[0]);
                         listdir->time_w.hour = h2d(files->file[i].wh[0]);
                         listdir->time_w.minute = h2d(files->file[i].wh[1]);
                         listdir->time_w.second = h2d(files->file[i].wh[2]);
                         /* Use date */
-                        listdir->time_r.year = h2d(files->file[i].rd[2]) + ((h2d(files->file[i].rd[2]) < FOSFAT_Y2K) ? 2000 : 1900);
+                        listdir->time_r.year = y2k(h2d(files->file[i].rd[2]));
                         listdir->time_r.month = h2d(files->file[i].rd[1]);
                         listdir->time_r.day = h2d(files->file[i].rd[0]);
                         listdir->time_r.hour = h2d(files->file[i].rh[0]);
