@@ -198,7 +198,7 @@ void fosfat_free_listdir(s_fosfat_listdir *var) {
  * @param file pointer on the file (in the BL)
  * @return a boolean (true for success)
  */
-int fosfat_isdir(s_fosfat_blf *file) {
+static inline int fosfat_isdir(s_fosfat_blf *file) {
     return (((int)c2l(file->att, sizeof(file->att)) & 0x1000));
 }
 
@@ -207,7 +207,7 @@ int fosfat_isdir(s_fosfat_blf *file) {
  * @param file pointer on the file (in the BL)
  * @return a boolean (true for success)
  */
-int fosfat_isvisible(s_fosfat_blf *file) {
+static inline int fosfat_isvisible(s_fosfat_blf *file) {
     return (((int)c2l(file->att, sizeof(file->att)) & 0x2000));
 }
 
@@ -217,7 +217,7 @@ int fosfat_isvisible(s_fosfat_blf *file) {
  * @param file pointer on the file (in the BL)
  * @return a boolean (true for success)
  */
-int fosfat_isopenexm(s_fosfat_blf *file) {
+static inline int fosfat_isopenexm(s_fosfat_blf *file) {
     return (((int)c2l(file->att, sizeof(file->att)) & 0x1)) ||
            (((int)c2l(file->att, sizeof(file->att)) & 0x2));
 }
@@ -227,7 +227,7 @@ int fosfat_isopenexm(s_fosfat_blf *file) {
  * @param file pointer on the file (in the BL)
  * @return a boolean (true for success)
  */
-int fosfat_isencoded(s_fosfat_blf *file) {
+static inline int fosfat_isencoded(s_fosfat_blf *file) {
     return (((int)c2l(file->att, sizeof(file->att)) & 0x20000));
 }
 
@@ -236,7 +236,7 @@ int fosfat_isencoded(s_fosfat_blf *file) {
  * @param file pointer on the file (in the BL)
  * @return a boolean (true for success)
  */
-int fosfat_issystem(s_fosfat_blf *file) {
+static inline int fosfat_issystem(s_fosfat_blf *file) {
     return ((int)(file->typ & 0xF8));
 }
 

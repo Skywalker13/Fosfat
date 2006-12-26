@@ -163,13 +163,6 @@ void fosfat_free_dir(s_fosfat_bd *var);
 void fosfat_free_file(s_fosfat_bd *var);
 void fosfat_free_listdir(s_fosfat_listdir *var);
 
-/* Test attributes and type on a file */
-int fosfat_isdir(s_fosfat_blf *file);
-int fosfat_isvisible(s_fosfat_blf *file);
-int fosfat_isopenexm(s_fosfat_blf *file);
-int fosfat_isencoded(s_fosfat_blf *file);
-int fosfat_issystem(s_fosfat_blf *file);
-
 /* Test attributes and type on a file since a location */
 int fosfat_p_isdir(FOSFAT_DEV *dev, const char *location);
 int fosfat_p_isvisible(FOSFAT_DEV *dev, const char *location);
