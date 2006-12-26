@@ -131,10 +131,18 @@ typedef struct time {
     short int second;
 } s_fosfat_time;
 
+typedef struct att {
+    int isdir     : 1;
+    int isvisible : 1;
+    int isencoded : 1;
+    int issystem  : 1;
+} s_fosfat_att;
+
 /** List of files in a directory */
 typedef struct list_dir {
     char name[16];
     int size;
+    s_fosfat_att att;
     s_fosfat_time time_c;
     s_fosfat_time time_w;
     s_fosfat_time time_r;

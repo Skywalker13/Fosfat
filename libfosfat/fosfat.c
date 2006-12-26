@@ -766,6 +766,12 @@ s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
                         lc(listdir->name);
                         listdir->size = (int)c2l(files->file[i].lgf, sizeof(files->file[i].lgf));
 
+                        /* ATT field bits */
+                        listdir->att.isdir = fosfat_isdir(&files->file[i]) ? 1 : 0;
+                        listdir->att.isvisible = fosfat_isvisible(&files->file[i]) ? 1 : 0;
+                        listdir->att.isencoded = fosfat_isencoded(&files->file[i]) ? 1 : 0;
+                        listdir->att.issystem = fosfat_issystem(&files->file[i]) ? 1 : 0;
+
                         /* Creation date */
                         listdir->time_c.year = h2d(files->file[i].cd[2]) + ((h2d(files->file[i].cd[2]) < FOSFAT_Y2K) ? 2000 : 1900);
                         listdir->time_c.month = h2d(files->file[i].cd[1]);
