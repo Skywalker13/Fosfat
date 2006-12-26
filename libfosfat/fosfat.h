@@ -166,6 +166,8 @@ int fosfat_issystem(s_fosfat_blf *file);
 /* Test attributes and type on a file since a location */
 int fosfat_p_isdir(FOSFAT_DEV *dev, const char *location);
 int fosfat_p_isvisible(FOSFAT_DEV *dev, const char *location);
+int fosfat_p_isencoded(FOSFAT_DEV *dev, const char *location);
+int fosfat_p_issystem(FOSFAT_DEV *dev, const char *location);
 
 /* Get a file */
 int fosfat_get_file(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int output);
