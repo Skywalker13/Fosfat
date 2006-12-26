@@ -678,6 +678,24 @@ int fosfat_p_isdir(FOSFAT_DEV *dev, const char *location) {
     return 1;
 }
 
+/** Test if the file is visible.
+ *  This function uses a string location.
+ * @param dev pointer on the device
+ * @param location file in the path
+ * @return a boolean (true for success)
+ */
+int fosfat_p_isvisible(FOSFAT_DEV *dev, const char *location) {
+    s_fosfat_blf *entry;
+
+    if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
+        fosfat_isnotdel(entry) && fosfat_isvisible(entry)) {
+        free(entry);
+    }
+    else
+        return 0;
+    return 1;
+}
+
 /** Return a linked list with all files of a directory.
  *  This function is high level.
  * @param dev pointer on the device
