@@ -37,6 +37,7 @@
 #define FOSFAT_NBL      4
 #define FOSFAT_Y2K      70
 
+#define FOSFAT_BLOCK0   0x00
 #define FOSFAT_SYSLIST  0x01
 
 /** List of all block types */
@@ -59,6 +60,19 @@ typedef struct block_data {
     /* Linked list */
     struct block_data *next_data;
 } s_fosfat_data;
+
+/** Block 0 (256 bytes) */
+typedef struct block_0 {
+    unsigned char sys[44];       //!< SYSTEM folder
+    char nlo[16];                //!< Disk name
+    unsigned char chk[4];        //!< Check control
+    unsigned char mes[172];      //!< Message
+    unsigned char change;        //!< Need of change the CHK number
+    unsigned char bonchk;        //!< New format
+    unsigned char oldchk[4];     //!< Old CHK value
+    unsigned char newchk[4];     //!< New CHK value
+    unsigned char reserve[10];   //!< Unused
+} s_fosfat_b0;
 
 /** File in a Block List (60 bytes) */
 typedef struct block_listf {
@@ -882,6 +896,19 @@ int fosfat_get_file(FOSFAT_DEV *dev, const char *src, const char *dst, int outpu
         fosfat_free_file(file2);
     }
     return res;
+}
+
+char *fosfat_diskname(FOSFAT_DEV *dev) {
+    s_fosfat_b0 *block0;
+    char *name;
+
+    if ((block0 = fosfat_read_b0(dev, FOSFAT_BLOCK0))) {
+        name = strdup(block0->nlo);
+        free(block0);
+    }
+    else
+        name = NULL;
+    return name;
 }
 
 /** Open the device. That hides the fopen processing.

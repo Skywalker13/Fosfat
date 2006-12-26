@@ -26,8 +26,6 @@
 #ifndef _FOSFAT_H_
 #define _FOSFAT_H_
 
-#define FOSFAT_BLOCK0   0x00
-
 #define FOSFAT_DEV      FILE
 #define FOSFAT_NAMELGT  17
 
@@ -36,19 +34,6 @@ typedef enum disk_type {
     eFD,                         //!< Floppy Disk
     eHD                          //!< Hard Disk
 } e_fosfat_disk;
-
-/** Block 0 (256 bytes) */
-typedef struct block_0 {
-    unsigned char sys[44];       //!< SYSTEM folder
-    char nlo[16];                //!< Disk name
-    unsigned char chk[4];        //!< Check control
-    unsigned char mes[172];      //!< Message
-    unsigned char change;        //!< Need of change the CHK number
-    unsigned char bonchk;        //!< New format
-    unsigned char oldchk[4];     //!< Old CHK value
-    unsigned char newchk[4];     //!< New CHK value
-    unsigned char reserve[10];   //!< Unused
-} s_fosfat_b0;
 
 /** Time */
 typedef struct time {
@@ -79,8 +64,8 @@ typedef struct list_dir {
 } s_fosfat_listdir;
 
 
-/* Read the block 0 */
-s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev, unsigned long int block);
+/* Disk */
+char *fosfat_diskname(FOSFAT_DEV *dev);
 
 /* Read a folder */
 s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location);
