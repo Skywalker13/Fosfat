@@ -400,7 +400,7 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block, unsigned
  * @param block the file BD position
  * @return the first BD of the linked list
  */
-s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block) {
+static s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block) {
     unsigned long int next;
     s_fosfat_bd *file_desc, *first_bd;
 
@@ -486,7 +486,7 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int o
  * @param block DIR (or SYS_LIST) BD position
  * @return the first BD of the linked list
  */
-s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
+static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
     unsigned long int i;
     unsigned long int next;
     s_fosfat_bd *dir_desc, *first_bd;
@@ -537,7 +537,7 @@ s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
  * @param type eSBD or eSBLF
  * @return the BD, BLF or NULL is nothing found
  */
-void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *files, e_fosfat_search type) {
+static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *files, e_fosfat_search type) {
     int i, j, nb = 0, ontop = 1;
     char *tmp, *path;
     char dir[MAX_SPLIT][FOSFAT_NAMELGT];
@@ -618,7 +618,7 @@ void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *fil
  * @param type eSBD or eSBLF
  * @return the BD, BLF or NULL is nothing found
  */
-void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location, e_fosfat_search type) {
+static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location, e_fosfat_search type) {
     s_fosfat_bd *syslist;
     s_fosfat_bl *files;
     void *search;
@@ -651,7 +651,7 @@ static inline int fosfat_blkcmp(const void *b1, const void *b2) {
  * @param bd BD tested
  * @return a boolean (true for success)
  */
-int fosfat_isbdsys(FOSFAT_DEV *dev, s_fosfat_bd *bd) {
+static int fosfat_isbdsys(FOSFAT_DEV *dev, s_fosfat_bd *bd) {
     s_fosfat_bd *sys;
 
     sys = fosfat_read_dir(dev, FOSFAT_SYSLIST);

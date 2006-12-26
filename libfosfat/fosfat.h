@@ -165,13 +165,6 @@ int fosfat_p_isencoded(FOSFAT_DEV *dev, const char *location);
 /* Get a file */
 int fosfat_get_file(FOSFAT_DEV *dev, const char *src, const char *dst, int output);
 
-/* Search */
-void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *files, e_fosfat_search type);
-void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location, e_fosfat_search type);
-
-/* Test */
-int fosfat_isbdsys(FOSFAT_DEV *dev, s_fosfat_bd *sys);
-
 /* Open and close the device */
 FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk);
 void fosfat_closedev(FOSFAT_DEV *dev);
