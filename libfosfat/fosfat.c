@@ -877,6 +877,10 @@ int fosfat_get_file(FOSFAT_DEV *dev, const char *src, const char *dst, int outpu
     return res;
 }
 
+/** Get the name of a disk.
+ * @param dev pointer on the device
+ * @return the name
+ */
 char *fosfat_diskname(FOSFAT_DEV *dev) {
     s_fosfat_b0 *block0;
     char *name;
