@@ -35,6 +35,7 @@
 #define FOSFAT_DEV      FILE
 #define FOSFAT_NAMELGT  17
 #define FOSFAT_NBL      4
+#define FOSFAT_Y2K      70
 
 /** Disk types */
 typedef enum disk_type {
@@ -120,9 +121,22 @@ typedef struct block_desc {
     struct block_list *first_bl;
 } s_fosfat_bd;
 
+/** Time */
+typedef struct time {
+    short int year;
+    short int month;
+    short int day;
+    short int hour;
+    short int minute;
+    short int second;
+} s_fosfat_time;
+
 /** List of files in a directory */
 typedef struct list_dir {
     char name[16];
+    s_fosfat_time time_c;
+    s_fosfat_time time_w;
+    s_fosfat_time time_r;
     /* Linked list */
     struct list_dir *next_file;
 } s_fosfat_listdir;

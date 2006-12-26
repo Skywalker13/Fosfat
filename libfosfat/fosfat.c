@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>      /* tolower */
 #include <string.h>     /* strcasecmp strncasecmp strdup strlen strtok memcmp memcpy */
 
 #include "fosfat.h"
@@ -86,6 +87,23 @@ unsigned long int c2l(unsigned char *value, int size) {
 
     for (i = size - 1, j = 0; i >= 0; i--, j++)
         res += value[j] * lpow(16, (long int)i * 2);
+    return res;
+}
+
+/** Convert an integer in base 10 with the value shown
+ *  in base 16, in an integer with the value shown in base 10.
+ * @param val the value
+ * @return the new integer
+ */
+static int h2d(int val) {
+    char *conv;
+    int res;
+
+    conv = (char *)malloc(sizeof(val));
+
+    snprintf(conv, sizeof(conv), "%X", val);
+    res = atoi(conv);
+    free(conv);
     return res;
 }
 
@@ -679,6 +697,29 @@ s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
                             firstfile = listdir;
                         }
                         strncpy(listdir->name, files->file[i].name, sizeof(listdir->name));
+
+                        /* Creation date */
+                        listdir->time_c.year = h2d(files->file[i].cd[2]) + ((h2d(files->file[i].cd[2]) < FOSFAT_Y2K) ? 2000 : 1900);
+                        listdir->time_c.month = h2d(files->file[i].cd[1]);
+                        listdir->time_c.day = h2d(files->file[i].cd[0]);
+                        listdir->time_c.hour = h2d(files->file[i].ch[0]);
+                        listdir->time_c.minute = h2d(files->file[i].ch[1]);
+                        listdir->time_c.second = h2d(files->file[i].ch[2]);
+                        /* Writing date */
+                        listdir->time_w.year = h2d(files->file[i].wd[2]) + ((h2d(files->file[i].wd[2]) < FOSFAT_Y2K) ? 2000 : 1900);
+                        listdir->time_w.month = h2d(files->file[i].wd[1]);
+                        listdir->time_w.day = h2d(files->file[i].wd[0]);
+                        listdir->time_w.hour = h2d(files->file[i].wh[0]);
+                        listdir->time_w.minute = h2d(files->file[i].wh[1]);
+                        listdir->time_w.second = h2d(files->file[i].wh[2]);
+                        /* Use date */
+                        listdir->time_r.year = h2d(files->file[i].rd[2]) + ((h2d(files->file[i].rd[2]) < FOSFAT_Y2K) ? 2000 : 1900);
+                        listdir->time_r.month = h2d(files->file[i].rd[1]);
+                        listdir->time_r.day = h2d(files->file[i].rd[0]);
+                        listdir->time_r.hour = h2d(files->file[i].rh[0]);
+                        listdir->time_r.minute = h2d(files->file[i].rh[1]);
+                        listdir->time_r.second = h2d(files->file[i].rh[2]);
+
                         listdir->next_file = NULL;
                     }
                 }
