@@ -433,7 +433,7 @@ s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block) {
  * @param output TRUE for print the size
  * @return a boolean (true for success)
  */
-int fosfat_get_file(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int output) {
+static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int output) {
     unsigned long int i;
     int res = 1;
     size_t check_last;
@@ -783,6 +783,32 @@ s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
         fosfat_free_dir(dir);
     }
     return firstfile;
+}
+
+/** Get a file and put this in a location on the PC.
+ *  This function create a copy from src to dst.
+ *  An output variable can be used for
+ *  that the current size is printed for each PTS.
+ * @param dev pointer on the device
+ * @param src source on the Smaky disk
+ * @param dst destination on your PC
+ * @param output TRUE for print the size
+ * @return a boolean (true for success)
+ */
+int fosfat_get_file(FOSFAT_DEV *dev, const char *src, const char *dst, int output) {
+    int res = 0;
+    s_fosfat_blf *file;
+    s_fosfat_bd *file2;
+
+    if ((file = fosfat_search_insys(dev, src, eSBLF)) &&
+        fosfat_isnotdel(file) && !fosfat_isdir(file)) {
+        file2 = fosfat_read_file(dev, c2l(file->pt, sizeof(file->pt)));
+        if (fosfat_get(dev, file2, dst, output))
+            res = 1;
+        free(file);
+        fosfat_free_file(file2);
+    }
+    return res;
 }
 
 /** Open the device. That hides the fopen processing.

@@ -169,7 +169,7 @@ int fosfat_p_isvisible(FOSFAT_DEV *dev, const char *location);
 int fosfat_p_isencoded(FOSFAT_DEV *dev, const char *location);
 
 /* Get a file */
-int fosfat_get_file(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int output);
+int fosfat_get_file(FOSFAT_DEV *dev, const char *src, const char *dst, int output);
 
 /* Search */
 void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_bl *files, e_fosfat_search type);
