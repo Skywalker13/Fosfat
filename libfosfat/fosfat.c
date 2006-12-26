@@ -714,24 +714,6 @@ int fosfat_p_isencoded(FOSFAT_DEV *dev, const char *location) {
     return 1;
 }
 
-/** Test if the file is system.
- *  This function uses a string location.
- * @param dev pointer on the device
- * @param location file in the path
- * @return a boolean (true for success)
- */
-int fosfat_p_issystem(FOSFAT_DEV *dev, const char *location) {
-    s_fosfat_blf *entry;
-
-    if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
-        fosfat_isnotdel(entry) && fosfat_issystem(entry)) {
-        free(entry);
-    }
-    else
-        return 0;
-    return 1;
-}
-
 /** Return a linked list with all files of a directory.
  *  This function is high level.
  * @param dev pointer on the device
@@ -752,7 +734,7 @@ s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
             do {
                 /* Check all files in the BL */
                 for (i = 0; i < FOSFAT_NBL; i++) {
-                    if (fosfat_isopenexm(&files->file[i]) && fosfat_isnotdel(&files->file[i])) {
+                    if (fosfat_isopenexm(&files->file[i]) && fosfat_isnotdel(&files->file[i]) && !fosfat_issystem(&files->file[i])) {
                         /* Complete the linked list with all files */
                         if (listdir) {
                             listdir->next_file = (s_fosfat_listdir *)malloc(sizeof(s_fosfat_listdir));
@@ -770,7 +752,6 @@ s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
                         listdir->att.isdir = fosfat_isdir(&files->file[i]) ? 1 : 0;
                         listdir->att.isvisible = fosfat_isvisible(&files->file[i]) ? 1 : 0;
                         listdir->att.isencoded = fosfat_isencoded(&files->file[i]) ? 1 : 0;
-                        listdir->att.issystem = fosfat_issystem(&files->file[i]) ? 1 : 0;
 
                         /* Creation date */
                         listdir->time_c.year = h2d(files->file[i].cd[2]) + ((h2d(files->file[i].cd[2]) < FOSFAT_Y2K) ? 2000 : 1900);

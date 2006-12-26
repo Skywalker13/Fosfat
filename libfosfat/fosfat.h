@@ -135,7 +135,6 @@ typedef struct att {
     int isdir     : 1;
     int isvisible : 1;
     int isencoded : 1;
-    int issystem  : 1;
 } s_fosfat_att;
 
 /** List of files in a directory */
@@ -175,7 +174,6 @@ int fosfat_issystem(s_fosfat_blf *file);
 int fosfat_p_isdir(FOSFAT_DEV *dev, const char *location);
 int fosfat_p_isvisible(FOSFAT_DEV *dev, const char *location);
 int fosfat_p_isencoded(FOSFAT_DEV *dev, const char *location);
-int fosfat_p_issystem(FOSFAT_DEV *dev, const char *location);
 
 /* Get a file */
 int fosfat_get_file(FOSFAT_DEV *dev, s_fosfat_bd *file, const char *dst, int output);
