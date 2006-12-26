@@ -32,6 +32,13 @@
 
 #define MAX_SPLIT       64
 
+/* Block size (256 bytes) */
+#define FOSFAT_BLK      256
+#define FOSFAT_NBL      4
+#define FOSFAT_Y2K      70
+
+#define FOSFAT_SYSLIST  0x01
+
 /** List of all block types */
 typedef enum block_type {
     eB0,                //!< Block 0

@@ -26,16 +26,10 @@
 #ifndef _FOSFAT_H_
 #define _FOSFAT_H_
 
-/* Block size (256 bytes) */
-#define FOSFAT_BLK      256
-
 #define FOSFAT_BLOCK0   0x00
-#define FOSFAT_SYSLIST  0x01
 
 #define FOSFAT_DEV      FILE
 #define FOSFAT_NAMELGT  17
-#define FOSFAT_NBL      4
-#define FOSFAT_Y2K      70
 
 /** Disk types */
 typedef enum disk_type {
