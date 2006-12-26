@@ -927,7 +927,7 @@ int fosfat_get_file(FOSFAT_DEV *dev, const char *src, const char *dst, int outpu
 
 /** Get a buffer from a file in the FOS.
  *  The buffer can be selected with an offset in the
- *  file dans with the size.
+ *  file and with a size.
  * @param dev pointer on the device
  * @param path source on the Smaky disk
  * @param offset start address in the file
