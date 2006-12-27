@@ -23,6 +23,9 @@
  *
  */
 
+/* strcasecmp */
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -696,15 +699,20 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_
             for (j = 0; j < FOSFAT_NBL; j++) {
                 if (fosfat_isopenexm(&loop->file[j]) && !fosfat_issystem(&loop->file[j])) {
                     /* Test if it is a directory */
-                    if (fosfat_isdir(&loop->file[j]) && !strncasecmp(loop->file[j].name, dir[i], strlen(loop->file[j].name) - 4)) {
-                        if (type)
-                            memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
-                        if (loop_bd)
-                            fosfat_free_dir(loop_bd);
-                        loop_bd = fosfat_read_dir(dev, c2l(loop->file[j].pt, sizeof(loop->file[j].pt)));
-                        loop = loop_bd->first_bl;
-                        ontop = 0;  // dir found
-                        break;
+
+                    if (fosfat_isdir(&loop->file[j])) {
+                        if (!strcmp(dir[i], "/") ||
+                            (strcasestr(loop->file[j].name, ".dir") && !strncasecmp(loop->file[j].name, dir[i], strlen(loop->file[j].name) - 4)) ||
+                            !strncasecmp(loop->file[j].name, dir[i], strlen(loop->file[j].name))) {
+                            if (type)
+                                memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
+                            if (loop_bd)
+                                fosfat_free_dir(loop_bd);
+                            loop_bd = fosfat_read_dir(dev, c2l(loop->file[j].pt, sizeof(loop->file[j].pt)));
+                            loop = loop_bd->first_bl;
+                            ontop = 0;  // dir found
+                            break;
+                        }
                     }
                     /* Test if it is a file */
                     else if (!fosfat_isdir(&loop->file[j]) && !strcasecmp(loop->file[j].name, dir[i])) {
@@ -750,6 +758,8 @@ static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location, e_fosfat
     void *search;
 
     if ((syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST))) {
+        if (!type && (*location == '\0' || !strcmp(location, "/")))
+            return (s_fosfat_bd *)syslist;
         files = syslist->first_bl;
         if ((search = fosfat_search_bdlf(dev, location, files, type))) {
             if (type)
@@ -757,8 +767,6 @@ static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location, e_fosfat
             else
                 return (s_fosfat_bd *)search;
         }
-        if (!type && (*location == '\0' || !strcmp(location, "/")))
-            return (s_fosfat_bd *)syslist;
     }
     return NULL;
 }
