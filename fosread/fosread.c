@@ -114,7 +114,7 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
         fosfat_free_listdir(first_file);
     }
     else {
-        printf("ERROR: I can't found this path or this directory is empty!\n");
+        printf("ERROR: I can't found this path!\n");
         return 0;
     }
     return 1;
