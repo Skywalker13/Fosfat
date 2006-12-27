@@ -697,12 +697,12 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_
         do {
             /* Loop for FOSFAT_NBL files in the BL */
             for (j = 0; j < FOSFAT_NBL; j++) {
-                if (fosfat_isopenexm(&loop->file[j]) && !fosfat_issystem(&loop->file[j])) {
+                if (fosfat_isopenexm(&loop->file[j]) && fosfat_isnotdel(&loop->file[j]) && !fosfat_issystem(&loop->file[j])) {
                     /* Test if it is a directory */
-
                     if (fosfat_isdir(&loop->file[j])) {
                         if ((strcasestr(loop->file[j].name, ".dir") && !strncasecmp(loop->file[j].name, dir[i], strlen(loop->file[j].name) - 4)) ||
                             !strncasecmp(loop->file[j].name, dir[i], strlen(loop->file[j].name))) {
+printf("_%s_\n", loop->file[j].name);
                             if (type)
                                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
                             if (loop_bd)
@@ -712,6 +712,8 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_
                             ontop = 0;  // dir found
                             break;
                         }
+                        else
+                            ontop = 1;
                     }
                     /* Test if it is a file */
                     else if (!fosfat_isdir(&loop->file[j]) && !strcasecmp(loop->file[j].name, dir[i])) {
