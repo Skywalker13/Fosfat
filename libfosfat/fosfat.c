@@ -913,6 +913,7 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
     int i;
     s_fosfat_bd *dir;
     s_fosfat_bl *files;
+    s_fosfat_file *sysdir = NULL;
     s_fosfat_file *listdir = NULL;
     s_fosfat_file *firstfile = NULL;
 
@@ -934,10 +935,18 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
                             listdir = firstfile;
                         }
                     }
+                    else if (fosfat_issystem(&files->file[i]) && !strcasecmp(files->file[i].name, "sys_list")) {
+                        sysdir = fosfat_stat(&files->file[i]);
+                        strcpy(sysdir->name, "..dir");
+                    }
                 }
             } while ((files = files->next_bl));
         }
         fosfat_free_dir(dir);
+    }
+    if (sysdir) {
+        sysdir->next_file = firstfile;
+        return sysdir;
     }
     return firstfile;
 }
