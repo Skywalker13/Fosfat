@@ -54,7 +54,7 @@ typedef struct att {
 
 /** List of files in a directory */
 typedef struct file_info {
-    char name[16];
+    char name[FOSFAT_NAMELGT];
     int size;
     s_fosfat_att att;
     s_fosfat_time time_c;
