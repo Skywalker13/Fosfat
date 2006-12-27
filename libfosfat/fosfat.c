@@ -701,8 +701,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_
                     /* Test if it is a directory */
 
                     if (fosfat_isdir(&loop->file[j])) {
-                        if (!strcmp(dir[i], "/") ||
-                            (strcasestr(loop->file[j].name, ".dir") && !strncasecmp(loop->file[j].name, dir[i], strlen(loop->file[j].name) - 4)) ||
+                        if ((strcasestr(loop->file[j].name, ".dir") && !strncasecmp(loop->file[j].name, dir[i], strlen(loop->file[j].name) - 4)) ||
                             !strncasecmp(loop->file[j].name, dir[i], strlen(loop->file[j].name))) {
                             if (type)
                                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
