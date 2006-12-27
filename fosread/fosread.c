@@ -66,7 +66,7 @@ void print_date(s_fosfat_time *time) {
  * @param location where
  * @param file description
  */
-void print_file(const char *location, s_fosfat_listdir *file) {
+void print_file(const char *location, s_fosfat_file *file) {
     char *path;
     char filename[FOSFAT_NAMELGT];
 
@@ -100,7 +100,7 @@ void print_file(const char *location, s_fosfat_listdir *file) {
  * @return true if it is ok
  */
 int list_dir(FOSFAT_DEV *dev, const char *path) {
-    s_fosfat_listdir *files, *first_file;
+    s_fosfat_file *files, *first_file;
 
     if ((files = fosfat_list_dir(dev, path))) {
         first_file = files;

@@ -278,8 +278,8 @@ static void fosfat_free_dir(s_fosfat_bd *var) {
  *  This function must be used after all fosfat_list_dir()!
  * @param var pointer on the description block
  */
-void fosfat_free_listdir(s_fosfat_listdir *var) {
-    s_fosfat_listdir *ld, *free_ld;
+void fosfat_free_listdir(s_fosfat_file *var) {
+    s_fosfat_file *ld, *free_ld;
 
     ld = var;
     while (ld) {
@@ -842,12 +842,12 @@ int fosfat_get_size(FOSFAT_DEV *dev, const char *location) {
  * @param location directory in the path
  * @return the linked list
  */
-s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
+s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
     int i;
     s_fosfat_bd *dir;
     s_fosfat_bl *files;
-    s_fosfat_listdir *listdir = NULL;
-    s_fosfat_listdir *firstfile = NULL;
+    s_fosfat_file *listdir = NULL;
+    s_fosfat_file *firstfile = NULL;
 
     if ((dir = fosfat_search_insys(dev, location, eSBD))) {
         /* Test if it is a directory */
@@ -859,11 +859,11 @@ s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
                     if (fosfat_isopenexm(&files->file[i]) && fosfat_isnotdel(&files->file[i]) && !fosfat_issystem(&files->file[i])) {
                         /* Complete the linked list with all files */
                         if (listdir) {
-                            listdir->next_file = (s_fosfat_listdir *)malloc(sizeof(s_fosfat_listdir));
+                            listdir->next_file = (s_fosfat_file *)malloc(sizeof(s_fosfat_file));
                             listdir = listdir->next_file;
                         }
                         else {
-                            listdir = (s_fosfat_listdir *)malloc(sizeof(s_fosfat_listdir));
+                            listdir = (s_fosfat_file *)malloc(sizeof(s_fosfat_file));
                             firstfile = listdir;
                         }
                         strncpy(listdir->name, files->file[i].name, sizeof(listdir->name));

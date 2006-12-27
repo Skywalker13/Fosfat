@@ -53,7 +53,7 @@ typedef struct att {
 } s_fosfat_att;
 
 /** List of files in a directory */
-typedef struct list_dir {
+typedef struct file_info {
     char name[16];
     int size;
     s_fosfat_att att;
@@ -61,16 +61,16 @@ typedef struct list_dir {
     s_fosfat_time time_w;
     s_fosfat_time time_r;
     /* Linked list */
-    struct list_dir *next_file;
-} s_fosfat_listdir;
+    struct file_info *next_file;
+} s_fosfat_file;
 
 
 /* Disk */
 char *fosfat_diskname(FOSFAT_DEV *dev);
 
 /* Read a folder */
-s_fosfat_listdir *fosfat_list_dir(FOSFAT_DEV *dev, const char *location);
-void fosfat_free_listdir(s_fosfat_listdir *var);
+s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location);
+void fosfat_free_listdir(s_fosfat_file *var);
 
 /* Test attributes and type on a file since a location */
 int fosfat_p_isdir(FOSFAT_DEV *dev, const char *location);
