@@ -836,6 +836,73 @@ int fosfat_get_size(FOSFAT_DEV *dev, const char *location) {
     return size;
 }
 
+/** Return all informations on one file.
+ *  This function uses the BLF and get only useful attributes.
+ * @param dev pointer on the device
+ * @param file BLF on the file
+ * @return the stat
+ */
+static s_fosfat_file *fosfat_stat(s_fosfat_blf *file) {
+    s_fosfat_file *stat;
+
+    stat = (s_fosfat_file *)malloc(sizeof(s_fosfat_file));
+
+    /* Name */
+    strncpy(stat->name, file->name, sizeof(stat->name));
+    lc(stat->name);
+
+    /* Size (bytes) */
+    stat->size = (int)c2l(file->lgf, sizeof(file->lgf));
+
+    /* Attributes (field bits) */
+    stat->att.isdir = fosfat_isdir(file) ? 1 : 0;
+    stat->att.isvisible = fosfat_isvisible(file) ? 1 : 0;
+    stat->att.isencoded = fosfat_isencoded(file) ? 1 : 0;
+
+    /* Creation date */
+    stat->time_c.year = y2k(h2d(file->cd[2]));
+    stat->time_c.month = h2d(file->cd[1]);
+    stat->time_c.day = h2d(file->cd[0]);
+    stat->time_c.hour = h2d(file->ch[0]);
+    stat->time_c.minute = h2d(file->ch[1]);
+    stat->time_c.second = h2d(file->ch[2]);
+    /* Writing date */
+    stat->time_w.year = y2k(h2d(file->wd[2]));
+    stat->time_w.month = h2d(file->wd[1]);
+    stat->time_w.day = h2d(file->wd[0]);
+    stat->time_w.hour = h2d(file->wh[0]);
+    stat->time_w.minute = h2d(file->wh[1]);
+    stat->time_w.second = h2d(file->wh[2]);
+    /* Use date */
+    stat->time_r.year = y2k(h2d(file->rd[2]));
+    stat->time_r.month = h2d(file->rd[1]);
+    stat->time_r.day = h2d(file->rd[0]);
+    stat->time_r.hour = h2d(file->rh[0]);
+    stat->time_r.minute = h2d(file->rh[1]);
+    stat->time_r.second = h2d(file->rh[2]);
+
+    stat->next_file = NULL;
+    return stat;
+}
+
+/** Return all informations on one file.
+ *  This function is high level.
+ * @param dev pointer on the device
+ * @param location file in the path
+ * @return the stat
+ */
+s_fosfat_file *fosfat_get_stat(FOSFAT_DEV *dev, const char *location) {
+    s_fosfat_blf *entry;
+    s_fosfat_file *stat = NULL;
+
+    if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
+        fosfat_isnotdel(entry)) {
+        stat = fosfat_stat(entry);
+        free(entry);
+    }
+    return stat;
+}
+
 /** Return a linked list with all files of a directory.
  *  This function is high level.
  * @param dev pointer on the device
@@ -859,45 +926,13 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
                     if (fosfat_isopenexm(&files->file[i]) && fosfat_isnotdel(&files->file[i]) && !fosfat_issystem(&files->file[i])) {
                         /* Complete the linked list with all files */
                         if (listdir) {
-                            listdir->next_file = (s_fosfat_file *)malloc(sizeof(s_fosfat_file));
+                            listdir->next_file = fosfat_stat(&files->file[i]);
                             listdir = listdir->next_file;
                         }
                         else {
-                            listdir = (s_fosfat_file *)malloc(sizeof(s_fosfat_file));
-                            firstfile = listdir;
+                            firstfile = fosfat_stat(&files->file[i]);
+                            listdir = firstfile;
                         }
-                        strncpy(listdir->name, files->file[i].name, sizeof(listdir->name));
-                        lc(listdir->name);
-                        listdir->size = (int)c2l(files->file[i].lgf, sizeof(files->file[i].lgf));
-
-                        /* ATT field bits */
-                        listdir->att.isdir = fosfat_isdir(&files->file[i]) ? 1 : 0;
-                        listdir->att.isvisible = fosfat_isvisible(&files->file[i]) ? 1 : 0;
-                        listdir->att.isencoded = fosfat_isencoded(&files->file[i]) ? 1 : 0;
-
-                        /* Creation date */
-                        listdir->time_c.year = y2k(h2d(files->file[i].cd[2]));
-                        listdir->time_c.month = h2d(files->file[i].cd[1]);
-                        listdir->time_c.day = h2d(files->file[i].cd[0]);
-                        listdir->time_c.hour = h2d(files->file[i].ch[0]);
-                        listdir->time_c.minute = h2d(files->file[i].ch[1]);
-                        listdir->time_c.second = h2d(files->file[i].ch[2]);
-                        /* Writing date */
-                        listdir->time_w.year = y2k(h2d(files->file[i].wd[2]));
-                        listdir->time_w.month = h2d(files->file[i].wd[1]);
-                        listdir->time_w.day = h2d(files->file[i].wd[0]);
-                        listdir->time_w.hour = h2d(files->file[i].wh[0]);
-                        listdir->time_w.minute = h2d(files->file[i].wh[1]);
-                        listdir->time_w.second = h2d(files->file[i].wh[2]);
-                        /* Use date */
-                        listdir->time_r.year = y2k(h2d(files->file[i].rd[2]));
-                        listdir->time_r.month = h2d(files->file[i].rd[1]);
-                        listdir->time_r.day = h2d(files->file[i].rd[0]);
-                        listdir->time_r.hour = h2d(files->file[i].rh[0]);
-                        listdir->time_r.minute = h2d(files->file[i].rh[1]);
-                        listdir->time_r.second = h2d(files->file[i].rh[2]);
-
-                        listdir->next_file = NULL;
                     }
                 }
             } while ((files = files->next_bl));

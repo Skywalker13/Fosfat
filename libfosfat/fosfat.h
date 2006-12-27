@@ -78,6 +78,7 @@ int fosfat_p_isvisible(FOSFAT_DEV *dev, const char *location);
 int fosfat_p_isencoded(FOSFAT_DEV *dev, const char *location);
 
 /* Get informations */
+s_fosfat_file *fosfat_get_stat(FOSFAT_DEV *dev, const char *location);
 int fosfat_get_size(FOSFAT_DEV *dev, const char *location);
 
 /* Get a file */
