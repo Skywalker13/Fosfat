@@ -1,0 +1,13 @@
+2006-12-28  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* libfosfat: add high level functions for work with
+	the FOS's files. Now the processing with the blocks
+	is not available in public. The fosread tool have been
+	adapted in this way.
+
+	* fosmount: add a very simple FUSE extension that works
+	with libfosfat.
+
+2006-11-26  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* Initial import of libfosfat and fosread.
