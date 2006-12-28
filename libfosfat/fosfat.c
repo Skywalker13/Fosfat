@@ -240,7 +240,7 @@ static void fosfat_free_data(s_fosfat_data *var) {
  *  This function must be used after all fosfat_read_file()!
  * @param var pointer on the description block
  */
-static void fosfat_free_file(s_fosfat_bd *var) {
+static void fosfat_free_bd(s_fosfat_bd *var) {
     s_fosfat_bd *bd, *free_bd;
 
     bd = var;
@@ -982,7 +982,7 @@ int fosfat_get_file(FOSFAT_DEV *dev, const char *src, const char *dst, int outpu
         if (fosfat_get(dev, file2, dst, output, 0))
             res = 1;
         free(file);
-        fosfat_free_file(file2);
+        fosfat_free_bd(file2);
     }
     return res;
 }
@@ -1010,7 +1010,7 @@ char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path, int offset, int size)
             buffer = NULL;
         }
         free(file);
-        fosfat_free_file(file2);
+        fosfat_free_bd(file2);
     }
     return buffer;
 }
