@@ -654,14 +654,13 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
     return NULL;
 }
 
-/** Search a BD or a BLF from a location. You can not use this
- *  function for found a BD of a system file /!\
+/** Search a BD or a BLF from a location.
  *  A good example for use this function, is the BL of the
  *  first SYS_LIST in the disk. It will search the file BD
  *  since this BL.
  *  The location must be not bigger of MAX_SPLIT /!\
  * @param dev pointer on the device
- * @param location path for found the BD (foo/bar/file)
+ * @param location path for found the BD/BLF (foo/bar/file)
  * @param files first BL for start the search
  * @param type eSBD or eSBLF
  * @return the BD, BLF or NULL is nothing found
@@ -697,7 +696,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location, s_fosfat_
         do {
             /* Loop for FOSFAT_NBL files in the BL */
             for (j = 0; j < FOSFAT_NBL; j++) {
-                if (fosfat_isopenexm(&loop->file[j]) && fosfat_isnotdel(&loop->file[j]) && !fosfat_issystem(&loop->file[j])) {
+                if (fosfat_isopenexm(&loop->file[j]) && fosfat_isnotdel(&loop->file[j])) {
                     /* Test if it is a directory */
                     if (fosfat_isdir(&loop->file[j])) {
                         if ((strcasestr(loop->file[j].name, ".dir") && !strncasecmp(loop->file[j].name, dir[i], strlen(loop->file[j].name) - 4)) ||
