@@ -762,11 +762,13 @@ static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location, e_fosfat
             return (s_fosfat_bd *)syslist;
         files = syslist->first_bl;
         if ((search = fosfat_search_bdlf(dev, location, files, type))) {
+            fosfat_free_dir(syslist);
             if (type)
                 return (s_fosfat_blf *)search;
             else
                 return (s_fosfat_bd *)search;
         }
+        fosfat_free_dir(syslist);
     }
     return NULL;
 }
