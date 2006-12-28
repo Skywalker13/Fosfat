@@ -828,6 +828,24 @@ int fosfat_p_isencoded(FOSFAT_DEV *dev, const char *location) {
     return 1;
 }
 
+/** Test if the file is valid.
+ *  This function uses a string location.
+ * @param dev pointer on the device
+ * @param location file in the path
+ * @return a boolean (true for success)
+ */
+int fosfat_p_isopenexm(FOSFAT_DEV *dev, const char *location) {
+    s_fosfat_blf *entry;
+
+    if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
+        fosfat_isnotdel(entry) && fosfat_isopenexm(entry)) {
+        free(entry);
+    }
+    else
+        return 0;
+    return 1;
+}
+
 /** Return all informations on one file.
  *  This function uses the BLF and get only useful attributes.
  * @param dev pointer on the device
