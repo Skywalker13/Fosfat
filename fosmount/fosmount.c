@@ -116,9 +116,12 @@ static int fos_getattr(const char *path, struct stat *stbuf) {
         location = (char *)path;
 
     /* Get file stats */
-    st = get_stat(location);
-    memcpy(stbuf, st, sizeof(*stbuf));
-    free(st);
+    if ((st = get_stat(location))) {
+        memcpy(stbuf, st, sizeof(*stbuf));
+        free(st);
+    }
+    else
+        return -ENOENT;
 
     if (location != path)
         free(location);
