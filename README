@@ -26,23 +26,33 @@ Fosfat is a library for a read-only access on Smaky FOS
 (File Operating System). Floppy disk and hard disk are
 supported.
 
-A tool, "fosread" can be used with this library for list
-directories and get files from a disk.
+Two tools are available for work with a Smaky FOS formatted
+disk. The first tool 'fosread' can work directly with your
+device but it is limited for an console utilisation.
+The tool 'fosmount' uses FUSE for mount in _read-only_ your
+device in your tree.
+You can compile 'fosmount' with >=fuse-2.5.x. Maybe it works
+with older version but it needs to test.
+
+Look the help with each application for the command line. Or
+look on the website.
 
 
 BUILD
 ~~~~~
 
-make
-make install
+ make
+ make install
 
-It will install the library and the tool in your local
+It will install 'fosread' and 'fosmount' in your local
 directory. You can specify an other destination in the
 config.mak file.
 
-For use this library, add an include on fosfat.h.
-For more informations, consult the comments
-in the sources.
+ make install-lib
+
+Will install the static library in your local directory.
+The include is fosfat.h.
+For more informations, consult the comments in the sources.
 
 You can found others informations on the website :
 http://home.gna.org/fosfat/
