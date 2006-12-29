@@ -41,12 +41,12 @@ look on the website.
 BUILD
 ~~~~~
 
+ ./configure
  make
  make install
 
 It will install 'fosread' and 'fosmount' in your local
-directory. You can specify an other destination in the
-config.mak file.
+directory. Use `./configure --help` for more informations.
 
  make install-lib
 
