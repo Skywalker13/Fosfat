@@ -1,3 +1,8 @@
+2006-12-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* Add configure script with some options for compile
+	only fosmount, fosread or both.
+
 2006-12-28  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: add high level functions for work with
