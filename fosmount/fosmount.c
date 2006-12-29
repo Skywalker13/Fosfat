@@ -29,8 +29,6 @@
 #include <fcntl.h>
 #include <string.h>     /* strcmp strncmp strstr strlen strdup memcpy memset */
 #include <time.h>       /* mktime */
-
-#define FUSE_USE_VERSION    26
 #include <fuse.h>
 
 #include "fosfat.h"

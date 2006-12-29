@@ -10,6 +10,10 @@ clean:
 	$(MAKE) -C fosread clean
 	$(MAKE) -C fosmount clean
 
+distclean: clean
+	rm -f config.log
+	rm -f config.mak
+
 install:
 	$(MAKE) -C fosread install
 	$(MAKE) -C fosmount install
@@ -22,4 +26,4 @@ uninstall:
 	$(MAKE) -C fosread uninstall
 	$(MAKE) -C fosmount uninstall
 
-.phony: clean
+.phony: clean distclean

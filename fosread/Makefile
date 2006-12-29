@@ -1,5 +1,7 @@
 include ../config.mak
 
+TARGETI =
+TARGETB =
 APPNAME = fosread
 SRCS = fosread.c
 
@@ -8,28 +10,35 @@ LDFLAGS += -L../libfosfat -lfosfat
 
 OBJS = $(SRCS:.c=.o)
 
+ifeq ($(FOSREAD),yes)
+TARGETI = install-app
+TARGETB = depend $(APPNAME)
+endif
+
 .SUFFIXES: .c .o
 
-all: depend $(APPNAME)
+all: $(TARGETB)
 
 .c.o:
-	$(CC) -c $(CFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) $(OPTFLAGS) -o $@ $<
 
 $(APPNAME): $(OBJS)
-	$(CC) $(OBJS) $(LDFLAGS) -o $(APPNAME)
+	$(CC) $(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(APPNAME)
 
 clean:
 	rm -f *.o $(APPNAME)
 	rm -f .depend
 
-install: $(APPNAME)
-	$(INSTALL) -c $(APPNAME) $(PREFIX)/bin
+install: $(TARGETI)
 
-uninstall: $(APPNAME)
-	rm -f $(PREFIX)/bin/$(APPNAME)
+install-app: $(APPNAME)
+	$(INSTALL) -c -m 755 $(APPNAME) $(bindir)
+
+uninstall:
+	rm -f $(bindir)/$(APPNAME)
 
 depend:
-	$(CC) -MM $(CFLAGS) $(SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(OPTFLAGS) $(SRCS) 1>.depend
 
 .phony: clean depend
 

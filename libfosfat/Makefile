@@ -13,7 +13,7 @@ OBJS = $(SRCS:.c=.o)
 all: depend $(LIBNAME)
 
 .c.o:
-	$(CC) -c $(CFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) $(OPTFLAGS) -o $@ $<
 
 $(LIBNAME): $(OBJS)
 	$(AR) r $(LIBNAME) $(OBJS)
@@ -24,15 +24,15 @@ clean:
 	rm -f .depend
 
 install: $(LIBNAME)
-	$(INSTALL) -c $(LIBNAME) $(PREFIX)/lib
-	$(INSTALL) -c -m 644 fosfat.h $(PREFIX)/include
+	$(INSTALL) -c $(LIBNAME) $(libdir)
+	$(INSTALL) -c -m 644 fosfat.h $(includedir)
 
 uninstall: $(LIBNAME)
-	rm -f $(PREFIX)/lib/$(LIBNAME)
-	rm -f $(PREFIX)/include/fosfat.h
+	rm -f $(libdir)/$(LIBNAME)
+	rm -f $(includedir)/fosfat.h
 
 depend:
-	$(CC) -MM $(CFLAGS) $(SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(OPTFLAGS) $(SRCS) 1>.depend
 
 .phony: clean depend
 
