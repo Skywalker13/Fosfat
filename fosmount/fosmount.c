@@ -254,7 +254,6 @@ int main(int argc, char **argv) {
         if (!strcmp(argv[i], "--harddisk")) {
             type = eHD;
             cnt++;
-            break;
         }
         else if (!strncmp(argv[i], "--dev=", 6) && strlen(argv[i]) > 6) {
             path = strdup(argv[i] + 6);
