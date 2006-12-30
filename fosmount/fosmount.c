@@ -222,7 +222,7 @@ static int fos_read(const char *path, char *buf, size_t size, off_t offset,
 /** Print help. */
 void print_info(void) {
     printf("Usage: fosmount mountpoint --dev=device [--harddisk]\n");
-    printf("FUSE extension for a read-only access on Smaky FOS.\n\n");
+    printf("FUSE extension for a read-only access on Smaky FOS. Fosfat-%s\n\n", VERSION);
     printf("mountpoint   for example, /mnt/smaky\n");
     printf("--dev=       /dev/fd0 : floppy disk\n");
     printf("             /dev/sda : hard disk, etc\n");

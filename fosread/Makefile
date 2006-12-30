@@ -1,11 +1,12 @@
 include ../config.mak
+include ../version.mak
 
 TARGETI =
 TARGETB =
 APPNAME = fosread
 SRCS = fosread.c
 
-CFLAGS += -I../libfosfat
+CFLAGS += -I../libfosfat -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)\"
 LDFLAGS += -L../libfosfat -lfosfat
 
 OBJS = $(SRCS:.c=.o)

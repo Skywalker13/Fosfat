@@ -29,8 +29,6 @@
 
 #include "fosfat.h"
 
-#define VERSION     "0.0.1"
-
 typedef struct ginfo {
     char name[FOSFAT_NAMELGT];
 } s_global_info;
@@ -149,7 +147,7 @@ int get_file(FOSFAT_DEV *dev, const char *path, const char *dst) {
 /** Print help. */
 void print_info(void) {
     printf("Usage: fosread DEVICE MODE [NODE] [PATH] [--harddisk]\n");
-    printf("Tool for a read-only access on a Smaky disk. Version %s\n\n", VERSION);
+    printf("Tool for a read-only access on a Smaky disk. Fosfat-%s\n\n", VERSION);
     printf("DEVICE       for example, /dev/fd0\n");
     printf("MODE\n");
     printf(" list        list the content of a node\n");
