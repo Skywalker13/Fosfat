@@ -16,4 +16,5 @@ tar -czf "fosfat_$VERSION.$PATCHLEVEL.$SUBLEVEL.orig.tar.gz" "$DIR"
 cd "$DIR"
 debuild -us -uc
 
+cd ..
 rm -rf "$DIR"
