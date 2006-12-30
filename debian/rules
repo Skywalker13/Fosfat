@@ -23,7 +23,7 @@ clean:
 	dh_testroot
 	rm -f build-stamp
 	touch config.mak
-	$(MAKE) distclean
+	-$(MAKE) distclean
 	dh_clean
 
 install: build
@@ -41,6 +41,8 @@ binary-arch: build install
 	dh_testroot
 	dh_installchangelogs ChangeLog
 	dh_installdocs
+	dh_installexamples
+	dh_installman
 	dh_link
 	dh_strip
 	dh_compress
