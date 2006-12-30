@@ -1,3 +1,9 @@
+2006-12-30  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* First alpha released 0.1.0
+
+	* Add Debian package rules
+
 2006-12-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Add configure script with some options for compile
