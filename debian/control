@@ -2,7 +2,7 @@ Source: fosfat
 Section: misc
 Priority: optional
 Maintainer: Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
-Build-Depends: debhelper (>= 5)
+Build-Depends: debhelper (>= 5), pkg-config (>= 0.20), libfuse-dev (>= 2.5)
 Standards-Version: 3.7.2
 
 Package: fosfat
