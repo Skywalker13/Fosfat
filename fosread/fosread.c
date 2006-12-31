@@ -156,7 +156,7 @@ void print_info(void) {
     printf("             example: foo/bar/toto.text\n");
     printf("PATH         you can specify a path for save the file (with get mode)\n");
     printf("--harddisk   if you use an hard disk and not a floppy, use this option\n");
-    printf("\nPlease, report bugs to <mathieu.schroeter@gamesover.ch>\n");
+    printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>\n");
 }
 
 int main(int argc, char **argv) {
