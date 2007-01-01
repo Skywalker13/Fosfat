@@ -6,7 +6,7 @@ TARGETB =
 APPNAME = fosmount
 SRCS = fosmount.c
 
-CFLAGS += -I../libfosfat -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)\"
+CFLAGS += -I../libfosfat -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)\"
 LDFLAGS += -L../libfosfat -lfosfat
 
 OBJS = $(SRCS:.c=.o)
