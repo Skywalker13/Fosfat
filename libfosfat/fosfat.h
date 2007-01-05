@@ -31,37 +31,37 @@
 
 /** Disk types */
 typedef enum disk_type {
-    eFD,                         //!< Floppy Disk
-    eHD                          //!< Hard Disk
+  eFD,                         //!< Floppy Disk
+  eHD                          //!< Hard Disk
 } e_fosfat_disk;
 
 /** Time */
 typedef struct time {
-    short int year;
-    short int month;
-    short int day;
-    short int hour;
-    short int minute;
-    short int second;
+  short int year;
+  short int month;
+  short int day;
+  short int hour;
+  short int minute;
+  short int second;
 } s_fosfat_time;
 
 /** Attributes for a file (or dir) */
 typedef struct att {
-    int isdir     : 1;
-    int isvisible : 1;
-    int isencoded : 1;
+  int isdir     : 1;
+  int isvisible : 1;
+  int isencoded : 1;
 } s_fosfat_att;
 
 /** List of files in a directory */
 typedef struct file_info {
-    char name[FOSFAT_NAMELGT];
-    int size;
-    s_fosfat_att att;
-    s_fosfat_time time_c;
-    s_fosfat_time time_w;
-    s_fosfat_time time_r;
-    /* Linked list */
-    struct file_info *next_file;
+  char name[FOSFAT_NAMELGT];
+  int size;
+  s_fosfat_att att;
+  s_fosfat_time time_c;
+  s_fosfat_time time_w;
+  s_fosfat_time time_r;
+  /* Linked list */
+  struct file_info *next_file;
 } s_fosfat_file;
 
 
@@ -82,8 +82,10 @@ int fosfat_p_isopenexm(FOSFAT_DEV *dev, const char *location);
 s_fosfat_file *fosfat_get_stat(FOSFAT_DEV *dev, const char *location);
 
 /* Get a file */
-int fosfat_get_file(FOSFAT_DEV *dev, const char *src, const char *dst, int output);
-char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path, int offset, int size);
+int fosfat_get_file(FOSFAT_DEV *dev, const char *src,
+                    const char *dst, int output);
+char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path,
+                        int offset, int size);
 
 /* Open and close the device */
 FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk);
