@@ -416,7 +416,9 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned long int block,
  * @param block block position
  * @return the block0 or NULL if broken
  */
-s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev, unsigned long int block) {
+static inline s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev,
+                                          unsigned long int block)
+{
   return (s_fosfat_b0 *)fosfat_read_b(dev, block, eB0);
 }
 
