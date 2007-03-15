@@ -169,6 +169,7 @@ void print_info(void) {
 
 int main(int argc, char **argv) {
   int res = 0;
+  int harddisk = eFD;
   char *path, *choice, *file, *dst;
   FOSFAT_DEV *dev;
   s_global_info *ginfo;
@@ -180,10 +181,10 @@ int main(int argc, char **argv) {
 
   path = strdup(argv[1]);
   choice = strdup(argv[2]);
+  harddisk = strcmp(argv[argc - 1], "--harddisk") ? eFD : eHD;
 
   /* Open the floppy disk (or hard disk) */
-  if (!(dev = fosfat_opendev(path, strcmp(argv[argc - 1], "--harddisk") ?
-        eFD : eHD)))
+  if (!(dev = fosfat_opendev(path, harddisk)))
   {
     printf("Could not open %s for reading!\n", path);
     return -1;
@@ -194,7 +195,7 @@ int main(int argc, char **argv) {
     printf("Smaky disk %s\n", ginfo->name);
     /* Show the list of a directory */
     if (!strcasecmp(choice, "list")) {
-      if (argc < 4) {
+      if ((argc < 4 && harddisk == eFD) || (argc < 5 && harddisk == eHD)) {
         if (!list_dir(dev, "/"))
           res = -1;
       }
