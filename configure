@@ -40,7 +40,7 @@ show_help(){
   echo "  --with-fuse-dir=DIR         check for libfuse installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
-  echo "  --disable-debug             disable debugging symbols"
+  echo "  --enable-debug              enable debugging symbols"
   echo "  --disable-strip             disable stripping of executables at installation"
   echo "  --disable-optimize          disable compiler optimization"
   echo "  --cross-prefix=PREFIX       use PREFIX for compilation tools [$cross_prefix]"
@@ -380,7 +380,7 @@ for opt do
   ;;
   --includedir=*) includedir="$optval"
   ;;
-  --disable-debug) debug="no"
+  --enable-debug) debug="yes"
   ;;
   --disable-strip) dostrip="no"
   ;;
