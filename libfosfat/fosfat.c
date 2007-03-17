@@ -489,7 +489,7 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block,
           block_list = first_bl;
           for (i = 1; i < nbs; i++) {
             block_list->next_bl = fosfat_read_bl(dev, block +
-                                                (unsigned long int)i);
+                                                 (unsigned long int)i);
             block_list = block_list->next_bl;
           }
           block_list->next_bl = NULL;
@@ -514,8 +514,8 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block,
         break;
       }
       /* Only for no compilation warning because
-      * all types are not in the switch
-      */
+       * all types are not in the switch
+       */
       default:
         break;
     }
