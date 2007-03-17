@@ -784,7 +784,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
   if (!ontop) {
     if (type) {
       fosfat_free_dir(loop_bd);
-        return (s_fosfat_blf *)loop_blf;
+      return (s_fosfat_blf *)loop_blf;
     }
     else
       return (s_fosfat_bd *)loop_bd;
