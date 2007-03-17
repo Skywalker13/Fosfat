@@ -201,13 +201,13 @@ static char *lc(char *data) {
  */
 static int h2d(int val) {
   char *conv;
-  int res;
+  int res = 0;
 
-  conv = (char *)malloc(sizeof(val));
-
-  snprintf(conv, sizeof(conv), "%X", val);
-  res = atoi(conv);
-  free(conv);
+  if ((conv = (char *)malloc(sizeof(val)))) {
+    snprintf(conv, sizeof(conv), "%X", val);
+    res = atoi(conv);
+    free(conv);
+  }
   return res;
 }
 
@@ -367,42 +367,46 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned long int block,
     switch (type) {
       case eB0: {
         s_fosfat_b0 *blk;
-        blk = (s_fosfat_b0 *)malloc(sizeof(s_fosfat_b0));
-        if (fread((s_fosfat_b0 *)blk, (size_t)sizeof(unsigned char),
-            (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
-          return (s_fosfat_b0 *)blk;
-        else
-          free(blk);
+        if ((blk = (s_fosfat_b0 *)malloc(sizeof(s_fosfat_b0)))) {
+          if (fread((s_fosfat_b0 *)blk, (size_t)sizeof(unsigned char),
+              (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
+            return (s_fosfat_b0 *)blk;
+          else
+            free(blk);
+        }
         break;
       }
       case eBL: {
         s_fosfat_bl *blk;
-        blk = (s_fosfat_bl *)malloc(sizeof(s_fosfat_bl));
-        if (fread((s_fosfat_bl *)blk, (size_t)sizeof(unsigned char),
-            (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
-          return (s_fosfat_bl *)blk;
-        else
-          free(blk);
+        if ((blk = (s_fosfat_bl *)malloc(sizeof(s_fosfat_bl)))) {
+          if (fread((s_fosfat_bl *)blk, (size_t)sizeof(unsigned char),
+              (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
+            return (s_fosfat_bl *)blk;
+          else
+            free(blk);
+        }
         break;
       }
       case eBD: {
         s_fosfat_bd *blk;
-        blk = (s_fosfat_bd *)malloc(sizeof(s_fosfat_bd));
-        if (fread((s_fosfat_bd *)blk, (size_t)sizeof(unsigned char),
-            (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
-          return (s_fosfat_bd *)blk;
-        else
-          free(blk);
+        if ((blk = (s_fosfat_bd *)malloc(sizeof(s_fosfat_bd)))) {
+          if (fread((s_fosfat_bd *)blk, (size_t)sizeof(unsigned char),
+              (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
+            return (s_fosfat_bd *)blk;
+          else
+            free(blk);
+        }
         break;
       }
       case eDATA: {
         s_fosfat_data *blk;
-        blk = (s_fosfat_data *)malloc(sizeof(s_fosfat_data));
-        if (fread((s_fosfat_data *)blk, (size_t)sizeof(unsigned char),
-            (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
-          return (s_fosfat_data *)blk;
-        else
-          free(blk);
+        if ((blk = (s_fosfat_data *)malloc(sizeof(s_fosfat_data)))) {
+          if (fread((s_fosfat_data *)blk, (size_t)sizeof(unsigned char),
+              (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
+            return (s_fosfat_data *)blk;
+          else
+            free(blk);
+        }
       }
     }
   }
@@ -741,7 +745,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
                 !strncasecmp(loop->file[j].name, dir[i],
                 strlen(loop->file[j].name)))
             {
-              if (type)
+              if (type && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
               if (loop_bd)
                 fosfat_free_dir(loop_bd);
@@ -758,7 +762,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
           else if (!fosfat_isdir(&loop->file[j]) &&
                    !strcasecmp(loop->file[j].name, dir[i]))
           {
-            if (type)
+            if (type && loop_blf)
               memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
             if (loop_bd)
               fosfat_free_dir(loop_bd);
@@ -895,45 +899,45 @@ int fosfat_p_isopenexm(FOSFAT_DEV *dev, const char *location) {
  * @return the stat
  */
 static s_fosfat_file *fosfat_stat(s_fosfat_blf *file) {
-  s_fosfat_file *stat;
+  s_fosfat_file *stat = NULL;
 
-  stat = (s_fosfat_file *)malloc(sizeof(s_fosfat_file));
+  if ((stat = (s_fosfat_file *)malloc(sizeof(s_fosfat_file)))) {
+    /* Name */
+    strncpy(stat->name, file->name, sizeof(stat->name));
+    lc(stat->name);
 
-  /* Name */
-  strncpy(stat->name, file->name, sizeof(stat->name));
-  lc(stat->name);
+    /* Size (bytes) */
+    stat->size = (int)c2l(file->lgf, sizeof(file->lgf));
 
-  /* Size (bytes) */
-  stat->size = (int)c2l(file->lgf, sizeof(file->lgf));
+    /* Attributes (field bits) */
+    stat->att.isdir = fosfat_isdir(file) ? 1 : 0;
+    stat->att.isvisible = fosfat_isvisible(file) ? 1 : 0;
+    stat->att.isencoded = fosfat_isencoded(file) ? 1 : 0;
 
-  /* Attributes (field bits) */
-  stat->att.isdir = fosfat_isdir(file) ? 1 : 0;
-  stat->att.isvisible = fosfat_isvisible(file) ? 1 : 0;
-  stat->att.isencoded = fosfat_isencoded(file) ? 1 : 0;
+    /* Creation date */
+    stat->time_c.year = y2k(h2d(file->cd[2]));
+    stat->time_c.month = h2d(file->cd[1]);
+    stat->time_c.day = h2d(file->cd[0]);
+    stat->time_c.hour = h2d(file->ch[0]);
+    stat->time_c.minute = h2d(file->ch[1]);
+    stat->time_c.second = h2d(file->ch[2]);
+    /* Writing date */
+    stat->time_w.year = y2k(h2d(file->wd[2]));
+    stat->time_w.month = h2d(file->wd[1]);
+    stat->time_w.day = h2d(file->wd[0]);
+    stat->time_w.hour = h2d(file->wh[0]);
+    stat->time_w.minute = h2d(file->wh[1]);
+    stat->time_w.second = h2d(file->wh[2]);
+    /* Use date */
+    stat->time_r.year = y2k(h2d(file->rd[2]));
+    stat->time_r.month = h2d(file->rd[1]);
+    stat->time_r.day = h2d(file->rd[0]);
+    stat->time_r.hour = h2d(file->rh[0]);
+    stat->time_r.minute = h2d(file->rh[1]);
+    stat->time_r.second = h2d(file->rh[2]);
 
-  /* Creation date */
-  stat->time_c.year = y2k(h2d(file->cd[2]));
-  stat->time_c.month = h2d(file->cd[1]);
-  stat->time_c.day = h2d(file->cd[0]);
-  stat->time_c.hour = h2d(file->ch[0]);
-  stat->time_c.minute = h2d(file->ch[1]);
-  stat->time_c.second = h2d(file->ch[2]);
-  /* Writing date */
-  stat->time_w.year = y2k(h2d(file->wd[2]));
-  stat->time_w.month = h2d(file->wd[1]);
-  stat->time_w.day = h2d(file->wd[0]);
-  stat->time_w.hour = h2d(file->wh[0]);
-  stat->time_w.minute = h2d(file->wh[1]);
-  stat->time_w.second = h2d(file->wh[2]);
-  /* Use date */
-  stat->time_r.year = y2k(h2d(file->rd[2]));
-  stat->time_r.month = h2d(file->rd[1]);
-  stat->time_r.day = h2d(file->rd[0]);
-  stat->time_r.hour = h2d(file->rh[0]);
-  stat->time_r.minute = h2d(file->rh[1]);
-  stat->time_r.second = h2d(file->rh[2]);
-
-  stat->next_file = NULL;
+    stat->next_file = NULL;
+  }
   return stat;
 }
 
@@ -1057,7 +1061,7 @@ char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path,
     fosfat_isnotdel(file) && !fosfat_isdir(file)) {
     buffer = (char *)malloc(sizeof(char) * size);
     file2 = fosfat_read_file(dev, c2l(file->pt, sizeof(file->pt)));
-    if (fosfat_get(dev, file2, NULL, 0, 1, offset, size, buffer)) {
+    if (buffer && fosfat_get(dev, file2, NULL, 0, 1, offset, size, buffer)) {
       free(buffer);
       buffer = NULL;
     }
