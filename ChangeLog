@@ -1,3 +1,13 @@
+2007-03-17  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* libfosfat: some bugfixes and malloc are now verified.
+	All variables as input of each function are tested
+	for not to be NULL.
+
+2007-03-15  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* Some bugfixes in fosread and configure script.
+
 2006-12-30  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* First alpha released 0.1.0
