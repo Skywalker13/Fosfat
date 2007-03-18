@@ -689,7 +689,9 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
              dir_list = dir_list->next_bl;
 
       /* Loop all others pointers */
-      for (i = 1; i < c2l(dir_desc->npt, sizeof(dir_desc->npt)); i++) {
+      for (i = 1; dir_list && i < c2l(dir_desc->npt,
+                                  sizeof(dir_desc->npt)); i++)
+      {
         dir_list->next_bl = fosfat_read_data(dev, c2l(dir_desc->pts[i],
                             sizeof(dir_desc->pts[i])), dir_desc->nbs[i], eBL);
         dir_list = dir_list->next_bl;
