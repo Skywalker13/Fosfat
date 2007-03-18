@@ -772,7 +772,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
                 if (loop_bd)
                   fosfat_free_dir(loop_bd);
                 loop_bd = fosfat_read_dir(dev, c2l(loop->file[j].pt,
-                                                  sizeof(loop->file[j].pt)));
+                                               sizeof(loop->file[j].pt)));
                 loop = loop_bd->first_bl;
                 ontop = 0;  // dir found
                 break;
