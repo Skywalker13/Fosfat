@@ -386,7 +386,10 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned long int block,
         if ((blk = (s_fosfat_bl *)malloc(sizeof(s_fosfat_bl)))) {
           if (fread((s_fosfat_bl *)blk, (size_t)sizeof(unsigned char),
               (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
+          {
+            blk->next_bl = NULL;
             return (s_fosfat_bl *)blk;
+          }
           else
             free(blk);
         }
@@ -397,7 +400,11 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned long int block,
         if ((blk = (s_fosfat_bd *)malloc(sizeof(s_fosfat_bd)))) {
           if (fread((s_fosfat_bd *)blk, (size_t)sizeof(unsigned char),
               (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
+          {
+            blk->next_bd = NULL;
+            blk->first_bl = NULL;
             return (s_fosfat_bd *)blk;
+          }
           else
             free(blk);
         }
@@ -408,7 +415,10 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned long int block,
         if ((blk = (s_fosfat_data *)malloc(sizeof(s_fosfat_data)))) {
           if (fread((s_fosfat_data *)blk, (size_t)sizeof(unsigned char),
               (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
+          {
+            blk->next_data = NULL;
             return (s_fosfat_data *)blk;
+          }
           else
             free(blk);
         }
