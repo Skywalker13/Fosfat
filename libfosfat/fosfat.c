@@ -487,7 +487,7 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block,
 
         if ((first_bl = fosfat_read_bl(dev, block))) {
           block_list = first_bl;
-          for (i = 1; i < nbs; i++) {
+          for (i = 1; block_list && i < nbs; i++) {
             block_list->next_bl = fosfat_read_bl(dev, block +
                                                  (unsigned long int)i);
             block_list = block_list->next_bl;
@@ -503,7 +503,7 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block,
 
         if ((first_data = fosfat_read_d(dev, block))) {
           block_data = first_data;
-          for (i = 1; i < nbs; i++) {
+          for (i = 1; block_data && i < nbs; i++) {
             block_data->next_data = fosfat_read_d(dev, block +
                                                   (unsigned long int)i);
             block_data = block_data->next_data;
