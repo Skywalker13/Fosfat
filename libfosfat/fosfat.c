@@ -592,7 +592,7 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
     /* Loop for all BD */
     do {
       /* Loop for all pointers */
-      for (i = 0; i < c2l(file->npt, sizeof(file->npt)); i++) {
+      for (i = 0; res && i < c2l(file->npt, sizeof(file->npt)); i++) {
         if ((file_d = fosfat_read_data(dev, c2l(file->pts[i],
             sizeof(file->pts[i])), file->nbs[i], eDATA)))
         {
