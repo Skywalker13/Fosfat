@@ -502,7 +502,6 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block,
                                                  (unsigned long int)i);
             block_list = block_list->next_bl;
           }
-          block_list->next_bl = NULL;
           return (s_fosfat_bl *)first_bl;
         }
         break;
@@ -518,7 +517,6 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block,
                                                   (unsigned long int)i);
             block_data = block_data->next_data;
           }
-          block_data->next_data = NULL;
           return (s_fosfat_data *)first_data;
         }
         break;
@@ -700,7 +698,8 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
           dir_list = dir_list->next_bl;
       }
       /* End of the BL linked list */
-      dir_list->next_bl = NULL;
+      if (dir_list)
+        dir_list->next_bl = NULL;
     /* Go to the next BD if exists (create the linked list for BD) */
     } while ((next = c2l(dir_desc->next, sizeof(dir_desc->next))) &&
              (dir_desc->next_bd = fosfat_read_bd(dev, next)) &&
