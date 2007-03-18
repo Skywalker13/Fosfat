@@ -937,7 +937,7 @@ int fosfat_p_isopenexm(FOSFAT_DEV *dev, const char *location) {
 static s_fosfat_file *fosfat_stat(s_fosfat_blf *file) {
   s_fosfat_file *stat = NULL;
 
-  if ((stat = (s_fosfat_file *)malloc(sizeof(s_fosfat_file)))) {
+  if (file && (stat = (s_fosfat_file *)malloc(sizeof(s_fosfat_file)))) {
     /* Name */
     strncpy(stat->name, file->name, sizeof(stat->name));
     lc(stat->name);
