@@ -675,7 +675,7 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
                            sizeof(dir_desc->pts[0])), dir_desc->nbs[0], eBL);
       dir_list = dir_desc->first_bl;
       /* Go to the last BL */
-      while (dir_list->next_bl)
+      while (dir_list && dir_list->next_bl)
              dir_list = dir_list->next_bl;
 
       /* Loop all others pointers */
@@ -684,7 +684,7 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
                             sizeof(dir_desc->pts[i])), dir_desc->nbs[i], eBL);
         dir_list = dir_list->next_bl;
         /* Go to the last BL */
-        while (dir_list->next_bl)
+        while (dir_list && dir_list->next_bl)
           dir_list = dir_list->next_bl;
       }
       /* End of the BL linked list */
