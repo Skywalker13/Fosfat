@@ -538,14 +538,15 @@ static s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block) {
     file_desc->first_bl = NULL;     // Useless in this case
     first_bd = file_desc;
     /* Go to the next BD if exists (create the linked list for BD) */
-    while (file_desc->next &&
+    while (file_desc && file_desc->next &&
            (next = c2l(file_desc->next, sizeof(file_desc->next))))
     {
       file_desc->next_bd = fosfat_read_bd(dev, next);
       file_desc = file_desc->next_bd;
     }
     /* End of the BD linked list */
-    file_desc->next_bd = NULL;
+    if (file_desc)
+      file_desc->next_bd = NULL;
     return first_bd;
   }
   return NULL;
