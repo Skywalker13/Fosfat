@@ -766,7 +766,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
       /* Loop for all BL */
       do {
         /* Loop for FOSFAT_NBL files in the BL */
-        for (j = 0; j < FOSFAT_NBL; j++) {
+        for (j = 0; j < FOSFAT_NBL && ontop && loop; j++) {
           if (fosfat_isopenexm(&loop->file[j]) &&
               fosfat_isnotdel(&loop->file[j]))
           {
@@ -786,10 +786,11 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
               {
                 if (type && loop_blf)
                   memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
+                unsigned long int pt = c2l(loop->file[j].pt,
+                                           sizeof(loop->file[j].pt));
                 if (loop_bd)
                   fosfat_free_dir(loop_bd);
-                loop_bd = fosfat_read_dir(dev, c2l(loop->file[j].pt,
-                                               sizeof(loop->file[j].pt)));
+                loop_bd = fosfat_read_dir(dev, pt);
                 if (loop_bd)
                   loop = loop_bd->first_bl;
                 ontop = 0;  // dir found
@@ -804,10 +805,11 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
             {
               if (type && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
+              unsigned long int pt = c2l(loop->file[j].pt,
+                                              sizeof(loop->file[j].pt));
               if (loop_bd)
                 fosfat_free_dir(loop_bd);
-              loop_bd = fosfat_read_file(dev, c2l(loop->file[j].pt,
-                                              sizeof(loop->file[j].pt)));
+              loop_bd = fosfat_read_file(dev, pt);
               loop = NULL;
               ontop = 0;  // file found
               break;
@@ -818,7 +820,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
           else
             ontop = 1;
         }
-      } while (ontop && (loop = loop->next_bl));
+      } while (ontop && loop && (loop = loop->next_bl));
     }
     free(path);
     if (!ontop) {
