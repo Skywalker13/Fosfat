@@ -666,7 +666,7 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
             printf(" %i bytes\n", (int)size);
         }
         else
-        res = 0;
+          res = 0;
       }
     } while (res && file->next_bd && (file = file->next_bd));
     if (!flag) {
