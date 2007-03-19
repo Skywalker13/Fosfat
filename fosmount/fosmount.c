@@ -79,6 +79,13 @@ static struct stat *in_stat(s_fosfat_file *file) {
   time.tm_min = file->time_w.minute;
   time.tm_sec = file->time_w.second;
   st->st_mtime = mktime(&time);
+  time.tm_year = file->time_c.year - 1900;
+  time.tm_mon = file->time_c.month - 1;
+  time.tm_mday = file->time_c.day;
+  time.tm_hour = file->time_c.hour;
+  time.tm_min = file->time_c.minute;
+  time.tm_sec = file->time_c.second;
+  st->st_ctime = mktime(&time);
 
   return st;
 }
