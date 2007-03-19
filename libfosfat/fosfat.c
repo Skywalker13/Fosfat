@@ -312,6 +312,15 @@ static inline int fosfat_isdir(s_fosfat_blf *file) {
   return (file ? ((int)c2l(file->att, sizeof(file->att)) & 0x1000) : 0);
 }
 
+/** Test if the file is a soft-link. This function read the ATT
+ *  and return the value of the 24th bit, mask 0x1000000.
+ * @param file pointer on the file (in the BL)
+ * @return a boolean (true for success)
+ */
+static inline int fosfat_islink(s_fosfat_blf *file) {
+  return (file ? ((int)c2l(file->att, sizeof(file->att)) & 0x1000000) : 0);
+}
+
 /** Test if the file is visible. This function read the ATT
  *  and return the value of the 13th bit, mask 0x2000.
  * @param file pointer on the file (in the BL)
@@ -722,6 +731,32 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
   return NULL;
 }
 
+/** Test if two names are the same or not.
+ *  This function must be used only for particular purpose,
+ *  because that will no test if it is a directory or not,
+ *  but only the names.
+ *  That is very useful for fosfat_search_bdlf().
+ * @param realname the name of the file in the FOS
+ * @param searchname the name in the path
+ * @return true if it seems to be a dir name
+ */
+static inline int fosfat_isdirname(const char *realname, const char *searchname)
+{
+      /* Test with a name as foobar.dir */
+  if ((
+        strcasestr(realname, ".dir") &&
+        !strncasecmp(realname, searchname, strlen(realname) - 4) &&
+        strlen(searchname) == strlen(realname) - 4
+      ) ||
+      /* Test with a name as sys_list (without .dir) */
+      (
+        !strncasecmp(realname, searchname, strlen(realname)) &&
+        strlen(searchname) == strlen(realname)
+      ))
+    return 1;
+  return 0;
+}
+
 /** Search a BD or a BLF from a location.
  *  A good example for use this function, is the BL of the
  *  first SYS_LIST in the disk. It will search the file BD
@@ -771,33 +806,20 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
               fosfat_isnotdel(&loop->file[j]))
           {
             /* Test if it is a directory */
-            if (fosfat_isdir(&loop->file[j])) {
-              if ((
-                    strcasestr(loop->file[j].name, ".dir") &&
-                    !strncasecmp(loop->file[j].name, dir[i],
-                    strlen(loop->file[j].name) - 4) &&
-                    strlen(dir[i]) == strlen(loop->file[j].name) - 4
-                  ) ||
-                  (
-                    !strncasecmp(loop->file[j].name, dir[i],
-                    strlen(loop->file[j].name)) &&
-                    strlen(dir[i]) == strlen(loop->file[j].name)
-                  ))
-              {
-                if (type && loop_blf)
-                  memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
-                unsigned long int pt = c2l(loop->file[j].pt,
-                                           sizeof(loop->file[j].pt));
-                if (loop_bd)
-                  fosfat_free_dir(loop_bd);
-                loop_bd = fosfat_read_dir(dev, pt);
-                if (loop_bd)
-                  loop = loop_bd->first_bl;
-                ontop = 0;  // dir found
-                break;
-              }
-              else
-                ontop = 1;
+            if (fosfat_isdir(&loop->file[j]) &&
+                fosfat_isdirname(loop->file[j].name, dir[i]))
+            {
+              if (type && loop_blf)
+                memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
+              unsigned long int pt = c2l(loop->file[j].pt,
+                                         sizeof(loop->file[j].pt));
+              if (loop_bd)
+                fosfat_free_dir(loop_bd);
+              loop_bd = fosfat_read_dir(dev, pt);
+              if (loop_bd)
+                loop = loop_bd->first_bl;
+              ontop = 0;  // dir found
+              break;
             }
             /* Test if it is a file */
             else if (!fosfat_isdir(&loop->file[j]) &&
@@ -812,6 +834,25 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
               loop_bd = fosfat_read_file(dev, pt);
               loop = NULL;
               ontop = 0;  // file found
+              break;
+            }
+            /* Test if it is a soft-link */
+            else if (!fosfat_isdir(&loop->file[j]) &&
+                     fosfat_islink(&loop->file[j]) &&
+                     fosfat_isdirname(loop->file[j].name, dir[i]))
+            {
+              // TODO: currently, the soft-links are interpreted like a
+              //       simple file. That must be implemented for display
+              //       a unix symbolic link instead of a file.
+              if (type && loop_blf)
+                memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
+              unsigned long int pt = c2l(loop->file[j].pt,
+                                     sizeof(loop->file[j].pt));
+              if (loop_bd)
+                fosfat_free_dir(loop_bd);
+              loop_bd = fosfat_read_file(dev, pt);
+              loop = NULL;
+              ontop = 0;  // soft-link found
               break;
             }
             else
