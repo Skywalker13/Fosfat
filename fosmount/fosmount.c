@@ -210,8 +210,12 @@ static int fos_read(const char *path, char *buf, size_t size,
       /* Read the data */
       buf_tmp = fosfat_get_buffer(dev, path, offset, size);
       /* Copy the data for FUSE */
-      memcpy(buf, buf_tmp, size);
-      free(buf_tmp);
+      if (buf_tmp) {
+        memcpy(buf, buf_tmp, size);
+        free(buf_tmp);
+      }
+      else
+        return -ENOENT;
     }
     else
       size = 0;
