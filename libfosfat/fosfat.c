@@ -135,6 +135,9 @@ typedef struct block_desc {
 /** Global variable for the FOSBOOT address */
 static int g_fosboot = 0x10;
 
+/** Global variable for the CHK */
+static unsigned long int g_foschk = 0;
+
 
 /** Translate a block number to an address. This function
  *  depend if the media is an HARD DISK or an 3"1/2 DISK.
@@ -388,10 +391,13 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned long int block,
               (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
           {
             blk->next_bl = NULL;
-            return (s_fosfat_bl *)blk;
+            /* Check the CHK value */
+            if (!g_foschk)
+              g_foschk = c2l(blk->chk, sizeof(blk->chk));
+            if (g_foschk == c2l(blk->chk, sizeof(blk->chk)))
+              return (s_fosfat_bl *)blk;
           }
-          else
-            free(blk);
+          free(blk);
         }
         break;
       }
@@ -403,10 +409,13 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned long int block,
           {
             blk->next_bd = NULL;
             blk->first_bl = NULL;
-            return (s_fosfat_bd *)blk;
+            /* Check the CHK value */
+            if (!g_foschk)
+              g_foschk = c2l(blk->chk, sizeof(blk->chk));
+            if (g_foschk == c2l(blk->chk, sizeof(blk->chk)))
+              return (s_fosfat_bd *)blk;
           }
-          else
-            free(blk);
+          free(blk);
         }
         break;
       }
