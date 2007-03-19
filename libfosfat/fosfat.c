@@ -270,20 +270,22 @@ static void fosfat_free_dir(s_fosfat_bd *var) {
   s_fosfat_bd *bd, *free_bd;
 
   bd = var;
-  do {
-    bl = bd->first_bl;
-    /* Freed all BL */
-    while (bl) {
-      free_bl = bl;
-      bl = bl->next_bl;
-      free(free_bl);
-    }
-    /* And after, freed the BD */
-    free_bd = bd;
-    bd = bd->next_bd;
-    if (free_bd)
-      free(free_bd);
-  } while (bd);
+  if (bd) {
+    do {
+      bl = bd->first_bl;
+      /* Freed all BL */
+      while (bl) {
+        free_bl = bl;
+        bl = bl->next_bl;
+        free(free_bl);
+      }
+      /* And after, freed the BD */
+      free_bd = bd;
+      bd = bd->next_bd;
+      if (free_bd)
+        free(free_bd);
+    } while (bd);
+  }
 }
 
 /** Free a List Dir variable.
