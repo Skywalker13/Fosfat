@@ -1,3 +1,18 @@
+2007-03-19  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* libfosfat: add a test for CHK value in BD and BL.
+	If this value changes, then NULL is returned and not
+	the block.
+	A lot of possible segfaults are fixed and now that
+	is possible for list the smaky's system directory
+	without to kill Fuse.
+	The smaky's soft-link are now listed like a simple
+	file. In the futur, that will be translated to an
+	symbolic unix link.
+
+	* fosmount: fix possible segfault and add the creation
+	date to listed files.
+
 2007-03-18  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: a lot of segfaults fixed.
