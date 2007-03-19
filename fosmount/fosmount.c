@@ -234,14 +234,15 @@ static int fos_read(const char *path, char *buf, size_t size,
 
 /** Print help. */
 void print_info(void) {
-  printf("Usage: fosmount mountpoint --dev=device [--harddisk]\n");
+  printf("Usage: fosmount device mountpoint [--harddisk] [--debug]\n");
   printf("FUSE extension for a read-only access on Smaky FOS. Fosfat-%s\n\n",
          VERSION);
-  printf("mountpoint   for example, /mnt/smaky\n\n");
-  printf("--dev=       /dev/fd0 : floppy disk\n");
+  printf("device       /dev/fd0 : floppy disk\n");
   printf("             /dev/sda : hard disk, etc\n\n");
+  printf("mountpoint   for example, /mnt/smaky\n\n");
   printf("--harddisk   if you use an hard disk and not a floppy,\n");
   printf("             use this option\n\n");
+  printf("--debug      that will turn on the fuse debugger\n\n");
   printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>\n");
 }
 
@@ -255,39 +256,46 @@ static struct fuse_operations fosfat_oper = {
 
 int main(int argc, char **argv) {
   int i;
-  int res = 0, cnt = 0, dev_on = 0;
-  char *path = NULL;
+  int res = 0, debug = 0;
+  char *device;
+  char **arg;
   e_fosfat_disk type;
 
   /* Default type is Floppy Disk */
   type = eFD;
 
   /* Check arguments */
-  for (i = 0; i < argc; i++) {
-    if (!strcmp(argv[i], "--harddisk")) {
-      type = eHD;
-      cnt++;
-    }
-    else if (!strncmp(argv[i], "--dev=", 6) && strlen(argv[i]) > 6) {
-      path = strdup(argv[i] + 6);
-      dev_on = 1;
-      cnt++;
-    }
-  }
-
-  if (argc < 3 || !dev_on) {
+  if (argc < 3) {
     print_info();
     return -1;
   }
+  else {
+    for (i = 3; argc > 3 && i < argc; i++) {
+      if (!strcmp(argv[i], "--harddisk"))
+        type = eHD;
+      else if (!strcmp(argv[i], "--debug"))
+        debug = 1;
+    }
+    arg = (char **)malloc(sizeof(char *) * (2 + debug));
+    if (arg) {
+      arg[0] = strdup(argv[0]);
+      if (debug)
+        arg[debug] = strdup("-d");
+      arg[1 + debug] = strdup(argv[2]);
+      device = strdup(argv[1]);
+    }
+    else
+      return -1;
+  }
 
   /* Open the floppy disk (or hard disk) */
-  if (!(dev = fosfat_opendev(path, type))) {
-    printf("Could not open %s for mounting!\n", path);
+  if (!(dev = fosfat_opendev(device, type))) {
+    printf("Could not open %s for mounting!\n", device);
     return -1;
   }
 
   /* FUSE */
-  res = fuse_main(argc - cnt, argv, &fosfat_oper);
+  res = fuse_main(2 + debug, arg, &fosfat_oper);
 
   /* Close the device */
   fosfat_closedev(dev);
