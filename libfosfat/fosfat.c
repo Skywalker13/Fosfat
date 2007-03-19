@@ -828,7 +828,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
               if (type && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
               unsigned long int pt = c2l(loop->file[j].pt,
-                                              sizeof(loop->file[j].pt));
+                                         sizeof(loop->file[j].pt));
               if (loop_bd)
                 fosfat_free_dir(loop_bd);
               loop_bd = fosfat_read_file(dev, pt);
