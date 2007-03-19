@@ -877,7 +877,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
 }
 
 /** Search a BD or a BLF from a location in the first SYS_LIST.
- *  It uses fosfat_search_bd().
+ *  That uses fosfat_search_bdlf().
  * @param dev pointer on the device
  * @param location path for found the BD (foo/bar/file)
  * @param type eSBD or eSBLF
