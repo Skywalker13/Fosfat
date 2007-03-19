@@ -45,6 +45,9 @@
 #define FOSFAT_BLOCK0   0x00
 #define FOSFAT_SYSLIST  0x01
 
+#define FOSBOOT_FD      0x10
+#define FOSBOOT_HD      0x20
+
 /** List of all block types */
 typedef enum block_type {
   eB0,                         //!< Block 0
@@ -133,7 +136,7 @@ typedef struct block_desc {
 
 
 /** Global variable for the FOSBOOT address */
-static int g_fosboot = 0x10;
+static int g_fosboot = FOSBOOT_FD;
 
 /** Global variable for the CHK */
 static unsigned long int g_foschk = 0;
@@ -1196,10 +1199,10 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
   if (dev) {
     switch (disk) {
       case eFD:
-        g_fosboot = 0x10;
+        g_fosboot = FOSBOOT_FD;
         break;
       case eHD:
-        g_fosboot = 0x20;
+        g_fosboot = FOSBOOT_HD;
     }
     return ((fopen(dev, "r")));
   }
