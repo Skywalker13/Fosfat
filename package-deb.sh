@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. ./version
+. ./VERSION
 
 DIR=fosfat-$VERSION.$PATCHLEVEL.$SUBLEVEL
 PACKAGE=package-deb

@@ -1,5 +1,5 @@
 include ../config.mak
-include ../version
+include ../VERSION
 
 TARGETI =
 TARGETB =
