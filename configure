@@ -551,6 +551,7 @@ fi
 # add some useful compiler flags if supported
 check_cflags -Wall
 check_cflags -Wextra
+check_cflags -Werror
 check_cflags -D_LARGEFILE_SOURCE
 check_cflags -D_FILE_OFFSET_BITS=64
 check_cflags -D_REENTRANT
