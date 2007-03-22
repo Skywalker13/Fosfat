@@ -806,9 +806,14 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
               ontop = 0;  // dir found
               break;
             }
-            /* Test if it is a file */
+            /* Test if it is a file or a soft-link */
+            // TODO: currently, the soft-links are interpreted like a
+            //       simple file. That must be implemented for display
+            //       a unix symbolic link instead of a file.
             else if (!fosfat_isdir(&loop->file[j]) &&
-                    !strcasecmp(loop->file[j].name, dir[i]))
+                     (!strcasecmp(loop->file[j].name, dir[i]) ||
+                     (fosfat_islink(&loop->file[j]) &&
+                     fosfat_isdirname(loop->file[j].name, dir[i]))))
             {
               if (type && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
@@ -818,26 +823,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
                 fosfat_free_dir(loop_bd);
               loop_bd = fosfat_read_file(dev, pt);
               loop = NULL;
-              ontop = 0;  // file found
-              break;
-            }
-            /* Test if it is a soft-link */
-            else if (!fosfat_isdir(&loop->file[j]) &&
-                     fosfat_islink(&loop->file[j]) &&
-                     fosfat_isdirname(loop->file[j].name, dir[i]))
-            {
-              // TODO: currently, the soft-links are interpreted like a
-              //       simple file. That must be implemented for display
-              //       a unix symbolic link instead of a file.
-              if (type && loop_blf)
-                memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
-              unsigned int pt = c2l(loop->file[j].pt,
-                                    sizeof(loop->file[j].pt));
-              if (loop_bd)
-                fosfat_free_dir(loop_bd);
-              loop_bd = fosfat_read_file(dev, pt);
-              loop = NULL;
-              ontop = 0;  // soft-link found
+              ontop = 0;  // file (or soft-link) found
               break;
             }
             else
