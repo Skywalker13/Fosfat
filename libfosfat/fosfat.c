@@ -139,7 +139,7 @@ typedef struct block_desc {
 static int g_fosboot = FOSBOOT_FD;
 
 /** Global variable for the CHK */
-static unsigned long int g_foschk = 0;
+static unsigned int g_foschk = 0;
 
 
 /** Translate a block number to an address. This function
@@ -151,19 +151,19 @@ static unsigned long int g_foschk = 0;
  * @param block the block's number given by the disk
  * @return the address of this block in the physical disk
  */
-static inline unsigned long int blk2add(unsigned long int block) {
+static inline unsigned int blk2add(unsigned int block) {
   return ((block + g_fosboot) * FOSFAT_BLK);
 }
 
-/** Math long int power function. The math.h library can
+/** Math int power function. The math.h library can
  *  calculate a pow only with floating point numbers.
  *  lpow is used only for the c2l() function.
  * @param x base value
  * @param y power
  * @return the result of x^y
  */
-static long int lpow(long int x, long int y) {
-  long int i, res = x;
+static int lpow(int x, int y) {
+  int i, res = x;
 
   for (i = 1; i < y; i++)
     res *= x;
@@ -174,18 +174,18 @@ static long int lpow(long int x, long int y) {
 }
 
 /** Convert char table to an integer. This convertion will
- *  swapped all bytes and returned a long int value.
+ *  swapped all bytes and returned an int value.
  * @param value pointer on the char table
  * @param size size of the table (number of bytes)
- * @return the long integer value
+ * @return the integer value
  */
-static unsigned long int c2l(unsigned char *value, int size) {
+static unsigned int c2l(unsigned char *value, int size) {
   int i, j;
-  unsigned long int res = 0;
+  unsigned int res = 0;
 
   if (value) {
     for (i = size - 1, j = 0; i >= 0; i--, j++)
-      res += value[j] * lpow(16, (long int)i * 2);
+      res += value[j] * lpow(16, i * 2);
   }
   return res;
 }
@@ -312,7 +312,7 @@ void fosfat_free_listdir(s_fosfat_file *var) {
  * @return a boolean (true for success)
  */
 static inline int fosfat_isdir(s_fosfat_blf *file) {
-  return (file ? ((int)c2l(file->att, sizeof(file->att)) & 0x1000) : 0);
+  return (file ? (c2l(file->att, sizeof(file->att)) & 0x1000) : 0);
 }
 
 /** Test if the file is a soft-link. This function read the ATT
@@ -321,7 +321,7 @@ static inline int fosfat_isdir(s_fosfat_blf *file) {
  * @return a boolean (true for success)
  */
 static inline int fosfat_islink(s_fosfat_blf *file) {
-  return (file ? ((int)c2l(file->att, sizeof(file->att)) & 0x1000000) : 0);
+  return (file ? (c2l(file->att, sizeof(file->att)) & 0x1000000) : 0);
 }
 
 /** Test if the file is visible. This function read the ATT
@@ -330,7 +330,7 @@ static inline int fosfat_islink(s_fosfat_blf *file) {
  * @return a boolean (true for success)
  */
 static inline int fosfat_isvisible(s_fosfat_blf *file) {
-  return (file ? ((int)c2l(file->att, sizeof(file->att)) & 0x2000) : 0);
+  return (file ? (c2l(file->att, sizeof(file->att)) & 0x2000) : 0);
 }
 
 /** Test if the file is 'open exclusif' and 'multiple'. This function
@@ -340,8 +340,8 @@ static inline int fosfat_isvisible(s_fosfat_blf *file) {
  * @return a boolean (true for success)
  */
 static inline int fosfat_isopenexm(s_fosfat_blf *file) {
-  return (file ? ((((int)c2l(file->att, sizeof(file->att)) & 0x1)) ||
-                  (((int)c2l(file->att, sizeof(file->att)) & 0x2))) : 0);
+  return (file ? (((c2l(file->att, sizeof(file->att)) & 0x1)) ||
+                  ((c2l(file->att, sizeof(file->att)) & 0x2))) : 0);
 }
 
 /** Test if the file is encoded. This function read the ATT
@@ -350,7 +350,7 @@ static inline int fosfat_isopenexm(s_fosfat_blf *file) {
  * @return a boolean (true for success)
  */
 static inline int fosfat_isencoded(s_fosfat_blf *file) {
-  return (file ? ((int)c2l(file->att, sizeof(file->att)) & 0x20000) : 0);
+  return (file ? (c2l(file->att, sizeof(file->att)) & 0x20000) : 0);
 }
 
 /** Test if the file is system (5 MSB bits). This function read the
@@ -359,7 +359,7 @@ static inline int fosfat_isencoded(s_fosfat_blf *file) {
  * @return a boolean (true for success)
  */
 static inline int fosfat_issystem(s_fosfat_blf *file) {
-  return (file ? ((int)(file->typ & 0xF8)) : 0);
+  return (file ? ((file->typ & 0xF8)) : 0);
 }
 
 /** Test if the file is not deleted.
@@ -381,7 +381,7 @@ static inline int fosfat_isnotdel(s_fosfat_blf *file) {
  * @param type type of this block (eB0, eBL, eBD or eDATA)
  * @return a pointer on the new block or NULL if broken
  */
-static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned long int block,
+static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned int block,
                            e_fosfat_type type)
 {
   /* Move the pointer on the block */
@@ -459,7 +459,7 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned long int block,
  * @return the block0 or NULL if broken
  */
 static inline s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev,
-                                          unsigned long int block)
+                                          unsigned int block)
 {
   return (dev ? ((s_fosfat_b0 *)fosfat_read_b(dev, block, eB0)) : NULL);
 }
@@ -471,7 +471,7 @@ static inline s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev,
  * @return the data or NULL if broken
  */
 static inline s_fosfat_data *fosfat_read_d(FOSFAT_DEV *dev,
-                                           unsigned long int block)
+                                           unsigned int block)
 {
   return (dev ? ((s_fosfat_data *)fosfat_read_b(dev, block, eDATA)) : NULL);
 }
@@ -482,7 +482,7 @@ static inline s_fosfat_data *fosfat_read_d(FOSFAT_DEV *dev,
  * @return the BD or NULL if broken
  */
 static inline s_fosfat_bd *fosfat_read_bd(FOSFAT_DEV *dev,
-                                          unsigned long int block)
+                                          unsigned int block)
 {
   return (dev ? ((s_fosfat_bd *)fosfat_read_b(dev, block, eBD)) : NULL);
 }
@@ -493,7 +493,7 @@ static inline s_fosfat_bd *fosfat_read_bd(FOSFAT_DEV *dev,
  * @return the BL or NULL if broken
  */
 static inline s_fosfat_bl *fosfat_read_bl(FOSFAT_DEV *dev,
-                                          unsigned long int block)
+                                          unsigned int block)
 {
   return (dev ? ((s_fosfat_bl *)fosfat_read_b(dev, block, eBL)) : NULL);
 }
@@ -509,7 +509,7 @@ static inline s_fosfat_bl *fosfat_read_bl(FOSFAT_DEV *dev,
  * @param type type of this block (eB0, eBL, eBD or eDATA)
  * @return the first block of the linked list created
  */
-static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block,
+static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned int block,
                               unsigned char nbs, e_fosfat_type type)
 {
   if (dev) {
@@ -522,7 +522,7 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block,
           block_list = first_bl;
           for (i = 1; block_list && i < nbs; i++) {
             block_list->next_bl = fosfat_read_bl(dev, block +
-                                                 (unsigned long int)i);
+                                                 (unsigned int)i);
             block_list = block_list->next_bl;
           }
           return (s_fosfat_bl *)first_bl;
@@ -537,7 +537,7 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block,
           block_data = first_data;
           for (i = 1; block_data && i < nbs; i++) {
             block_data->next_data = fosfat_read_d(dev, block +
-                                                  (unsigned long int)i);
+                                                  (unsigned int)i);
             block_data = block_data->next_data;
           }
           return (s_fosfat_data *)first_data;
@@ -560,8 +560,8 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned long int block,
  * @param block the file BD position
  * @return the first BD of the linked list
  */
-static s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, unsigned long int block) {
-  unsigned long int next;
+static s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, unsigned int block) {
+  unsigned int next;
   s_fosfat_bd *file_desc, *first_bd;
 
   if (dev && (file_desc = fosfat_read_bd(dev, block))) {
@@ -614,7 +614,7 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
   }
   va_end(pp);
 
-  unsigned long int i;
+  unsigned int i;
   int res = 1;
   size_t check_last;
   size_t size = 0;
@@ -690,9 +690,9 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
  * @param block DIR (or SYS_LIST) BD position
  * @return the first BD of the linked list
  */
-static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned long int block) {
-  unsigned long int i;
-  unsigned long int next;
+static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned int block) {
+  unsigned int i;
+  unsigned int next;
   s_fosfat_bd *dir_desc, *first_bd;
   s_fosfat_bl *dir_list;
 
@@ -814,8 +814,8 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
             {
               if (type && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
-              unsigned long int pt = c2l(loop->file[j].pt,
-                                         sizeof(loop->file[j].pt));
+              unsigned int pt = c2l(loop->file[j].pt,
+                                    sizeof(loop->file[j].pt));
               if (loop_bd)
                 fosfat_free_dir(loop_bd);
               loop_bd = fosfat_read_dir(dev, pt);
@@ -830,8 +830,8 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
             {
               if (type && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
-              unsigned long int pt = c2l(loop->file[j].pt,
-                                         sizeof(loop->file[j].pt));
+              unsigned int pt = c2l(loop->file[j].pt,
+                                    sizeof(loop->file[j].pt));
               if (loop_bd)
                 fosfat_free_dir(loop_bd);
               loop_bd = fosfat_read_file(dev, pt);
@@ -849,8 +849,8 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
               //       a unix symbolic link instead of a file.
               if (type && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
-              unsigned long int pt = c2l(loop->file[j].pt,
-                                         sizeof(loop->file[j].pt));
+              unsigned int pt = c2l(loop->file[j].pt,
+                                    sizeof(loop->file[j].pt));
               if (loop_bd)
                 fosfat_free_dir(loop_bd);
               loop_bd = fosfat_read_file(dev, pt);
@@ -1006,7 +1006,7 @@ static s_fosfat_file *fosfat_stat(s_fosfat_blf *file) {
     lc(stat->name);
 
     /* Size (bytes) */
-    stat->size = (int)c2l(file->lgf, sizeof(file->lgf));
+    stat->size = c2l(file->lgf, sizeof(file->lgf));
 
     /* Attributes (field bits) */
     stat->att.isdir = fosfat_isdir(file) ? 1 : 0;
