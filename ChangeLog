@@ -1,3 +1,11 @@
+2007-03-22  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* libfosfat: change all long variables for int because
+	the FOS use only 32 bits addresses.
+	The lpow() function is removed and it was used only for
+	the c2l() function. Then a shift register is enough and
+	faster.
+
 2007-03-19  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: add a test for CHK value in BD and BL.
