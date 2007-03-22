@@ -155,24 +155,6 @@ static inline unsigned int blk2add(unsigned int block) {
   return ((block + g_fosboot) * FOSFAT_BLK);
 }
 
-/** Math int power function. The math.h library can
- *  calculate a pow only with floating point numbers.
- *  lpow is used only for the c2l() function.
- * @param x base value
- * @param y power
- * @return the result of x^y
- */
-static int lpow(int x, int y) {
-  int i, res = x;
-
-  for (i = 1; i < y; i++)
-    res *= x;
-  /* x^0 return always 1 */
-  if (!y)
-    res = 1;
-  return res;
-}
-
 /** Convert char table to an integer. This convertion will
  *  swapped all bytes and returned an int value.
  * @param value pointer on the char table
@@ -185,7 +167,7 @@ static unsigned int c2l(unsigned char *value, int size) {
 
   if (value) {
     for (i = size - 1, j = 0; i >= 0; i--, j++)
-      res += value[j] * lpow(16, i * 2);
+      res += (*(value + j) << i * 8);
   }
   return res;
 }
