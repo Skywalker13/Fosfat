@@ -291,14 +291,21 @@ int main(int argc, char **argv) {
   /* Open the floppy disk (or hard disk) */
   if (!(dev = fosfat_opendev(device, type))) {
     printf("Could not open %s for mounting!\n", device);
-    return -1;
+    res = -1;
+  }
+  else {
+    /* FUSE */
+    res = fuse_main(2 + debug, arg, &fosfat_oper);
+
+    /* Close the device */
+    fosfat_closedev(dev);
   }
 
-  /* FUSE */
-  res = fuse_main(2 + debug, arg, &fosfat_oper);
-
-  /* Close the device */
-  fosfat_closedev(dev);
+  /* Free */
+  for (i = 0; i < 2 + debug; i++)
+    free(arg[i]);
+  free(arg);
+  free(device);
 
   return res;
 }
