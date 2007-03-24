@@ -209,7 +209,7 @@ int main(int argc, char **argv) {
     }
     /* Get a file from the disk */
     else if (argc >= 4 && !strcmp(choice, "get")) {
-      if (argc == 5)
+      if (argc >= 5 && strcmp(argv[4], "--harddisk"))
         dst = strdup(argv[4]);
       else
         dst = strdup("./");
