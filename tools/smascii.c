@@ -48,14 +48,14 @@ int run_conv(const char *input, const char *output) {
       if (sma2iso8859(buffer, (unsigned int)lng))
         fwrite((char *)buffer, (size_t)sizeof(char), lng, out);
       else {
-        printf("Conversion error!");
+        printf("Conversion error!\n");
         return 0;
       }
     }
-    printf("File %s successfully converted to %s!", input, output);
+    printf("File %s successfully converted to %s!\n", input, output);
   }
   else {
-    printf("Reading or writing error!");
+    printf("Reading or writing error!\n");
     return 0;
   }
   return 1;
@@ -81,6 +81,7 @@ int main(int argc, char **argv) {
     if (run_conv(input_file, output_file))
       return 0;
   }
-  print_help();
+  else
+    print_help();
   return -1;
 }
