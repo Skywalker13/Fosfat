@@ -33,8 +33,8 @@ show_help(){
   echo "  --bindir=DIR                install bins in DIR [PREFIX/bin]"
   echo "  --libdir=DIR                install libs in DIR [PREFIX/lib]"
   echo "  --includedir=DIR            install includes in DIR [PREFIX/include]"
-  echo "  --enable-tools              build fosread and smascii tools"
-  echo "  --disable-tools             do not build fosread ans smascii tools"
+  echo "  --enable-fosread            build fosread tool"
+  echo "  --disable-fosread           do not build fosread tool"
   echo "  --enable-fosmount           build fosmount FUSE extension"
   echo "  --disable-fosmount          do not build fosmount FUSE extension"
   echo "  --with-fuse-dir=DIR         check for libfuse installed in DIR"
@@ -299,7 +299,7 @@ dostrip="yes"
 extralibs=""
 installstrip="-s"
 cross_compile="no"
-tools="yes"
+fosread="yes"
 fosmount="yes"
 INSTALL="install"
 
@@ -390,9 +390,9 @@ for opt do
   ;;
   --cross-compile) cross_compile="yes"
   ;;
-  --enable-tools) tools="yes";
+  --enable-fosread) fosread="yes";
   ;;
-  --disable-tools) tools="no";
+  --disable-fosread) fosread="no";
   ;;
   --enable-fosmount) fosmount="yes";
   ;;
@@ -662,7 +662,7 @@ append_config "LDFLAGS=$LDFLAGS"
 append_config "INSTALL=$INSTALL"
 
 append_config "DEBUG=$debug"
-append_config "TOOLS=$tools"
+append_config "FOSREAD=$fosread"
 append_config "FOSMOUNT=$fosmount"
 
 clean

@@ -3,23 +3,17 @@ include ../VERSION
 
 TARGETI =
 TARGETB =
-APPNAME1 = fosread
-APPNAME2 = smascii
-SRCS1 = fosread.c
-SRCS2 = ascii.c smascii.c
+APPNAME = fosread
+SRCS = fosread.c
 
-CFLAGS1 = $(CFLAGS) -I../libfosfat -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)\"
-LDFLAGS1 = $(LDFLAGS) -L../libfosfat -lfosfat
+CFLAGS += -I../libfosfat -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)\"
+LDFLAGS += -L../libfosfat -lfosfat
 
-CFLAGS2 = $(CFLAGS)
-LDFLAGS2 = $(LDFLAGS)
+OBJS = $(SRCS:.c=.o)
 
-OBJS1 = $(SRCS1:.c=.o)
-OBJS2 = $(SRCS2:.c=.o)
-
-ifeq ($(TOOLS),yes)
+ifeq ($(FOSREAD),yes)
 TARGETI = install-app
-TARGETB = depend $(APPNAME1) $(APPNAME2)
+TARGETB = depend $(APPNAME)
 endif
 
 .SUFFIXES: .c .o
@@ -27,38 +21,31 @@ endif
 all: $(TARGETB)
 
 .c.o:
-	$(CC) -c $(CFLAGS1) $(OPTFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) $(OPTFLAGS) -o $@ $<
 
-$(APPNAME1): $(OBJS1)
-	$(CC) $(OBJS1) $(LDFLAGS1) $(EXTRALIBS) -o $(APPNAME1)
-
-$(APPNAME2): $(OBJS2)
-	$(CC) $(OBJS2) $(LDFLAGS2) -o $(APPNAME2)
+$(APPNAME): $(OBJS)
+	$(CC) $(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(APPNAME)
 
 clean:
-	rm -f *.o $(APPNAME1) $(APPNAME2)
-	rm -f .depend1 .depend2
+	rm -f *.o $(APPNAME)
+	rm -f .depend
 
 install: $(TARGETI)
 
-install-app: $(APPNAME1) $(APPNAME2)
-	$(INSTALL) -c -m 755 $(APPNAME1) $(bindir)
-	$(INSTALL) -c -m 755 $(APPNAME2) $(bindir)
+install-app: $(APPNAME)
+	$(INSTALL) -c -m 755 $(APPNAME) $(bindir)
 
 uninstall:
-	rm -f $(bindir)/$(APPNAME1)
-	rm -f $(bindir)/$(APPNAME2)
+	rm -f $(bindir)/$(APPNAME)
 
 depend:
-	$(CC) -MM $(CFLAGS1) $(OPTFLAGS) $(SRCS1) 1>.depend1
-	$(CC) -MM $(CFLAGS2) $(SRCS2) 1>.depend2
+	$(CC) -MM $(CFLAGS) $(OPTFLAGS) $(SRCS) 1>.depend
 
 .phony: clean depend
 
 #
 # include dependency files if they exist
 #
-ifneq ($(wildcard .depend1 .depend2),)
-include .depend1
-include .depend2
+ifneq ($(wildcard .depend),)
+include .depend
 endif
