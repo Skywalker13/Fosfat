@@ -82,8 +82,7 @@ int main(int argc, char **argv) {
     output_file = strdup(argv[2]);
     if (run_conv(input_file, output_file))
       return 0;
-    else
-      print_help();
+
     if (input_file)
       free(input_file);
     if (output_file)
