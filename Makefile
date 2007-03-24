@@ -2,12 +2,12 @@ include config.mak
 
 all:
 	$(MAKE) -C libfosfat
-	$(MAKE) -C fosread
+	$(MAKE) -C tools
 	$(MAKE) -C fosmount
 
 clean:
 	$(MAKE) -C libfosfat clean
-	$(MAKE) -C fosread clean
+	$(MAKE) -C tools clean
 	$(MAKE) -C fosmount clean
 
 distclean: clean
@@ -15,7 +15,7 @@ distclean: clean
 	rm -f config.mak
 
 install:
-	$(MAKE) -C fosread install
+	$(MAKE) -C tools install
 	$(MAKE) -C fosmount install
 
 install-lib:
@@ -23,7 +23,7 @@ install-lib:
 
 uninstall:
 	$(MAKE) -C libfosfat uninstall
-	$(MAKE) -C fosread uninstall
+	$(MAKE) -C tools uninstall
 	$(MAKE) -C fosmount uninstall
 
 .phony: clean distclean
