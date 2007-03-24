@@ -1,3 +1,10 @@
+2007-03-24  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* Some fixes in all the project.
+
+	* smascii: new tool for convert Smaky's text files to
+	Extended ASCII (ISO-8859-1) files.
+
 2007-03-22  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: change all long variables for int because
