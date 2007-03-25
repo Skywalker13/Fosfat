@@ -17,5 +17,5 @@ cleanbuilddir::
 	touch config.mak
 
 makebuilddir::
-	mkdir -p $(CURDIR)/debian/fosfat/usr/bin
-	./configure --prefix=$(CURDIR)/debian/fosfat/usr
+	mkdir -p $(CURDIR)/debian/fosfat/bin
+	./configure --prefix=$(CURDIR)/debian/fosfat
