@@ -1,3 +1,10 @@
+2007-03-25  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* smascii: add an option for convert Carriage Return
+	to Unix newline (Line Feed).
+
+	* Fix Ubuntu package builder with CDBS.
+
 2007-03-24  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Some fixes in all the project.
