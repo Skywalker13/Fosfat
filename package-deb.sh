@@ -34,7 +34,7 @@ cd "$PACKAGE"
 tar -czf "fosfat_$VERSION.$PATCHLEVEL.$SUBLEVEL.orig.tar.gz" "$DIR"
 
 cp -pPR ../debian "$DIR"
-find "$DIR" \( -name .svn or -name *~ \) -exec rm -rf '{}' \; 2>/dev/null
+find "$DIR" \( -name .svn -or -name '*~' \) -exec rm -rf '{}' \; 2>/dev/null
 cd "$DIR"
 debuild -us -uc
 
