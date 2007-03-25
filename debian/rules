@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
-# Copyright 2006, Mathieu Schroeter
+# Copyright 2006-2007, Mathieu Schroeter
 # This file was originally written by Joey Hess and Craig Small.
 
 # Uncomment this to turn on verbose mode.
