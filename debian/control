@@ -7,10 +7,11 @@ Standards-Version: 3.7.2
 
 Package: fosfat
 Architecture: any
-Description: Fosfat FUSE extension
+Description: Library Fosfat and FUSE extension
  Fosfat is a C library for providing read-only access to a Smaky
  formatted disk. Currently, only a tool and a FUSE extension that
  use this library can be used for reading a directory and copying
  a file. Smaky was a system developed in Switzerland at the EPFL
  (Ecole Polytechnique Fédérale de Lausanne).
+ --
  Website: http://home.gna.org/fosfat/
