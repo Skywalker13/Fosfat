@@ -8,16 +8,35 @@ PACKAGE=package-deb
 rm -rf "$PACKAGE"
 mkdir -p "$PACKAGE/$DIR"
 
-touch config.mak
-make distclean
-
-cp -pPR Makefile README COPYING VERSION TODO ChangeLog package-deb.sh configure fosmount tools libfosfat debian "$PACKAGE/$DIR"
-find "$PACKAGE/$DIR" \( -name .svn -or -name .depend -or -name '*.o' \) -exec rm -rf '{}' \; 2>/dev/null
+cp -pPR Makefile \
+        README \
+        COPYING \
+        VERSION \
+        TODO \
+        ChangeLog \
+        configure \
+        fosmount \
+        tools \
+        libfosfat \
+        "$PACKAGE/$DIR"
+find "$PACKAGE/$DIR" \( -name .svn -or \
+                        -name .depend* -or \
+                        -name '*.o' -or \
+                        -name '*.a' \
+                     \) -exec rm -rf '{}' \; 2>/dev/null
+find "$PACKAGE/$DIR" \( -name 'fosread' -or \
+                        -name 'smascii' -or \
+                        -name 'fosmount' \
+                     \) -exec rm -f '{}' \; 2>/dev/null
 cd "$PACKAGE"
 tar -czf "fosfat_$VERSION.$PATCHLEVEL.$SUBLEVEL.orig.tar.gz" "$DIR"
+echo "sudo pbuilder build *dsc" 1> gen-deb.sh
+chmod a+x gen-deb.sh
 
+cp -pPR ../debian "$DIR"
+find "$DIR" \( -name .svn \) -exec rm -rf '{}' \; 2>/dev/null
 cd "$DIR"
-debuild -S -uc
+debuild -S -sa
 
 cd ..
 rm -rf "$DIR"
