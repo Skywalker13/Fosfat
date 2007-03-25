@@ -153,18 +153,18 @@ int get_file(FOSFAT_DEV *dev, const char *path, const char *dst) {
 void print_info(void) {
   printf("Usage: fosread device mode [node] [path] [--harddisk]\n");
   printf("Tool for a read-only access on a Smaky disk. Fosfat-%s\n\n", VERSION);
-  printf("device       for example, /dev/fd0\n\n");
-  printf("mode\n");
-  printf(" list        list the content of a node\n");
-  printf(" get         copy a file from the Smaky's disk in a\n");
-  printf("             local directory\n\n");
-  printf("node         the tree with the file (or folder)\n");
-  printf("             for a 'get' or a 'list'\n");
-  printf("             example: foo/bar/toto.text\n\n");
-  printf("path         you can specify a path for save\n");
-  printf("             the file (with get mode)\n\n");
-  printf("--harddisk   if you use an hard disk and not a floppy,\n");
-  printf("             use this option\n\n");
+  printf("  device       for example, /dev/fd0\n\n");
+  printf("  mode\n");
+  printf("   list        list the content of a node\n");
+  printf("   get         copy a file from the Smaky's disk in a\n");
+  printf("               local directory\n\n");
+  printf("  node         the tree with the file (or folder)\n");
+  printf("               for a 'get' or a 'list'\n");
+  printf("               example: foo/bar/toto.text\n\n");
+  printf("  path         you can specify a path for save\n");
+  printf("               the file (with get mode)\n\n");
+  printf("  --harddisk   if you use an hard disk and not a floppy,\n");
+  printf("               use this option\n\n");
   printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>\n");
 }
 
