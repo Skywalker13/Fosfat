@@ -8,6 +8,7 @@ PACKAGE=package-deb
 rm -rf "$PACKAGE"
 mkdir -p "$PACKAGE/$DIR"
 
+touch config.mak
 make distclean
 
 cp -pPR Makefile README COPYING VERSION TODO ChangeLog package-deb.sh configure fosmount tools libfosfat debian "$PACKAGE/$DIR"
