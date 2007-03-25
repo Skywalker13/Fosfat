@@ -4,7 +4,7 @@ LIBNAME = libfosfat.a
 
 SRCS = fosfat.c
 
-CFLAGS += -fPIC
+OPTFLAGS += -fPIC
 
 OBJS = $(SRCS:.c=.o)
 

@@ -1,12 +1,13 @@
 Source: fosfat
-Section: contrib/misc
+Section: misc
 Priority: optional
 Maintainer: Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
-Build-Depends: debhelper (>= 5), pkg-config (>= 0.20), libfuse-dev (>= 2.5)
+Build-Depends: cdbs, debhelper (>= 5), pkg-config (>= 0.20), libfuse-dev (>= 2.5)
 Standards-Version: 3.7.2
 
 Package: fosfat
 Architecture: any
+Depends: ${shlibs:Depends}
 Description: Library Fosfat and FUSE extension
  Fosfat is a C library for providing read-only access to a Smaky
  formatted disk. Currently, only a tool and a FUSE extension that
@@ -14,4 +15,4 @@ Description: Library Fosfat and FUSE extension
  a file. Smaky was a system developed in Switzerland at the EPFL
  (Ecole Polytechnique Fédérale de Lausanne).
  .
-  Homepage: http://home.gna.org/fosfat/
+ Homepage: http://home.gna.org/fosfat/

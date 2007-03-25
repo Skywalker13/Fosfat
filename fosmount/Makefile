@@ -6,8 +6,8 @@ TARGETB =
 APPNAME = fosmount
 SRCS = fosmount.c
 
-CFLAGS += -I../libfosfat -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)\"
-LDFLAGS += -L../libfosfat -lfosfat
+OPTFLAGS += -I../libfosfat -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)\"
+OPTLDFLAGS = -L../libfosfat -lfosfat
 
 OBJS = $(SRCS:.c=.o)
 
@@ -24,7 +24,7 @@ all: $(TARGETB)
 	$(CC) -c $(CFLAGS) $(OPTFLAGS) -o $@ $<
 
 $(APPNAME): $(OBJS)
-	$(CC) $(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(APPNAME)
+	$(CC) $(OBJS) $(LDFLAGS) $(OPTLDFLAGS) $(EXTRALIBS) -o $(APPNAME)
 
 clean:
 	rm -f *.o $(APPNAME)
