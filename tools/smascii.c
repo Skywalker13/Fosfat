@@ -65,14 +65,14 @@ int run_conv(const char *input, const char *output, e_newline newline) {
 
 /** Print help. */
 void print_help(void) {
-  printf("Usage: smascii smaky_file converted_file [--unix]\n");
   printf("Tool for convert Smaky text file to ");
   printf("Extended ASCII (ISO-8859-1).\n\n");
-  printf("  smaky_file            the smaky text file\n\n");
-  printf("  converted_file        the file converted\n\n");
+  printf("Usage: smascii smaky_file converted_file [--unix]\n\n");
+  printf("  smaky_file            the smaky text file\n");
+  printf("  converted_file        the file converted\n");
   printf("  --unix                the Carriage Return (Old Mac) will be\n");
-  printf("                        converted to Line Feed (unix)\n\n");
-  printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>\n");
+  printf("                        converted to Line Feed (unix)\n");
+  printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n");
 }
 
 int main(int argc, char **argv) {

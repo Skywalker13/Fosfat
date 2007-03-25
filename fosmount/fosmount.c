@@ -234,16 +234,16 @@ static int fos_read(const char *path, char *buf, size_t size,
 
 /** Print help. */
 void print_info(void) {
-  printf("Usage: fosmount device mountpoint [--harddisk] [--debug]\n");
   printf("FUSE extension for a read-only access on Smaky FOS. Fosfat-%s\n\n",
          VERSION);
-  printf("  device       /dev/fd0 : floppy disk\n");
-  printf("               /dev/sda : hard disk, etc\n\n");
-  printf("  mountpoint   for example, /mnt/smaky\n\n");
-  printf("  --harddisk   if you use an hard disk and not a floppy,\n");
-  printf("               use this option\n\n");
-  printf("  --debug      that will turn on the fuse debugger\n\n");
-  printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>\n");
+  printf("Usage: fosmount device mountpoint [--harddisk] [--debug]\n\n");
+  printf("  device                /dev/fd0 : floppy disk\n");
+  printf("                        /dev/sda : hard disk, etc\n");
+  printf("  mountpoint            for example, /mnt/smaky\n");
+  printf("  --harddisk            if you use an hard disk and not a floppy,\n");
+  printf("                        use this option\n");
+  printf("  --debug               that will turn on the fuse debugger\n");
+  printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n");
 }
 
 /** FUSE implemented functions */
