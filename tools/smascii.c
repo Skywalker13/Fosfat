@@ -36,7 +36,7 @@
  * @param output ISO-8859-1 text file
  * @return 1 for success and 0 for error
  */
-int run_conv(const char *input, const char *output) {
+int run_conv(const char *input, const char *output, e_newline newline) {
   FILE *in = NULL, *out = NULL;
   char buffer[BUFFER_SIZE];
   size_t lng;
@@ -45,7 +45,7 @@ int run_conv(const char *input, const char *output) {
     while ((lng = fread((char *)buffer, (size_t)sizeof(char),
            (size_t)BUFFER_SIZE, in)))
     {
-      if (sma2iso8859(buffer, (unsigned int)lng))
+      if (sma2iso8859(buffer, (unsigned int)lng, newline))
         fwrite((char *)buffer, (size_t)sizeof(char), lng, out);
       else {
         printf("Conversion error!\n");
@@ -65,22 +65,29 @@ int run_conv(const char *input, const char *output) {
 
 /** Print help. */
 void print_help(void) {
-  printf("Usage: smascii smaky_file converted_file\n");
+  printf("Usage: smascii smaky_file converted_file [--unix]\n");
   printf("Tool for convert Smaky text file to ");
   printf("Extended ASCII (ISO-8859-1).\n\n");
-  printf("smaky_file        the smaky text file\n\n");
-  printf("converted_file    the file converted\n\n");
+  printf("  smaky_file            the smaky text file\n\n");
+  printf("  converted_file        the file converted\n\n");
+  printf("  --unix                the Carriage Return (Old Mac) will be\n");
+  printf("                        converted to Line Feed (unix)\n\n");
   printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>\n");
 }
 
 int main(int argc, char **argv) {
   char *input_file;
   char *output_file;
+  e_newline newline = eCR;
 
-  if (argc == 3) {
+  if (argc >= 3) {
     input_file = strdup(argv[1]);
     output_file = strdup(argv[2]);
-    if (run_conv(input_file, output_file))
+
+    if (argc == 4 && !strcmp(argv[3], "--unix"))
+      newline = eLF;
+
+    if (run_conv(input_file, output_file, newline))
       return 0;
 
     if (input_file)

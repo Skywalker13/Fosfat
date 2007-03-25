@@ -27,6 +27,7 @@
 
 #include "ascii.h"
 
+
 /** Smaky's ASCII table converter.
  *  Index : Smaky
  *  Value : ISO-8859-1
@@ -53,23 +54,28 @@ static unsigned char smaky2iso8859_charset[] = {
 
 /** Convert smaky char to ISO-8859-1 char.
  * @param value the char
+ * @param newline CR or LF
  * @return the new char
  */
-static inline unsigned char char_sma2iso8859(unsigned char value) {
-  return (value > 127 ? 0 : smaky2iso8859_charset[value]);
+static inline unsigned char char_sma2iso8859(unsigned char value,
+                                             e_newline newline)
+{
+  return (value > 127 ? 0 :
+          (value == 13 ? newline : smaky2iso8859_charset[value]));
 }
 
 /** Convert a buffer of chars.
  * @param buffer pointer on the buffer
  * @param size the length
+ * @param newline CR or LF
  * @return the buffer
  */
-char *sma2iso8859(char *buffer, unsigned int size) {
+char *sma2iso8859(char *buffer, unsigned int size, e_newline newline) {
   unsigned int i = 0;
 
   if (buffer && size) {
     for (i = 0; i < size; i++)
-      *(buffer + i) = char_sma2iso8859(*(buffer + i));
+      *(buffer + i) = char_sma2iso8859(*(buffer + i), newline);
   }
   else
     return NULL;
