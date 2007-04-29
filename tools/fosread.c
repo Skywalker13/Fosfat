@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> /* strcmp strcpy */
+#include <getopt.h>
 
 #include "fosfat.h"
 
@@ -152,42 +153,74 @@ int get_file(FOSFAT_DEV *dev, const char *path, const char *dst) {
 /** Print help. */
 void print_info(void) {
   printf("Tool for a read-only access on a Smaky disk. Fosfat-%s\n\n", VERSION);
-  printf("Usage: fosread device mode [node] [path] [--harddisk]\n\n");
-  printf("  device                for example, /dev/fd0\n");
-  printf("  mode\n");
-  printf("   list                 list the content of a node\n");
-  printf("   get                  copy a file from the Smaky's disk in a\n");
-  printf("                        local directory\n");
-  printf("  node                  the tree with the file (or folder)\n");
-  printf("                        for a 'get' or a 'list'\n");
-  printf("                        example: foo/bar/toto.text\n");
-  printf("  path                  you can specify a path for save\n");
-  printf("                        the file (with get mode)\n");
-  printf("  --harddisk            if you use an hard disk and not a floppy,\n");
-  printf("                        use this option\n");
+  printf("Usage: fosread [options] device mode [node] [path]\n\n");
+  printf(" -h --help             this help\n");
+  printf(" -a --harddisk         if you use an hard disk and not a floppy,");
+  printf(" use this option\n\n");
+  printf(" device                for example, /dev/fd0\n");
+  printf(" mode\n");
+  printf("  list                 list the content of a node\n");
+  printf("  get                  copy a file from the Smaky's disk in a");
+  printf(" local directory\n");
+  printf(" node                  the tree with the file (or folder)");
+  printf(" for a 'get' or a 'list'\n");
+  printf("                       example: foo/bar/toto.text\n");
+  printf(" path                  you can specify a path for save");
+  printf(" the file (with get mode)\n");
   printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n");
 }
 
 int main(int argc, char **argv) {
-  int res = 0;
-  int harddisk = eFD;
-  char *path, *choice, *file, *dst;
+  int res = 0, i, next_option;
+  e_fosfat_disk type = eFD;
+  char *device = NULL, *mode = NULL, *node = NULL, *path = NULL;
   FOSFAT_DEV *dev;
   s_global_info *ginfo;
 
-  if (argc < 3) {
+  const char *const short_options = "ah";
+
+  const struct option long_options[] = {
+    { "harddisk", 0, NULL, 'a' },
+    { "help",     0, NULL, 'h' },
+    { NULL,       0, NULL,  0  }
+  };
+
+  /* check options */
+  do {
+    next_option = getopt_long(argc, argv, short_options, long_options, NULL);
+    switch (next_option) {
+      default :           /* unknown */
+      case '?':           /* invalid option */
+      case 'h':           /* -h or --help */
+        print_info();
+        return -1;
+      case 'a':           /* -a or --harddisk */
+        type = eHD;
+        break ;
+      case -1:            /* end */
+        break ;
+    }
+  } while (next_option != -1);
+
+  if (argc < optind + 2) {
     print_info();
     return -1;
   }
 
-  path = strdup(argv[1]);
-  choice = strdup(argv[2]);
-  harddisk = strcmp(argv[argc - 1], "--harddisk") ? eFD : eHD;
+  for (i = optind; i < argc; i++) {
+    if (i == optind)
+      device = strdup(argv[optind]);
+    else if (i == optind + 1)
+      mode = strdup(argv[optind + 1]);
+    else if (i == optind + 2)
+      node = strdup(argv[optind + 2]);
+    else if (i == optind + 3)
+      path = strdup(argv[optind + 3]);
+  }
 
   /* Open the floppy disk (or hard disk) */
-  if (!(dev = fosfat_opendev(path, harddisk)))
-  {
-    printf("Could not open %s for reading!\n", path);
+  if (!(dev = fosfat_opendev(device, type))) {
+    printf("Could not open %s for reading!\n", device);
     return -1;
   }
 
@@ -195,36 +228,30 @@ int main(int argc, char **argv) {
   if ((ginfo = get_ginfo(dev))) {
     printf("Smaky disk %s\n", ginfo->name);
     /* Show the list of a directory */
-    if (!strcasecmp(choice, "list")) {
-      if ((argc < 4 && harddisk == eFD) || (argc < 5 && harddisk == eHD)) {
+    if (!strcasecmp(mode, "list")) {
+      if (!node) {
         if (!list_dir(dev, "/"))
           res = -1;
       }
-      else {
-        file = strdup(argv[3]);
-        if (!list_dir(dev, file))
+      else if (node) {
+        if (!list_dir(dev, node))
           res = -1;
-        free(file);
+        free(node);
       }
     }
     /* Get a file from the disk */
-    else if (argc >= 4 && !strcmp(choice, "get")) {
-      if (argc >= 5 && strcmp(argv[4], "--harddisk"))
-        dst = strdup(argv[4]);
-      else
-        dst = strdup("./");
-      file = strdup(argv[3]);
-      get_file(dev, argv[3], dst);
-      free(file);
-      free(dst);
+    else if (!strcmp(mode, "get") && node) {
+      get_file(dev, node, path ? path : "./");
+      free(node);
+      free(path);
     }
     else
       print_info();
   }
   /* Close the disk */
   fosfat_closedev(dev);
-  free(path);
-  free(choice);
+  free(device);
+  free(mode);
   free(ginfo);
   return res;
 }
