@@ -237,7 +237,7 @@ static int fos_read(const char *path, char *buf, size_t size,
 void print_info(void) {
   printf("FUSE extension for a read-only access on Smaky FOS. Fosfat-%s\n\n",
          VERSION);
-  printf("Usage: fosmount options [device] [mountpoint]\n\n");
+  printf("Usage: fosmount [options] device mountpoint\n\n");
   printf(" -h --help             this help\n");
   printf(" -a --harddisk         if you use an hard disk and not a floppy,");
   printf(" use this option\n");
