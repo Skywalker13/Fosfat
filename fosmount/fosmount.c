@@ -261,10 +261,7 @@ int main(int argc, char **argv) {
   int res = 0, debug = 0;
   char *device;
   char **arg;
-  e_fosfat_disk type;
-
-  /* Default type is Floppy Disk */
-  type = eFD;
+  e_fosfat_disk type = eFD;
 
   const char *const short_options = "adh";
 
