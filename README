@@ -1,42 +1,40 @@
 
-                                _aaa
-                          _j?\aj?  )?46/
-                        aP'        _j? Q/
-                       )W4aa        )?QQ
-                        )6P'   _aaa _J' 6
-                         J?6aaj?46)?6  aP
-                         Qa/ )Q aP4aj6Jga/
-                           ?????'    f   f
-      aaaa/    aaaa  aaaa   aaa _aaaaf   f aaaa/     _aaaa/
-    aJ?   ??6aP'  ?4P?  )46P' )?Q    f   fj'   6    _P   j'
-   _f        ]            P          f   Q'   J4/  _P   ]'
-   )6   ??Q6aj            f   _a/    f   '   J  4/_P   j'
-    jQaa    ?Q   ]    f   f   ]_f    f      )/   4P   ]'
-   ]'  ??'   4   ]    f   f   )?     f   6   )/      j(
-  _f        _Q   ]    f   6     _    f   P6   ?/    ]'
-   ???6aaaj??]aaajaaaa6aaaP?4aP?4aaaa6aaaf)6aaaJ   a'
-                                              J   a'
-                                             jaaaj'
+                                        _aaa
+                                  _j?\aj?  )?46/
+                                aP'        _j? Q/
+                              )W4aa        )?QQ
+                                )6P'   _aaa _J' 6
+                                J?6aaj?46)?6  aP
+                                Qa/ )Q aP4aj6Jga/
+                                  ?????'    f   f
+              aaaa/    aaaa  aaaa   aaa _aaaaf   f aaaa/     _aaaa/
+            aJ?   ??6aP'  ?4P?  )46P' )?Q    f   fj'   6    _P   j'
+          _f        ]            P          f   Q'   J4/  _P   ]'
+          )6   ??Q6aj            f   _a/    f   '   J  4/_P   j'
+            jQaa    ?Q   ]    f   f   ]_f    f      )/   4P   ]'
+          ]'  ??'   4   ]    f   f   )?     f   6   )/      j(
+          _f        _Q   ]    f   6     _    f   P6   ?/    ]'
+          ???6aaaj??]aaajaaaa6aaaP?4aP?4aaaa6aaaf)6aaaJ   a'
+                                                      J   a'
+                                                    jaaaj'
 
 
 FOSFAT
 ~~~~~~
 
 Fosfat is a library for a read-only access on Smaky FOS
-(File Operating System). Floppy disk and hard disk are
-supported.
+(File Operating System). Floppy disk and hard disk are supported.
 
-Some tools are available for work with a Smaky FOS formatted
-disk. The first tool 'fosread' can work directly with your
-device but it is limited for an console utilisation.
-The tool 'fosmount' uses FUSE for mount in _read-only_ your
-device in your tree. And you can convert the smaky's text
-files with smascii.
-You can compile 'fosmount' with >=fuse-2.5.x. Maybe it works
-with older version but it needs to test.
+Some tools are available for work with a Smaky FOS formatted disk. The first
+tool 'fosread' can work directly with your device but it is limited for an
+console utilisation.
+The tool 'fosmount' uses FUSE for mount in _read-only_ your device in your
+tree. And you can convert the smaky's text files with smascii. You can
+compile 'fosmount' with >=fuse-2.6.x. Maybe it works with older version but
+it needs to test.
 
-Look the help with each application for the command line. Or
-look on the website.
+Look the help with each application for the command line. Or look on the
+website.
 
 
 BUILD
@@ -46,8 +44,8 @@ BUILD
  make
  make install
 
-It will install 'fosread' and 'fosmount' in your local
-directory. Use `./configure --help` for more informations.
+It will install 'fosread', 'fosmount' and 'smascii' in your local directory.
+Use `./configure --help` for more informations.
 
  make install-lib
 
