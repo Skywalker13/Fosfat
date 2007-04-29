@@ -239,6 +239,7 @@ void print_info(void) {
          VERSION);
   printf("Usage: fosmount [options] device mountpoint\n\n");
   printf(" -h --help             this help\n");
+  printf(" -v --version          version\n");
   printf(" -a --harddisk         if you use an hard disk and not a floppy,");
   printf(" use this option\n");
   printf(" -d --debug            that will turn on the fuse debugger\n\n");
@@ -246,6 +247,11 @@ void print_info(void) {
   printf("                       /dev/sda : hard disk, etc\n");
   printf(" mountpoint            for example, /mnt/smaky\n");
   printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n");
+}
+
+/** Print version. */
+void print_version(void) {
+  printf("fosmount Fosfat-%s\n", VERSION);
 }
 
 /** FUSE implemented functions */
@@ -263,12 +269,13 @@ int main(int argc, char **argv) {
   char **arg;
   e_fosfat_disk type = eFD;
 
-  const char *const short_options = "adh";
+  const char *const short_options = "adhv";
 
   const struct option long_options[] = {
     { "harddisk", 0, NULL, 'a' },
     { "debug",    0, NULL, 'd' },
     { "help",     0, NULL, 'h' },
+    { "version",  0, NULL, 'v' },
     { NULL,       0, NULL,  0  }
   };
 
@@ -280,6 +287,9 @@ int main(int argc, char **argv) {
       case '?':           /* invalid option */
       case 'h':           /* -h or --help */
         print_info();
+        return -1;
+      case 'v':           /* -v or --version */
+        print_version();
         return -1;
       case 'a':           /* -a or --harddisk */
         type = eHD;

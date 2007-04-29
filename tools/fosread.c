@@ -155,6 +155,7 @@ void print_info(void) {
   printf("Tool for a read-only access on a Smaky disk. Fosfat-%s\n\n", VERSION);
   printf("Usage: fosread [options] device mode [node] [path]\n\n");
   printf(" -h --help             this help\n");
+  printf(" -v --version          version\n");
   printf(" -a --harddisk         if you use an hard disk and not a floppy,");
   printf(" use this option\n\n");
   printf(" device                for example, /dev/fd0\n");
@@ -170,6 +171,11 @@ void print_info(void) {
   printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n");
 }
 
+/** Print version. */
+void print_version(void) {
+  printf("fosread Fosfat-%s\n", VERSION);
+}
+
 int main(int argc, char **argv) {
   int res = 0, i, next_option;
   e_fosfat_disk type = eFD;
@@ -177,11 +183,12 @@ int main(int argc, char **argv) {
   FOSFAT_DEV *dev;
   s_global_info *ginfo;
 
-  const char *const short_options = "ah";
+  const char *const short_options = "ahv";
 
   const struct option long_options[] = {
     { "harddisk", 0, NULL, 'a' },
     { "help",     0, NULL, 'h' },
+    { "version",  0, NULL, 'v' },
     { NULL,       0, NULL,  0  }
   };
 
@@ -193,6 +200,9 @@ int main(int argc, char **argv) {
       case '?':           /* invalid option */
       case 'h':           /* -h or --help */
         print_info();
+        return -1;
+      case 'v':           /* -v or --version */
+        print_version();
         return -1;
       case 'a':           /* -a or --harddisk */
         type = eHD;
