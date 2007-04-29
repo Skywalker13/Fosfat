@@ -30,6 +30,7 @@
 #include <string.h>     /* strcmp strncmp strstr strlen strdup memcpy memset */
 #include <time.h>       /* mktime */
 #include <fuse.h>
+#include <getopt.h>
 
 #include "fosfat.h"
 
@@ -236,13 +237,14 @@ static int fos_read(const char *path, char *buf, size_t size,
 void print_info(void) {
   printf("FUSE extension for a read-only access on Smaky FOS. Fosfat-%s\n\n",
          VERSION);
-  printf("Usage: fosmount device mountpoint [--harddisk] [--debug]\n\n");
-  printf("  device                /dev/fd0 : floppy disk\n");
-  printf("                        /dev/sda : hard disk, etc\n");
-  printf("  mountpoint            for example, /mnt/smaky\n");
-  printf("  --harddisk            if you use an hard disk and not a floppy,\n");
-  printf("                        use this option\n");
-  printf("  --debug               that will turn on the fuse debugger\n");
+  printf("Usage: fosmount options [device] [mountpoint]\n\n");
+  printf(" -h --help             this help\n");
+  printf(" -a --harddisk         if you use an hard disk and not a floppy,");
+  printf(" use this option\n");
+  printf(" -d --debug            that will turn on the fuse debugger\n\n");
+  printf(" device                /dev/fd0 : floppy disk\n");
+  printf("                       /dev/sda : hard disk, etc\n");
+  printf(" mountpoint            for example, /mnt/smaky\n");
   printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n");
 }
 
@@ -255,7 +257,7 @@ static struct fuse_operations fosfat_oper = {
 };
 
 int main(int argc, char **argv) {
-  int i;
+  int i, next_option;
   int res = 0, debug = 0;
   char *device;
   char **arg;
@@ -264,29 +266,51 @@ int main(int argc, char **argv) {
   /* Default type is Floppy Disk */
   type = eFD;
 
-  /* Check arguments */
-  if (argc < 3) {
+  const char *const short_options = "adh";
+
+  const struct option long_options[] = {
+    { "harddisk", 0, NULL, 'a' },
+    { "debug",    0, NULL, 'd' },
+    { "help",     0, NULL, 'h' },
+    { NULL,       0, NULL,  0  }
+  };
+
+  /* check options */
+  do {
+    next_option = getopt_long(argc, argv, short_options, long_options, NULL);
+    switch (next_option) {
+      default :           /* unknown */
+      case '?':           /* invalid option */
+      case 'h':           /* -h or --help */
+        print_info();
+        return -1;
+      case 'a':           /* -a or --harddisk */
+        type = eHD;
+        break ;
+      case 'd':           /* -d or --debug */
+        debug = 1;
+        break ;
+      case -1:            /* end */
+        break ;
+    }
+  } while (next_option != -1);
+
+  if (argc < optind + 2) {
     print_info();
     return -1;
   }
-  else {
-    for (i = 3; argc > 3 && i < argc; i++) {
-      if (!strcmp(argv[i], "--harddisk"))
-        type = eHD;
-      else if (!strcmp(argv[i], "--debug"))
-        debug = 1;
-    }
-    arg = (char **)malloc(sizeof(char *) * (2 + debug));
-    if (arg) {
-      arg[0] = strdup(argv[0]);
-      if (debug)
-        arg[debug] = strdup("-d");
-      arg[1 + debug] = strdup(argv[2]);
-      device = strdup(argv[1]);
-    }
-    else
-      return -1;
+
+  /* table for fuse */
+  arg = (char **)malloc(sizeof(char *) * (2 + debug));
+  if (arg) {
+    arg[0] = strdup(argv[0]);
+    if (debug)
+      arg[debug] = strdup("-d");
+    device = strdup(argv[optind]);
+    arg[1 + debug] = strdup(argv[optind + 1]);
   }
+  else
+    return -1;
 
   /* Open the floppy disk (or hard disk) */
   if (!(dev = fosfat_opendev(device, type))) {
@@ -295,7 +319,7 @@ int main(int argc, char **argv) {
   }
   else {
     /* FUSE */
-    res = fuse_main(2 + debug, arg, &fosfat_oper);
+    res = fuse_main(2 + debug, arg, &fosfat_oper, NULL);
 
     /* Close the device */
     fosfat_closedev(dev);
