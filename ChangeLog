@@ -1,3 +1,8 @@
+2007-04-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	Use getopt header with fosmount and fosread and add
+	--help and --version options.
+
 2007-03-25  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* smascii: add an option for convert Carriage Return
