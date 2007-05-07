@@ -152,7 +152,8 @@ int get_file(FOSFAT_DEV *dev, const char *path, const char *dst) {
 
 /** Print help. */
 void print_info(void) {
-  printf("Tool for a read-only access on a Smaky disk. Fosfat-%s\n\n", VERSION);
+  printf("Tool for a read-only access on a Smaky disk. Fosfat-");
+  printf("%s\n\n", VERSION);
   printf("Usage: fosread [options] device mode [node] [path]\n\n");
   printf(" -h --help             this help\n");
   printf(" -v --version          version\n");

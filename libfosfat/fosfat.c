@@ -121,7 +121,7 @@ typedef struct block_desc {
   unsigned char npt[2];        //!< Number of tranches in the BD
   unsigned char pts[42][4];    //!< Pointers on the tranches (max 42 tranches)
   char name[16];               //!< Filename
-  unsigned char nbs[42];       //!< Length (in blocks) of each tranches (1 byte)
+  unsigned char nbs[42];       //!< Length (in blocks) of each tranches
   unsigned char reserve[4];    //!< Unused
   unsigned char lst[2];        //!< Number of byte in the last tranche
   unsigned char hac[2];        //!< Hashing function if LIST
@@ -725,7 +725,8 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned int block) {
  * @param searchname the name in the path
  * @return true if it seems to be a dir name
  */
-static inline int fosfat_isdirname(const char *realname, const char *searchname)
+static inline int fosfat_isdirname(const char *realname,
+                                   const char *searchname)
 {
       /* Test with a name as foobar.dir */
   if ((
