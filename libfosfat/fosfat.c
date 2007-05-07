@@ -689,7 +689,7 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned int block) {
       dir_list = dir_desc->first_bl;
       /* Go to the last BL */
       while (dir_list && dir_list->next_bl)
-             dir_list = dir_list->next_bl;
+        dir_list = dir_list->next_bl;
 
       /* Loop all others pointers */
       for (i = 1; dir_list && i < c2l(dir_desc->npt,
