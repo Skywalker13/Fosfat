@@ -57,6 +57,14 @@ You can found others informations on the website :
 http://home.gna.org/fosfat/
 
 
+PACKAGE
+~~~~~~~
+
+ ./package-deb
+
+It will build a Debian Ubuntu package for your architecture.
+
+
 AUTHOR
 ~~~~~~
 
