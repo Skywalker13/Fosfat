@@ -1,3 +1,7 @@
+2006-05-10  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* First beta released 0.2.0
+
 2007-04-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Use getopt header with fosmount and fosread and add
