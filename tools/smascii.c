@@ -37,6 +37,7 @@
  * @return 1 for success and 0 for error
  */
 int run_conv(const char *input, const char *output, e_newline newline) {
+  int res = 1;
   FILE *in = NULL, *out = NULL;
   char buffer[BUFFER_SIZE];
   size_t lng;
@@ -53,14 +54,16 @@ int run_conv(const char *input, const char *output, e_newline newline) {
       }
     }
     printf("File %s successfully converted to %s!\n", input, output);
-    fclose(in);
-    fclose(out);
   }
   else {
     printf("Reading or writing error!\n");
-    return 0;
+    res = 0;
   }
-  return 1;
+  if (in)
+    fclose(in);
+  if (out)
+    fclose(out);
+  return res;
 }
 
 /** Print help. */
