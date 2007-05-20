@@ -587,6 +587,8 @@ echolog "Checking for stdarg ..."
 check_header stdarg.h || die "Error, can't find stdarg !"
 echolog "Checking for ctype ..."
 check_header ctype.h || die "Error, can't find ctype !"
+echolog "Checking for getopt ..."
+check_header getopt.h || die "Error, can't find getopt !"
 
 if test "$fosmount" = "yes"; then
   echolog "Checking for errno ..."
