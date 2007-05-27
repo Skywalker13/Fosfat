@@ -863,12 +863,12 @@ static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location,
   void *search;
 
   if (dev && location && (syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST))) {
-    if (!type && (*location == '\0' || !strcmp(location, "/")))
+    if (type == eSBD && (*location == '\0' || !strcmp(location, "/")))
       return (s_fosfat_bd *)syslist;
     files = syslist->first_bl;
     if ((search = fosfat_search_bdlf(dev, location, files, type))) {
       fosfat_free_dir(syslist);
-      if (type)
+      if (type == eSBLF)
         return (s_fosfat_blf *)search;
       else
         return (s_fosfat_bd *)search;
