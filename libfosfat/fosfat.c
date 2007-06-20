@@ -1261,15 +1261,19 @@ char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path,
       fosfat_isnotdel(file) && !fosfat_isdir(file))
   {
     buffer = (char *)malloc(sizeof(char) * size);
-    file2 = fosfat_read_file(dev, c2l(file->pt, sizeof(file->pt)));
-    if (buffer && file2 &&
-        fosfat_get(dev, file2, NULL, 0, 1, offset, size, buffer))
-    {
-      free(buffer);
-      buffer = NULL;
+    if (buffer) {
+      memset(buffer, 0, sizeof(char) * size);
+      file2 = fosfat_read_file(dev, c2l(file->pt, sizeof(file->pt)));
+      if (file2)
+        fosfat_get(dev, file2, NULL, 0, 1, offset, size, buffer);
+      else {
+        free(buffer);
+        buffer = NULL;
+      }
+      free(file);
+      if (file2)
+        fosfat_free_file(file2);
     }
-    free(file);
-    fosfat_free_file(file2);
   }
   return buffer;
 }
