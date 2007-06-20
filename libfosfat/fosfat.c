@@ -39,8 +39,10 @@
 
 /* Block size (256 bytes) */
 #define FOSFAT_BLK      256
+
 #define FOSFAT_NBL      4
 #define FOSFAT_Y2K      70
+#define FOSFAT_CACHEMAX 16
 
 #define FOSFAT_BLOCK0   0x00
 #define FOSFAT_SYSLIST  0x01
@@ -110,6 +112,8 @@ typedef struct block_list {
   unsigned char chk[4];        //!< Check control
   unsigned char prev[4];       //!< Previous BL
   unsigned char reserve[4];    //!< Unused
+  /* Not in the block */
+  unsigned int pt;             //!< Block's number of this BL
   /* Linked list */
   struct block_list *next_bl;
 } s_fosfat_bl;
@@ -134,12 +138,27 @@ typedef struct block_desc {
   struct block_list *first_bl;
 } s_fosfat_bd;
 
+/** Cache list for name, BD and BL blocks */
+typedef struct cache_list {
+  char *name;
+  unsigned int bl;
+  unsigned int bd;
+  unsigned char isdir;
+  /* Linked list */
+  struct cache_list *sub;
+  struct cache_list *next;
+} s_cachelist;
+
 
 /** Global variable for the FOSBOOT address */
 static int g_fosboot = FOSBOOT_FD;
 
 /** Global variable for the CHK */
 static unsigned int g_foschk = 0;
+
+/** Global variables for the cache system (search) */
+static unsigned int g_cache = 1;
+static s_cachelist *g_cachelist = NULL;
 
 
 /** Translate a block number to an address. This function
@@ -502,10 +521,13 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned int block,
 
         if ((first_bl = fosfat_read_bl(dev, block))) {
           block_list = first_bl;
+          block_list->pt = block;
           for (i = 1; block_list && i < nbs; i++) {
             block_list->next_bl = fosfat_read_bl(dev, block +
                                                  (unsigned int)i);
             block_list = block_list->next_bl;
+            if (block_list)
+              block_list->pt = block + (unsigned int)i;
           }
           return (s_fosfat_bl *)first_bl;
         }
@@ -848,6 +870,99 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
   return NULL;
 }
 
+/** Search a BD or a BLF from a location in the cache.
+ *  The location must be not bigger of MAX_SPLIT /!\
+ * @param dev pointer on the device
+ * @param location path for found the BD/BLF (foo/bar/file)
+ * @param type eSBD or eSBLF
+ * @return the BD, BLF or NULL is nothing found
+ */
+static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
+                                   e_fosfat_search type)
+{
+  int i, nb = 0, ontop = 1, isdir = 0;
+  char *tmp, *path, *name = NULL;
+  char dir[MAX_SPLIT][FOSFAT_NAMELGT];
+  s_cachelist *list;
+  unsigned int bd_block = 0, bl_block = 0;
+  s_fosfat_bl *bl_found = NULL;
+  s_fosfat_blf *blf_found = NULL;
+  s_fosfat_bd *bd_found = NULL;
+
+  if (dev && location) {
+    if (type == eSBLF)
+      blf_found = malloc(sizeof(s_fosfat_blf));
+
+    list = g_cachelist;
+    path = strdup(location);
+
+    /* Split the path into a table */
+    if ((tmp = strtok((char *)path, "/")) != NULL) {
+      snprintf(dir[nb], sizeof(dir[nb]), "%s", tmp);
+      while ((tmp = strtok(NULL, "/")) != NULL && nb < MAX_SPLIT - 1)
+        snprintf(dir[++nb], sizeof(dir[nb]), "%s", tmp);
+    }
+    else
+      snprintf(dir[nb], sizeof(dir[nb]), "%s", path);
+    nb++;
+
+    /* Loop for all directories in the path */
+    for (i = 0; list && i < nb; i++) {
+      ontop = 1;
+      do {
+        /* Test if it is a directory */
+        if (list->isdir && fosfat_isdirname(list->name, dir[i])) {
+          bd_block = list->bd;
+          bl_block = list->bl;
+          if (name)
+            free(name);
+          name = strdup(list->name);
+          /* Go to the next level */
+          list = list->sub;
+          ontop = 0;
+          isdir = 1;
+        }
+        /* Test if it is a file */
+        else if (!list->isdir && !strcasecmp(list->name, dir[i])) {
+          bd_block = list->bd;
+          bl_block = list->bl;
+          if (name)
+            free(name);
+          name = strdup(list->name);
+          ontop = 0;
+          isdir = 0;
+        }
+        else
+          ontop = 1;
+      } while (ontop && list && (list = list->next));
+    }
+    free(path);
+    if (!ontop) {
+      switch (type) {
+        case eSBD: {
+          if (isdir)
+            bd_found = fosfat_read_dir(dev, bd_block);
+          else
+            bd_found = fosfat_read_file(dev, bd_block);
+          return (s_fosfat_bd *)bd_found;
+        }
+        case eSBLF: {
+          bl_found = fosfat_read_bl(dev, bl_block);
+          for (i = 0; bl_found && i < FOSFAT_NBL; i++) {
+            if (!strcasecmp(bl_found->file[i].name, name)) {
+              memcpy(blf_found, &bl_found->file[i], sizeof(*blf_found));
+              return (s_fosfat_blf *)blf_found;
+            }
+          }
+        }
+      }
+    }
+    if (name)
+      free(name);
+  }
+  return NULL;
+}
+
 /** Search a BD or a BLF from a location in the first SYS_LIST.
  *  That uses fosfat_search_bdlf().
  * @param dev pointer on the device
@@ -860,20 +975,36 @@ static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location,
 {
   s_fosfat_bd *syslist;
   s_fosfat_bl *files;
-  void *search;
+  void *search = NULL;
 
-  if (dev && location && (syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST))) {
-    if (type == eSBD && (*location == '\0' || !strcmp(location, "/")))
+  if (dev && location) {
+    if (type == eSBD && (*location == '\0' || !strcmp(location, "/"))) {
+      syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST);
       return (s_fosfat_bd *)syslist;
-    files = syslist->first_bl;
-    if ((search = fosfat_search_bdlf(dev, location, files, type))) {
-      fosfat_free_dir(syslist);
-      if (type == eSBLF)
-        return (s_fosfat_blf *)search;
-      else
-        return (s_fosfat_bd *)search;
     }
-    fosfat_free_dir(syslist);
+    /* Without cache, slower but better if the files change
+     * when the FOS is always mounted (normally useless) !
+     */
+    if (!g_cache && (syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST))) {
+      files = syslist->first_bl;
+      if ((search = fosfat_search_bdlf(dev, location, files, type))) {
+        fosfat_free_dir(syslist);
+        if (type == eSBLF)
+          return (s_fosfat_blf *)search;
+        else
+          return (s_fosfat_bd *)search;
+      }
+      fosfat_free_dir(syslist);
+    }
+    /* With cache enable, faster */
+    else if (g_cache) {
+      if ((search = fosfat_search_incache(dev, location, type))) {
+        if (type == eSBLF)
+          return (s_fosfat_blf *)search;
+        else
+          return (s_fosfat_bd *)search;
+      }
+    }
   }
   return NULL;
 }
@@ -1158,6 +1289,72 @@ char *fosfat_diskname(FOSFAT_DEV *dev) {
   return name;
 }
 
+/** Put file information in the cache list structure.
+ * @param file BLF element in the BL
+ * @param bl BL block's number
+ * @return the cache for a file
+ */
+static s_cachelist *fosfat_cache_file(s_fosfat_blf *file, unsigned int bl) {
+  s_cachelist *cachefile = NULL;
+
+  if (file) {
+    cachefile = malloc(sizeof(s_cachelist));
+    cachefile->next = NULL;
+    cachefile->sub = NULL;
+    cachefile->isdir = fosfat_isdir(file) ? 1 : 0;
+    cachefile->name = strdup(file->name);
+    cachefile->bl = bl;
+    cachefile->bd = c2l(file->pt, sizeof(file->pt));
+  }
+  return cachefile;
+}
+
+/** List all files on the disk for fill the global cache list.
+ *  This function is recursive!
+ * @param dev pointer on the device
+ * @param pt block's number of the BD
+ * @return the first element of the cache list.
+ */
+static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, unsigned int pt) {
+  int i;
+  s_fosfat_bd *dir = NULL;
+  s_fosfat_bl *files;
+  s_cachelist *firstfile = NULL;
+  s_cachelist *list = NULL;
+
+  if (dev && (dir = fosfat_read_dir(dev, pt))) {
+    files = dir->first_bl;
+    do {
+      /* Check all files in the BL */
+      for (i = 0; i < FOSFAT_NBL; i++) {
+        if (fosfat_isopenexm(&files->file[i]) &&
+            fosfat_isnotdel(&files->file[i]))
+        {
+          /* Complete the linked list with all files */
+          if (list) {
+            list->next = fosfat_cache_file(&files->file[i], files->pt);
+            list = list->next;
+          }
+          else {
+            firstfile = fosfat_cache_file(&files->file[i], files->pt);
+            list = firstfile;
+          }
+          /* If the file is a directory, then do a recursive cache */
+          if (list && fosfat_isdir(&files->file[i]) &&
+              !fosfat_issystem(&files->file[i]))
+            list->sub = fosfat_cache_dir(dev, list->bd);
+        }
+      }
+    } while ((files = files->next_bl));
+  }
+  fosfat_free_dir(dir);
+  return firstfile;
+}
+
+/*static void fosfat_cache_unloader(FOSFAT_DEV *dev) {
+  
+}*/
+
 /** Open the device. That hides the fopen processing.
  *  A device can be read like a file.
  * @param dev the device name
@@ -1165,6 +1362,8 @@ char *fosfat_diskname(FOSFAT_DEV *dev) {
  * @return the device handle
  */
 FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
+  FOSFAT_DEV *fosdev = NULL;
+
   if (dev) {
     switch (disk) {
       case eFD:
@@ -1173,15 +1372,24 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
       case eHD:
         g_fosboot = FOSBOOT_HD;
     }
-    return ((fopen(dev, "r")));
+    /* Open the device */
+    if ((fosdev = fopen(dev, "r"))) {
+      /* Load the cache if needed */
+      if (g_cache)
+        g_cachelist = fosfat_cache_dir(fosdev, FOSFAT_SYSLIST);
+    }
   }
-  return NULL;
+  return fosdev;
 }
 
 /** Close the device. That hides the fclose processing.
  * @param dev the device handle
  */
 void fosfat_closedev(FOSFAT_DEV *dev) {
-  if (dev)
+  if (dev) {
+    /* Unload the cache if is loaded */
+    //if (g_cachelist)
+      //fosfat_cache_unloader(dev);
     fclose(dev);
+  }
 }
