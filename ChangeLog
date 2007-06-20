@@ -1,3 +1,14 @@
+2007-06-20  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* libfosfat: a new system of caching is implemented
+	for improve the speed. Now that will be very fast for
+	looking in a directory. The system must be fixed for
+	that the memory is released.
+
+	* fosmount: a bug is fixed for that FUSE is always
+	loaded as single-thread. If not there is a really a
+	big problem when datas are loaded with libfosfat.
+
 2007-05-10  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* First beta released 0.2.0
