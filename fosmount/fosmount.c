@@ -315,6 +315,8 @@ int main(int argc, char **argv) {
       arg[debug] = strdup("-d");
     device = strdup(argv[optind]);
     arg[1 + debug] = strdup(argv[optind + 1]);
+    /* FUSE must be used as single-thread */
+    arg[2 + debug] = strdup("-s");
   }
   else
     return -1;
@@ -326,7 +328,7 @@ int main(int argc, char **argv) {
   }
   else {
     /* FUSE */
-    res = fuse_main(2 + debug, arg, &fosfat_oper, NULL);
+    res = fuse_main(3 + debug, arg, &fosfat_oper, NULL);
 
     /* Close the device */
     fosfat_closedev(dev);
