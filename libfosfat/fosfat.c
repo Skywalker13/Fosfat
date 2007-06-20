@@ -654,10 +654,10 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
                                   (unsigned)op_offset < size + check_last))
             {
               int first_pts = op_offset + op_inoff - (signed)size;
+              int cp = (op_size - op_inoff > (signed)check_last - first_pts) ?
+                       ((signed)check_last - first_pts) : (op_size - op_inoff);
               /* Copy the tranche */
-              memcpy(op_buffer + op_inoff, file_d->data + first_pts,
-                     (op_size - op_inoff > (signed)check_last - first_pts) ?
-                     (signed)check_last - first_pts : op_size - op_inoff);
+              memcpy(op_buffer + op_inoff, file_d->data + first_pts, cp);
               op_inoff += check_last - first_pts;
               if (op_size <= op_inoff)
                 res = 0;
