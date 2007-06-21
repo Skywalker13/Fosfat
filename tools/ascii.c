@@ -52,10 +52,10 @@ static unsigned char smaky2iso8859_charset[] = {
 };
 
 
-/** Convert smaky char to ISO-8859-1 char.
- * @param value the char
- * @param newline CR or LF
- * @return the new char
+/** \brief Convert smaky char to ISO-8859-1 char.
+ * \param value the char
+ * \param newline CR or LF
+ * \return the new char
  */
 static inline unsigned char char_sma2iso8859(unsigned char value,
                                              e_newline newline)
@@ -64,11 +64,11 @@ static inline unsigned char char_sma2iso8859(unsigned char value,
           (value == 13 ? newline : smaky2iso8859_charset[value]));
 }
 
-/** Convert a buffer of chars.
- * @param buffer pointer on the buffer
- * @param size the length
- * @param newline CR or LF
- * @return the buffer
+/** \brief Convert a buffer of chars.
+ * \param buffer pointer on the buffer
+ * \param size the length
+ * \param newline CR or LF
+ * \return the buffer
  */
 char *sma2iso8859(char *buffer, unsigned int size, e_newline newline) {
   unsigned int i = 0;

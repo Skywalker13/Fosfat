@@ -31,10 +31,10 @@
 
 #define BUFFER_SIZE 256
 
-/** Run the text conversion.
- * @param input Smaky text file
- * @param output ISO-8859-1 text file
- * @return 1 for success and 0 for error
+/** \brief Run the text conversion.
+ * \param input Smaky text file
+ * \param output ISO-8859-1 text file
+ * \return 1 for success and 0 for error
  */
 int run_conv(const char *input, const char *output, e_newline newline) {
   int res = 1;

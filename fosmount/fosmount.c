@@ -42,9 +42,9 @@
 static FOSFAT_DEV *dev;
 
 
-/** Convert 's_fosfat_file' to 'struct stat'.
- * @param file file description
- * @return the stat
+/** \brief Convert 's_fosfat_file' to 'struct stat'.
+ * \param file file description
+ * \return the stat
  */
 static struct stat *in_stat(s_fosfat_file *file) {
   struct stat *st;
@@ -91,9 +91,9 @@ static struct stat *in_stat(s_fosfat_file *file) {
   return st;
 }
 
-/** Get the file stat from a path an return as struct stat.
- * @param path (/foo/bar)
- * @return the stat
+/** \brief Get the file stat from a path an return as struct stat.
+ * \param path (/foo/bar)
+ * \return the stat
  */
 static struct stat *get_stat(const char *path) {
   struct stat *st = NULL;
@@ -106,10 +106,10 @@ static struct stat *get_stat(const char *path) {
   return st;
 }
 
-/** FUSE : get attributes of a file.
- * @param path (foo/bar)
- * @param stbuf attributes
- * @return 0 for success
+/** \brief FUSE : get attributes of a file.
+ * \param path (foo/bar)
+ * \param stbuf attributes
+ * \return 0 for success
  */
 static int fos_getattr(const char *path, struct stat *stbuf) {
   char *location;
@@ -135,13 +135,13 @@ static int fos_getattr(const char *path, struct stat *stbuf) {
   return 0;
 }
 
-/** FUSE : read a directory.
- * @param path (foo/bar)
- * @param buf buffer for filler
- * @param filler function for put each entry
- * @param offset not used
- * @param fi not used
- * @return 0 for success
+/** \brief FUSE : read a directory.
+ * \param path (foo/bar)
+ * \param buf buffer for filler
+ * \param filler function for put each entry
+ * \param offset not used
+ * \param fi not used
+ * \return 0 for success
  */
 static int fos_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                        off_t offset, struct fuse_file_info *fi)
@@ -174,10 +174,10 @@ static int fos_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
   return 0;
 }
 
-/** FUSE : test if a file can be opened.
- * @param path (foo/bar)
- * @param fi flags
- * @return 0 for success
+/** \brief FUSE : test if a file can be opened.
+ * \param path (foo/bar)
+ * \param fi flags
+ * \return 0 for success
  */
 static int fos_open(const char *path, struct fuse_file_info *fi) {
   (void)path;
@@ -191,13 +191,13 @@ static int fos_open(const char *path, struct fuse_file_info *fi) {
   return 0;
 }
 
-/** FUSE : read the data of a file.
- * @param path (foo/bar)
- * @param buf buffer for put the data
- * @param size size in bytes
- * @param offset offset un bytes
- * @param fi not used
- * @return the size
+/** \brief FUSE : read the data of a file.
+ * \param path (foo/bar)
+ * \param buf buffer for put the data
+ * \param size size in bytes
+ * \param offset offset un bytes
+ * \param fi not used
+ * \return the size
  */
 static int fos_read(const char *path, char *buf, size_t size,
                     off_t offset, struct fuse_file_info *fi)

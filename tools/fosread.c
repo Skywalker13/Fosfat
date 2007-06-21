@@ -34,9 +34,9 @@ typedef struct ginfo {
   char name[FOSFAT_NAMELGT];
 } s_global_info;
 
-/** Get info from the disk.
- * @param dev pointer on the device
- * @return info
+/** \brief Get info from the disk.
+ * \param dev pointer on the device
+ * \return info
  */
 s_global_info *get_ginfo(FOSFAT_DEV *dev) {
   s_global_info *ginfo;
@@ -55,17 +55,17 @@ s_global_info *get_ginfo(FOSFAT_DEV *dev) {
   return ginfo;
 }
 
-/** Print date and hour.
- * @param time date and hour
+/** \brief Print date and hour.
+ * \param time date and hour
  */
 void print_date(s_fosfat_time *time) {
   printf(" %4i-%02i-%02i %02i:%02i", time->year, time->month,
                                      time->day, time->hour, time->minute);
 }
 
-/** Print a file in the list.
- * @param location where
- * @param file description
+/** \brief Print a file in the list.
+ * \param location where
+ * \param file description
  */
 void print_file(const char *location, s_fosfat_file *file) {
   char *path;
@@ -96,10 +96,10 @@ void print_file(const char *location, s_fosfat_file *file) {
   free(path);
 }
 
-/** List the content of a directory.
- * @param dev pointer on the device
- * @param path where in the tree
- * @return true if it is ok
+/** \brief List the content of a directory.
+ * \param dev pointer on the device
+ * \param path where in the tree
+ * \return true if it is ok
  */
 int list_dir(FOSFAT_DEV *dev, const char *path) {
   s_fosfat_file *files, *first_file;
@@ -124,11 +124,11 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
   return 1;
 }
 
-/** Copy a file from the disk.
- * @param dev pointer on the device
- * @param path where in the tree
- * @param dst where in local
- * @return true if it is ok
+/** \brief Copy a file from the disk.
+ * \param dev pointer on the device
+ * \param path where in the tree
+ * \param dst where in local
+ * \return true if it is ok
  */
 int get_file(FOSFAT_DEV *dev, const char *path, const char *dst) {
   int res = 0;
