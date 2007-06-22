@@ -1,3 +1,11 @@
+2007-06-22  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* Add support for symbolic links. The Smaky's soft
+	links are now converted to symlink.
+
+	* libfosfat: the cache is now released when the device
+	is closed.
+
 2007-06-20  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: a new system of caching is implemented
