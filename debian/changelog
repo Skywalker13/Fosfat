@@ -1,3 +1,9 @@
+fosfat (0.2.1-0ubuntu0) feisty; urgency=low
+
+  * Second beta release
+
+ -- Mathieu Schroeter <mathieu.schroeter@gamesover.ch>  Thu, 22 Jun 2007 20:00:00 +0100
+
 fosfat (0.2.0-0ubuntu0) feisty; urgency=low
 
   * First beta release

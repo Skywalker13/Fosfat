@@ -1,5 +1,7 @@
 2007-06-22  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
+	* Second beta released 0.2.1
+
 	* Add support for symbolic links. The Smaky's soft
 	links are now converted to symlink.
 
