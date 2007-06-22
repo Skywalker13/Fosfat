@@ -1423,6 +1423,7 @@ static void fosfat_cache_unloader(FOSFAT_DEV *dev, s_cachelist *cache) {
       fosfat_cache_unloader(dev, it->sub);
     tofree = it;
     it = it->next;
+    free(tofree->name);
     free(tofree);
   }
 }

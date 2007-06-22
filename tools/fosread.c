@@ -182,7 +182,7 @@ int main(int argc, char **argv) {
   e_fosfat_disk type = eFD;
   char *device = NULL, *mode = NULL, *node = NULL, *path = NULL;
   FOSFAT_DEV *dev;
-  s_global_info *ginfo;
+  s_global_info *ginfo = NULL;
 
   const char *const short_options = "ahv";
 
@@ -232,11 +232,11 @@ int main(int argc, char **argv) {
   /* Open the floppy disk (or hard disk) */
   if (!(dev = fosfat_opendev(device, type))) {
     printf("Could not open %s for reading!\n", device);
-    return -1;
+    res = -1;
   }
 
   /* Get globals informations on the disk */
-  if ((ginfo = get_ginfo(dev))) {
+  if (!res && (ginfo = get_ginfo(dev))) {
     printf("Smaky disk %s\n", ginfo->name);
     /* Show the list of a directory */
     if (!strcasecmp(mode, "list")) {
