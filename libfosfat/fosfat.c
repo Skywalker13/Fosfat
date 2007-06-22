@@ -1362,9 +1362,23 @@ static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, unsigned int pt) {
   return firstfile;
 }
 
-/*static void fosfat_cache_unloader(FOSFAT_DEV *dev) {
-  
-}*/
+/** \brief Unload the cache.
+ *  This function releases all the cache when the device is closed.
+ * \param dev the device name
+ * \param cache the first element of the cache list
+ */
+static void fosfat_cache_unloader(FOSFAT_DEV *dev, s_cachelist *cache) {
+  s_cachelist *it, *tofree;
+
+  it = cache;
+  while (it) {
+    if (it->sub)
+      fosfat_cache_unloader(dev, it->sub);
+    tofree = it;
+    it = it->next;
+    free(tofree);
+  }
+}
 
 /** \brief Open the device.
  *  That hides the fopen processing. A device can be read like a file.
@@ -1400,8 +1414,8 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
 void fosfat_closedev(FOSFAT_DEV *dev) {
   if (dev) {
     /* Unload the cache if is loaded */
-    //if (g_cachelist)
-      //fosfat_cache_unloader(dev);
+    if (g_cachelist)
+      fosfat_cache_unloader(dev, g_cachelist);
     fclose(dev);
   }
 }
