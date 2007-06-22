@@ -50,6 +50,7 @@ typedef struct att {
   int isdir     : 1;
   int isvisible : 1;
   int isencoded : 1;
+  int islink    : 1;
 } s_fosfat_att;
 
 /** List of files in a directory */

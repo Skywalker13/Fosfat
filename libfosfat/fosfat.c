@@ -1121,6 +1121,7 @@ static s_fosfat_file *fosfat_stat(s_fosfat_blf *file) {
     stat->att.isdir = fosfat_isdir(file) ? 1 : 0;
     stat->att.isvisible = fosfat_isvisible(file) ? 1 : 0;
     stat->att.isencoded = fosfat_isencoded(file) ? 1 : 0;
+    stat->att.islink = fosfat_islink(file) ? 1 : 0;
 
     /* Creation date */
     stat->time_c.year = y2k(h2d(file->cd[2]));
