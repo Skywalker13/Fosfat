@@ -54,9 +54,13 @@ static struct stat *in_stat(s_fosfat_file *file) {
   memset(st, 0, sizeof(*st));
   memset(&time, 0, sizeof(time));
 
-  /* Directory or file */
+  /* Directory, symlink or file */
   if (file->att.isdir) {
     st->st_mode = S_IFDIR | FOS_DIR;
+    st->st_nlink = 2;
+  }
+  else if (file->att.islink) {
+    st->st_mode = S_IFLNK | FOS_DIR;
     st->st_nlink = 2;
   }
   else {
@@ -104,6 +108,27 @@ static struct stat *get_stat(const char *path) {
     free(file);
   }
   return st;
+}
+
+/** \brief FUSE : read the target of a symlink.
+ * \param path (foo/bar)
+ * \param dst target
+ * \param size max length
+ * \return 0 for success
+ */
+static int fos_readlink(const char *path, char *dst, size_t size) {
+  int res = -ENOENT;
+  char *link;
+
+  link = fosfat_symlink(dev, path);
+
+  if (strlen(link) < size) {
+    memcpy(dst, link, strlen(link) + 1);
+    res = 0;
+  }
+  if (link)
+    free(link);
+  return res;
 }
 
 /** \brief FUSE : get attributes of a file.
@@ -256,10 +281,11 @@ void print_version(void) {
 
 /** FUSE implemented functions */
 static struct fuse_operations fosfat_oper = {
-  .getattr = fos_getattr,
-  .readdir = fos_readdir,
-  .open    = fos_open,
-  .read    = fos_read,
+  .getattr  = fos_getattr,
+  .readdir  = fos_readdir,
+  .open     = fos_open,
+  .read     = fos_read,
+  .readlink = fos_readlink,
 };
 
 int main(int argc, char **argv) {

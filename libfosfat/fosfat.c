@@ -1100,6 +1100,54 @@ int fosfat_p_isopenexm(FOSFAT_DEV *dev, const char *location) {
   return 0;
 }
 
+/** \brief Read the data for get the target path of a symlink.
+ *  A Smaky's symlink is a simple file with the target's path in the data.
+ *  This function read the data and extract the right path.
+ * \param dev pointer on the device
+ * \param file BD of the symlink
+ * \return the target path
+ */
+static char *fosfat_get_link(FOSFAT_DEV *dev, s_fosfat_bd *file) {
+  s_fosfat_data *data;
+  char *path = NULL;
+  char *start, *it;
+
+  data = fosfat_read_data(dev, c2l(file->pts[0], sizeof(file->pts[0])),
+                          file->nbs[0], eDATA);
+  if (data) {
+    start = (char *)data->data + 3;
+    while ((it = strchr(start, ':')))
+      *it = '/';
+    it = strrchr(start, '/');
+    if (it)
+      *it = '\0';
+
+    path = strdup(start);
+    if (path)
+      lc(path);
+
+    fosfat_free_data(data);
+  }
+  return path;
+}
+
+/** \brief Get the target of a symlink.
+ *  This function is high level.
+ * \param dev pointer on the device
+ * \param location file in the path
+ * \return the target path
+ */
+char *fosfat_symlink(FOSFAT_DEV *dev, const char *location) {
+  s_fosfat_bd *entry;
+  char *link = NULL;
+
+  if (dev && location && (entry = fosfat_search_insys(dev, location, eSBD))) {
+    link = fosfat_get_link(dev, entry);
+    free(entry);
+  }
+  return link;
+}
+
 /** \brief Return all informations on one file.
  *  This function uses the BLF and get only useful attributes.
  * \param dev pointer on the device
