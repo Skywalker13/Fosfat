@@ -258,11 +258,11 @@ int main(int argc, char **argv) {
     }
     else
       print_info();
+    free(ginfo);
   }
   /* Close the disk */
   fosfat_closedev(dev);
   free(device);
   free(mode);
-  free(ginfo);
   return res;
 }
