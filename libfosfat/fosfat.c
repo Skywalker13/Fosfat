@@ -833,9 +833,6 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
               break;
             }
             /* Test if it is a file or a soft-link */
-            // TODO: currently, the soft-links are interpreted like a
-            //       simple file. That must be implemented for display
-            //       a unix symbolic link instead of a file.
             else if (!fosfat_isdir(&loop->file[j]) &&
                      (!strcasecmp(loop->file[j].name, dir[i]) ||
                      (fosfat_islink(&loop->file[j]) &&
