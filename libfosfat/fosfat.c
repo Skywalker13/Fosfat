@@ -144,6 +144,7 @@ typedef struct cache_list {
   unsigned int bl;
   unsigned int bd;
   unsigned char isdir;
+  unsigned char islink;
   /* Linked list */
   struct cache_list *sub;
   struct cache_list *next;
@@ -924,8 +925,13 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
           ontop = 0;
           isdir = 1;
         }
-        /* Test if it is a file */
-        else if (!list->isdir && !strcasecmp(list->name, dir[i])) {
+        /* Test if it is a file or a soft-link */
+        else if (!list->isdir && (
+                    !strcasecmp(list->name, dir[i]) ||
+                    (list->islink && fosfat_isdirname(list->name, dir[i]))
+                  )
+                )
+        {
           bd_block = list->bd;
           bl_block = list->bl;
           if (name)
@@ -1306,6 +1312,7 @@ static s_cachelist *fosfat_cache_file(s_fosfat_blf *file, unsigned int bl) {
     cachefile->next = NULL;
     cachefile->sub = NULL;
     cachefile->isdir = fosfat_isdir(file) ? 1 : 0;
+    cachefile->islink = fosfat_islink(file) ? 1 : 0;
     cachefile->name = strdup(file->name);
     cachefile->bl = bl;
     cachefile->bd = c2l(file->pt, sizeof(file->pt));
