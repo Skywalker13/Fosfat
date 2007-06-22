@@ -263,7 +263,7 @@ static struct fuse_operations fosfat_oper = {
 };
 
 int main(int argc, char **argv) {
-  int i, next_option;
+  int next_option;
   int res = 0, debug = 0;
   char *device;
   char **arg;
@@ -335,9 +335,6 @@ int main(int argc, char **argv) {
   }
 
   /* Free */
-  for (i = 0; i < 2 + debug; i++)
-    free(arg[i]);
-  free(arg);
   free(device);
 
   return res;
