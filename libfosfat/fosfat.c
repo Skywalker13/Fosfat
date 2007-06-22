@@ -926,11 +926,12 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
           isdir = 1;
         }
         /* Test if it is a file or a soft-link */
-        else if (!list->isdir && (
-                    !strcasecmp(list->name, dir[i]) ||
-                    (list->islink && fosfat_isdirname(list->name, dir[i]))
-                  )
-                )
+        else if (
+            !list->isdir && (
+              !strcasecmp(list->name, dir[i]) ||
+              (list->islink && fosfat_isdirname(list->name, dir[i]))
+            )
+          )
         {
           bd_block = list->bd;
           bl_block = list->bl;
