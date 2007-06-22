@@ -1147,7 +1147,6 @@ char *fosfat_symlink(FOSFAT_DEV *dev, const char *location) {
 
 /** \brief Return all informations on one file.
  *  This function uses the BLF and get only useful attributes.
- * \param dev pointer on the device
  * \param file BLF on the file
  * \return the stat
  */
