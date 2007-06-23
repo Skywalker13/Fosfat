@@ -42,7 +42,6 @@
 
 #define FOSFAT_NBL      4
 #define FOSFAT_Y2K      70
-#define FOSFAT_CACHEMAX 16
 
 #define FOSFAT_BLOCK0   0x00
 #define FOSFAT_SYSLIST  0x01
