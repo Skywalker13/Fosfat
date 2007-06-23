@@ -1406,8 +1406,8 @@ static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, unsigned int pt) {
         }
       }
     } while ((files = files->next_bl));
+    fosfat_free_dir(dir);
   }
-  fosfat_free_dir(dir);
   return firstfile;
 }
 
