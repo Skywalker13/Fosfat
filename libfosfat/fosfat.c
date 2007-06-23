@@ -945,6 +945,8 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
     if (!ontop) {
       switch (type) {
         case eSBD: {
+          if (name)
+            free(name);
           if (isdir)
             bd_found = fosfat_read_dir(dev, bd_block);
           else
@@ -955,6 +957,7 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
           bl_found = fosfat_read_bl(dev, bl_block);
           for (i = 0; bl_found && i < FOSFAT_NBL; i++) {
             if (!strcasecmp(bl_found->file[i].name, name)) {
+              free(name);
               memcpy(blf_found, &bl_found->file[i], sizeof(*blf_found));
               return (s_fosfat_blf *)blf_found;
             }
@@ -964,6 +967,7 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
     }
     if (name)
       free(name);
+    free(blf_found);
   }
   return NULL;
 }
