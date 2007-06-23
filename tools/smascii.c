@@ -50,10 +50,11 @@ int run_conv(const char *input, const char *output, e_newline newline) {
         fwrite((char *)buffer, (size_t)sizeof(char), lng, out);
       else {
         printf("Conversion error!\n");
-        return 0;
+        res = 0;
       }
     }
-    printf("File %s successfully converted to %s!\n", input, output);
+    if (res)
+      printf("File %s successfully converted to %s!\n", input, output);
   }
   else {
     printf("Reading or writing error!\n");
