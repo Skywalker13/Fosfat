@@ -1648,7 +1648,7 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
   if (dev) {
     /* Open the device */
     if (g_debugger)
-      printd("device is opening...", eNOTICE);
+      printd("device is opening ...", eNOTICE);
     if ((fosdev = fopen(dev, "r"))) {
       if (disk == eDAUTO) {
         disk = fosfat_diskauto(fosdev);
@@ -1688,7 +1688,7 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
       /* Load the cache if needed */
       if (fosdev && g_cache) {
         if (g_debugger)
-          printd("cache file is loading...", eNOTICE);
+          printd("cache file is loading ...", eNOTICE);
         if (!(g_cachelist = fosfat_cache_dir(fosdev, FOSFAT_SYSLIST))) {
           fclose(fosdev);
           fosdev = NULL;
@@ -1710,11 +1710,11 @@ void fosfat_closedev(FOSFAT_DEV *dev) {
     /* Unload the cache if is loaded */
     if (g_cachelist) {
       if (g_debugger)
-        printd("cache file is unloading...", eNOTICE);
+        printd("cache file is unloading ...", eNOTICE);
       fosfat_cache_unloader(dev, g_cachelist);
     }
     if (g_debugger)
-      printd("device is closing...", eNOTICE);
+      printd("device is closing ...", eNOTICE);
     fclose(dev);
   }
 }
