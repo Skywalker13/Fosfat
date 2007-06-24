@@ -1132,7 +1132,7 @@ static char *fosfat_get_link(FOSFAT_DEV *dev, s_fosfat_bd *file) {
                           file->nbs[0], eDATA);
   if (data) {
     start = (char *)data->data + 3;
-    while ((it = strchr(start, ':')))
+    while ((it = my_strnchr(start, strlen(start), ':')))
       *it = '/';
     it = strrchr(start, '/');
     if (it)
