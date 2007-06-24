@@ -1511,28 +1511,30 @@ static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, unsigned int pt) {
 
   if (dev && (dir = fosfat_read_dir(dev, pt))) {
     files = dir->first_bl;
-    do {
-      /* Check all files in the BL */
-      for (i = 0; i < FOSFAT_NBL; i++) {
-        if (fosfat_isopenexm(&files->file[i]) &&
-            fosfat_isnotdel(&files->file[i]))
-        {
-          /* Complete the linked list with all files */
-          if (list) {
-            list->next = fosfat_cache_file(&files->file[i], files->pt);
-            list = list->next;
+    if (files) {
+      do {
+        /* Check all files in the BL */
+        for (i = 0; i < FOSFAT_NBL; i++) {
+          if (fosfat_isopenexm(&files->file[i]) &&
+              fosfat_isnotdel(&files->file[i]))
+          {
+            /* Complete the linked list with all files */
+            if (list) {
+              list->next = fosfat_cache_file(&files->file[i], files->pt);
+              list = list->next;
+            }
+            else {
+              firstfile = fosfat_cache_file(&files->file[i], files->pt);
+              list = firstfile;
+            }
+            /* If the file is a directory, then do a recursive cache */
+            if (list && fosfat_isdir(&files->file[i]) &&
+                !fosfat_issystem(&files->file[i]))
+              list->sub = fosfat_cache_dir(dev, list->bd);
           }
-          else {
-            firstfile = fosfat_cache_file(&files->file[i], files->pt);
-            list = firstfile;
-          }
-          /* If the file is a directory, then do a recursive cache */
-          if (list && fosfat_isdir(&files->file[i]) &&
-              !fosfat_issystem(&files->file[i]))
-            list->sub = fosfat_cache_dir(dev, list->bd);
         }
-      }
-    } while ((files = files->next_bl));
+      } while ((files = files->next_bl));
+    }
     fosfat_free_dir(dir);
   }
 
