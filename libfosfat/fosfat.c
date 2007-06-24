@@ -1651,6 +1651,8 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
       printd("device is opening ...", eNOTICE);
     if ((fosdev = fopen(dev, "r"))) {
       if (disk == eDAUTO) {
+        if (g_debugger)
+          printd("auto detection in progress ...", eNOTICE);
         disk = fosfat_diskauto(fosdev);
         fboot = disk;
       }
