@@ -166,7 +166,7 @@ void print_info(void) {
   printf("  get                  copy a file from the Smaky's disk in a");
   printf(" local directory\n");
   printf(" node                  the tree with the file (or folder)");
-  printf(" for a 'get' or a 'list'\n");
+  printf(" for 'get' or 'list'\n");
   printf("                       example: foo/bar/toto.text\n");
   printf(" path                  you can specify a path for save");
   printf(" the file (with get mode)\n");
