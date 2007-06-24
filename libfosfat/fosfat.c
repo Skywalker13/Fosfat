@@ -1564,7 +1564,7 @@ static void fosfat_cache_unloader(FOSFAT_DEV *dev, s_cachelist *cache) {
   }
 }
 
-/** \brief Auto-detection of the FOSBOOT length.
+/** \brief Auto detection of the FOSBOOT length.
  *  This function detects if the device is an harddisk or a floppydisk. There
  *  is no explicit information for know that, then the name is tested. If the
  *  NLO begins with '#' and ':' exists in the field, then a FOSBOOT is chosen
@@ -1637,7 +1637,7 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
       else
         fboot = fosfat_diskauto(fosdev);
 
-      /* Test if the auto-detection and the user param are the same */
+      /* Test if the auto detection and the user param are the same */
       if (g_debugger && fboot != disk)
         printd("disk type forced seems to be false", eWARNING);
 
