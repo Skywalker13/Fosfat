@@ -2,4 +2,4 @@ TODO
 ~~~~
 
 * Add a tool for convert IMAGE and COLOR file to BMP or PNG?.
-* Autodetect if the media is an hard disk or a floppy disk.
+* Add debugger to libfosfat.
