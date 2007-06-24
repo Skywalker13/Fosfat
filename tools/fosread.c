@@ -157,8 +157,8 @@ void print_info(void) {
   printf("Usage: fosread [options] device mode [node] [path]\n\n");
   printf(" -h --help             this help\n");
   printf(" -v --version          version\n");
-  printf(" -a --harddisk         if you use an hard disk and not a floppy,");
-  printf(" use this option\n\n");
+  printf(" -a --harddisk         force an hard disk (default autodetect)\n");
+  printf(" -f --floppydisk       force a floppy disk (default autodetect)\n\n");
   printf(" device                for example, /dev/fd0\n");
   printf(" mode\n");
   printf("  list                 list the content of a node\n");
@@ -179,18 +179,19 @@ void print_version(void) {
 
 int main(int argc, char **argv) {
   int res = 0, i, next_option;
-  e_fosfat_disk type = eFD;
+  e_fosfat_disk type = eDAUTO;
   char *device = NULL, *mode = NULL, *node = NULL, *path = NULL;
   FOSFAT_DEV *dev;
   s_global_info *ginfo = NULL;
 
-  const char *const short_options = "ahv";
+  const char *const short_options = "afhv";
 
   const struct option long_options[] = {
-    { "harddisk", 0, NULL, 'a' },
-    { "help",     0, NULL, 'h' },
-    { "version",  0, NULL, 'v' },
-    { NULL,       0, NULL,  0  }
+    { "harddisk",   0, NULL, 'a' },
+    { "floppydisk", 0, NULL, 'f' },
+    { "help",       0, NULL, 'h' },
+    { "version",    0, NULL, 'v' },
+    { NULL,         0, NULL,  0  }
   };
 
   /* check options */
@@ -207,6 +208,9 @@ int main(int argc, char **argv) {
         return -1;
       case 'a':           /* -a or --harddisk */
         type = eHD;
+        break ;
+      case 'f':           /* -f or --floppydisk */
+        type = eFD;
         break ;
       case -1:            /* end */
         break ;

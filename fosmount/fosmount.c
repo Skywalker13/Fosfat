@@ -265,8 +265,8 @@ void print_info(void) {
   printf("Usage: fosmount [options] device mountpoint\n\n");
   printf(" -h --help             this help\n");
   printf(" -v --version          version\n");
-  printf(" -a --harddisk         if you use an hard disk and not a floppy,");
-  printf(" use this option\n");
+  printf(" -a --harddisk         force an hard disk (default autodetect)\n");
+  printf(" -f --floppydisk       force a floppy disk (default autodetect)\n");
   printf(" -d --debug            that will turn on the fuse debugger\n\n");
   printf(" device                /dev/fd0 : floppy disk\n");
   printf("                       /dev/sda : hard disk, etc\n");
@@ -293,16 +293,17 @@ int main(int argc, char **argv) {
   int res = 0, debug = 0;
   char *device;
   char **arg;
-  e_fosfat_disk type = eFD;
+  e_fosfat_disk type = eDAUTO;
 
-  const char *const short_options = "adhv";
+  const char *const short_options = "adfhv";
 
   const struct option long_options[] = {
-    { "harddisk", 0, NULL, 'a' },
-    { "debug",    0, NULL, 'd' },
-    { "help",     0, NULL, 'h' },
-    { "version",  0, NULL, 'v' },
-    { NULL,       0, NULL,  0  }
+    { "harddisk",   0, NULL, 'a' },
+    { "debug",      0, NULL, 'd' },
+    { "floppydisk", 0, NULL, 'f' },
+    { "help",       0, NULL, 'h' },
+    { "version",    0, NULL, 'v' },
+    { NULL,         0, NULL,  0  }
   };
 
   /* check options */
@@ -317,6 +318,9 @@ int main(int argc, char **argv) {
       case 'v':           /* -v or --version */
         print_version();
         return -1;
+      case 'f':           /* -f or --floppydisk */
+        type = eFD;
+        break ;
       case 'a':           /* -a or --harddisk */
         type = eHD;
         break ;

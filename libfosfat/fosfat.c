@@ -151,7 +151,7 @@ typedef struct cache_list {
 
 
 /** Global variable for the FOSBOOT address */
-static int g_fosboot = FOSBOOT_FD;
+static int g_fosboot = -1;
 
 /** Global variable for the CHK */
 static unsigned int g_foschk = 0;
@@ -228,6 +228,22 @@ static int h2d(int val) {
  */
 static inline int y2k(int y) {
   return ((y < FOSFAT_Y2K) ? 2000 : 1900) + y;
+}
+
+/** \brief Like strchr but limited to a length.
+ * \param s string
+ * \param count number of chars
+ * \param c char searched
+ * \return the pointer on the char or NULL is not found
+ */
+static char *my_strnchr(const char *s, size_t count, int c) {
+  size_t i;
+
+  for (i = 0; i < count; i++) {
+    if (*(s + i) == (const char)c)
+      return (char *)(s + i);
+  }
+  return NULL;
 }
 
 /** \brief Free a DATA file variable.
@@ -1430,6 +1446,57 @@ static void fosfat_cache_unloader(FOSFAT_DEV *dev, s_cachelist *cache) {
   }
 }
 
+/** \brief Auto-detection of the FOSBOOT length.
+ *  This function detects if the device is an harddisk or a floppydisk. There
+ *  is no explicit information for know that, then the name is tested. If the
+ *  NLO begins with '#' and ':' exists in the field, then a FOSBOOT is chosen
+ *  and TRUE is returned by the function.
+ * \param dev pointer on the device
+ * \return the type of disk
+ */
+static e_fosfat_disk fosfat_diskauto(FOSFAT_DEV *dev) {
+  int i, loop = 1;
+  int fboot = -1;
+  e_fosfat_disk res = eFAILS;
+  s_fosfat_b0 *block0;
+
+  if (dev) {
+    g_fosboot = FOSBOOT_FD;
+    /* for i = 0, test with FD and when i = 1, test for HD */
+    for (i = 0; loop && i < 2; i++) {
+      block0 = fosfat_read_b0(dev, FOSFAT_BLOCK0);
+
+      if (block0 && *(block0->nlo) == '#' &&
+          my_strnchr(block0->nlo, sizeof(block0->nlo), ':'))
+      {
+        loop = 0;
+        fboot = g_fosboot;
+      }
+
+      if (block0)
+        free(block0);
+
+      if (loop && !i)
+        g_fosboot = FOSBOOT_HD;
+    }
+    /* Select the right fosboot */
+    switch (fboot) {
+      case FOSBOOT_FD:
+        res = eFD;
+        break;
+      case FOSBOOT_HD:
+        res = eHD;
+        break;
+      default:
+        res = eFAILS;
+    }
+  }
+  /* Restore the fosboot */
+  g_fosboot = -1;
+
+  return res;
+}
+
 /** \brief Open the device.
  *  That hides the fopen processing. A device can be read like a file.
  * \param dev the device name
@@ -1437,20 +1504,39 @@ static void fosfat_cache_unloader(FOSFAT_DEV *dev, s_cachelist *cache) {
  * \return the device handle
  */
 FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
+  e_fosfat_disk fboot;
   FOSFAT_DEV *fosdev = NULL;
 
   if (dev) {
-    switch (disk) {
-      case eFD:
-        g_fosboot = FOSBOOT_FD;
-        break;
-      case eHD:
-        g_fosboot = FOSBOOT_HD;
-    }
     /* Open the device */
     if ((fosdev = fopen(dev, "r"))) {
+      if (disk == eDAUTO) {
+        disk = fosfat_diskauto(fosdev);
+        fboot = disk;
+      }
+      else
+        fboot = fosfat_diskauto(fosdev);
+
+      /* Test if the auto-detection and the user param are the same */
+      if (fboot != disk)
+        printf("You have forced the disk type and it seems to be false!\n");
+
+      switch (disk) {
+        case eFD:
+          g_fosboot = FOSBOOT_FD;
+          break;
+        case eHD:
+          g_fosboot = FOSBOOT_HD;
+          break;
+        case eFAILS:
+          printf("Disk auto-detection fails!\n");
+        default:
+          fclose(fosdev);
+          fosdev = NULL;
+      }
+
       /* Load the cache if needed */
-      if (g_cache)
+      if (fosdev && g_cache)
         g_cachelist = fosfat_cache_dir(fosdev, FOSFAT_SYSLIST);
     }
   }

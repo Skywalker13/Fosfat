@@ -32,7 +32,9 @@
 /** Disk types */
 typedef enum disk_type {
   eFD,                         //!< Floppy Disk
-  eHD                          //!< Hard Disk
+  eHD,                         //!< Hard Disk
+  eDAUTO,                      //!< Auto Detection
+  eFAILS                       //!< Auto Detection fails
 } e_fosfat_disk;
 
 /** Time */
