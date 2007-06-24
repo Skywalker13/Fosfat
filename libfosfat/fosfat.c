@@ -1673,7 +1673,7 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
           fclose(fosdev);
           fosdev = NULL;
         }
-        else
+        else if (g_debugger)
           printd("fosfat is ready", eNOTICE);
       }
     }
