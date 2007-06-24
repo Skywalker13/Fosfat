@@ -1359,6 +1359,19 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
   }
   else
     res = firstfile;
+
+  if (g_debugger) {
+    char debug[256];
+    if (!res) {
+      snprintf(debug, sizeof(debug), "directory \"%s\" is unknown", location);
+      printd(debug, eWARNING);
+    }
+    else {
+      snprintf(debug, sizeof(debug), "directory \"%s\" is read successfully",
+               location);
+      printd(debug, eNOTICE);
+    }
+  }
   return res;
 }
 
