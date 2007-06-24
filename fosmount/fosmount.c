@@ -267,7 +267,8 @@ void print_info(void) {
   printf(" -v --version          version\n");
   printf(" -a --harddisk         force an hard disk (default autodetect)\n");
   printf(" -f --floppydisk       force a floppy disk (default autodetect)\n");
-  printf(" -d --debug            that will turn on the fuse debugger\n\n");
+  printf(" -l --fos-debugger     that will turn on the FOS debugger\n");
+  printf(" -d --fuse-debugger    that will turn on the FUSE debugger\n\n");
   printf(" device                /dev/fd0 : floppy disk\n");
   printf("                       /dev/sda : hard disk, etc\n");
   printf(" mountpoint            for example, /mnt/smaky\n");
@@ -290,20 +291,21 @@ static struct fuse_operations fosfat_oper = {
 
 int main(int argc, char **argv) {
   int next_option;
-  int res = 0, debug = 0;
+  int res = 0, fusedebug = 0, fosdebug = 0;
   char *device;
   char **arg;
   e_fosfat_disk type = eDAUTO;
 
-  const char *const short_options = "adfhv";
+  const char *const short_options = "adfhlv";
 
   const struct option long_options[] = {
-    { "harddisk",   0, NULL, 'a' },
-    { "debug",      0, NULL, 'd' },
-    { "floppydisk", 0, NULL, 'f' },
-    { "help",       0, NULL, 'h' },
-    { "version",    0, NULL, 'v' },
-    { NULL,         0, NULL,  0  }
+    { "harddisk",      0, NULL, 'a' },
+    { "fuse-debugger", 0, NULL, 'd' },
+    { "floppydisk",    0, NULL, 'f' },
+    { "help",          0, NULL, 'h' },
+    { "fos-debugger",  0, NULL, 'l' },
+    { "version",       0, NULL, 'v' },
+    { NULL,            0, NULL,  0  }
   };
 
   /* check options */
@@ -324,8 +326,12 @@ int main(int argc, char **argv) {
       case 'a':           /* -a or --harddisk */
         type = eHD;
         break ;
-      case 'd':           /* -d or --debug */
-        debug = 1;
+      case 'd':           /* -d or --fuse-debugger */
+        fusedebug = 1;
+        break ;
+      case 'l':           /* -l or --fos-debugger */
+        fosdebug = 1;
+        fosfat_debugger(1);
         break ;
       case -1:            /* end */
         break ;
@@ -338,15 +344,17 @@ int main(int argc, char **argv) {
   }
 
   /* table for fuse */
-  arg = (char **)malloc(sizeof(char *) * (2 + debug));
+  arg = (char **)malloc(sizeof(char *) * (3 + fusedebug + fosdebug));
   if (arg) {
     arg[0] = strdup(argv[0]);
-    if (debug)
-      arg[debug] = strdup("-d");
+    if (fusedebug)
+      arg[fusedebug] = strdup("-d");
+    if (fosdebug)
+      arg[fusedebug + fosdebug] = strdup("-f");
     device = strdup(argv[optind]);
-    arg[1 + debug] = strdup(argv[optind + 1]);
+    arg[1 + fusedebug + fosdebug] = strdup(argv[optind + 1]);
     /* FUSE must be used as single-thread */
-    arg[2 + debug] = strdup("-s");
+    arg[2 + fusedebug + fosdebug] = strdup("-s");
   }
   else
     return -1;
@@ -358,7 +366,7 @@ int main(int argc, char **argv) {
   }
   else {
     /* FUSE */
-    res = fuse_main(3 + debug, arg, &fosfat_oper, NULL);
+    res = fuse_main(3 + fusedebug + fosdebug, arg, &fosfat_oper, NULL);
 
     /* Close the device */
     fosfat_closedev(dev);

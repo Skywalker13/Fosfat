@@ -158,7 +158,8 @@ void print_info(void) {
   printf(" -h --help             this help\n");
   printf(" -v --version          version\n");
   printf(" -a --harddisk         force an hard disk (default autodetect)\n");
-  printf(" -f --floppydisk       force a floppy disk (default autodetect)\n\n");
+  printf(" -f --floppydisk       force a floppy disk (default autodetect)\n");
+  printf(" -l --fos-debugger     that will turn on the FOS debugger\n\n");
   printf(" device                for example, /dev/fd0\n");
   printf(" mode\n");
   printf("  list                 list the content of a node\n");
@@ -184,14 +185,15 @@ int main(int argc, char **argv) {
   FOSFAT_DEV *dev;
   s_global_info *ginfo = NULL;
 
-  const char *const short_options = "afhv";
+  const char *const short_options = "afhlv";
 
   const struct option long_options[] = {
-    { "harddisk",   0, NULL, 'a' },
-    { "floppydisk", 0, NULL, 'f' },
-    { "help",       0, NULL, 'h' },
-    { "version",    0, NULL, 'v' },
-    { NULL,         0, NULL,  0  }
+    { "harddisk",     0, NULL, 'a' },
+    { "floppydisk",   0, NULL, 'f' },
+    { "help",         0, NULL, 'h' },
+    { "fos-debugger", 0, NULL, 'l' },
+    { "version",      0, NULL, 'v' },
+    { NULL,           0, NULL,  0  }
   };
 
   /* check options */
@@ -211,6 +213,9 @@ int main(int argc, char **argv) {
         break ;
       case 'f':           /* -f or --floppydisk */
         type = eFD;
+        break ;
+      case 'l':           /* -l or --fos-debugger */
+        fosfat_debugger(1);
         break ;
       case -1:            /* end */
         break ;

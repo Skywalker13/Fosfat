@@ -63,6 +63,13 @@ typedef enum search_type {
   eSBLF                        //!< Search BL File
 } e_fosfat_search;
 
+/** Printd type */
+typedef enum printd {
+  eERROR,
+  eWARNING,
+  eNOTICE
+} e_printd;
+
 /** Data Block (256 bytes) */
 typedef struct block_data {
   unsigned char data[256];     //!< Data
@@ -160,6 +167,9 @@ static unsigned int g_foschk = 0;
 static unsigned int g_cache = 1;
 static s_cachelist *g_cachelist = NULL;
 
+/** Global variable for internal debugger */
+static unsigned char g_debugger = 0;
+
 
 /** \brief Translate a block number to an address.
  *  This function depend if the media is an HARD DISK or an 3"1/2 DISK.
@@ -244,6 +254,42 @@ static char *my_strnchr(const char *s, size_t count, int c) {
       return (char *)(s + i);
   }
   return NULL;
+}
+
+/** \brief Enable or disable the internal FOS debugger.
+ * \param state 1 or 0
+ */
+void fosfat_debugger(unsigned char state) {
+  if (state)
+    g_debugger = 1;
+  else
+    g_debugger = 0;
+}
+
+/** \brief Print function for the internal FOS debugger.
+ * \param msg text shown
+ * \param type of debugging
+ */
+static void printd(const char *msg, e_printd type) {
+  FILE *output;
+  char debug[256] = "fosfat-";
+
+  if (msg) {
+    switch (type) {
+      case eERROR:
+        strcat(debug, "error");
+        output = stderr;
+        break;
+      case eWARNING:
+        strcat(debug, "warning");
+        output = stdout;
+        break;
+      case eNOTICE:
+        strcat(debug, "notice");
+        output = stdout;
+    }
+    fprintf(output, "%s: %s\n", debug, msg);
+  }
 }
 
 /** \brief Free a DATA file variable.
@@ -687,7 +733,7 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
           /* Freed all data */
           fosfat_free_data(first_d);
           if (res && output)
-            printf(" %i bytes\n", (int)size);
+            fprintf(stdout, " %i bytes\n", (int)size);
         }
         else
           res = 0;
@@ -754,6 +800,13 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned int block) {
     /* End of the BD linked list */
     dir_desc->next_bd = NULL;
     return first_bd;
+  }
+
+  if (g_debugger) {
+    char debug[256];
+    snprintf(debug, sizeof(debug),
+             "directory to block %i cannot be read", block);
+    printd(debug, eERROR);
   }
   return NULL;
 }
@@ -1031,6 +1084,12 @@ static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location,
       }
     }
   }
+
+  if (g_debugger) {
+    char debug[256];
+    snprintf(debug, sizeof(debug), "file \"%s\" not found", location);
+    printd(debug, eWARNING);
+  }
   return NULL;
 }
 
@@ -1161,6 +1220,13 @@ char *fosfat_symlink(FOSFAT_DEV *dev, const char *location) {
     link = fosfat_get_link(dev, entry);
     free(entry);
   }
+
+  if (g_debugger && !link) {
+    char debug[256];
+    snprintf(debug, sizeof(debug),
+             "target of symlink \"%s\" not found", location);
+    printd(debug, eERROR);
+  }
   return link;
 }
 
@@ -1228,6 +1294,12 @@ s_fosfat_file *fosfat_get_stat(FOSFAT_DEV *dev, const char *location) {
   {
     stat = fosfat_stat(entry);
     free(entry);
+  }
+
+  if (g_debugger && !stat) {
+    char debug[256];
+    snprintf(debug, sizeof(debug), "stat of \"%s\" not found", location);
+    printd(debug, eWARNING);
   }
   return stat;
 }
@@ -1310,6 +1382,19 @@ int fosfat_get_file(FOSFAT_DEV *dev, const char *src,
     free(file);
     fosfat_free_file(file2);
   }
+
+  if (g_debugger) {
+    char debug[256];
+    if (!res) {
+      snprintf(debug, sizeof(debug), "file \"%s\" cannot copied", src);
+      printd(debug, eWARNING);
+    }
+    else {
+      snprintf(debug, sizeof(debug), "get file \"%s\" and save to \"%s\"",
+               src, dst);
+      printd(debug, eNOTICE);
+    }
+  }
   return res;
 }
 
@@ -1346,6 +1431,22 @@ char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path,
         fosfat_free_file(file2);
     }
   }
+
+  if (g_debugger) {
+    char debug[256];
+    if (!buffer) {
+      snprintf(debug, sizeof(debug),
+              "data (offset:%i size:%i) of \"%s\" not read",
+              offset, size, path);
+      printd(debug, eERROR);
+    }
+    else {
+      snprintf(debug, sizeof(debug),
+              "data (offset:%i size:%i) of \"%s\" correctly read",
+              offset, size, path);
+      printd(debug, eNOTICE);
+    }
+  }
   return buffer;
 }
 
@@ -1360,6 +1461,16 @@ char *fosfat_diskname(FOSFAT_DEV *dev) {
   if (dev && (block0 = fosfat_read_b0(dev, FOSFAT_BLOCK0))) {
     name = strdup(block0->nlo);
     free(block0);
+  }
+
+  if (g_debugger) {
+    if (!name)
+      printd("the disk name cannot be found", eERROR);
+    else {
+      char debug[256];
+      snprintf(debug, sizeof(debug), "disk name found (%s)", name);
+      printd(debug, eNOTICE);
+    }
   }
   return name;
 }
@@ -1423,6 +1534,13 @@ static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, unsigned int pt) {
       }
     } while ((files = files->next_bl));
     fosfat_free_dir(dir);
+  }
+
+  if (g_debugger && !firstfile) {
+    char debug[256];
+    snprintf(debug, sizeof(debug),
+             "cache to block %i not correctly loaded", pt);
+    printd(debug, eERROR);
   }
   return firstfile;
 }
@@ -1509,6 +1627,8 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
 
   if (dev) {
     /* Open the device */
+    if (g_debugger)
+      printd("device is opening...", eNOTICE);
     if ((fosdev = fopen(dev, "r"))) {
       if (disk == eDAUTO) {
         disk = fosfat_diskauto(fosdev);
@@ -1518,26 +1638,44 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
         fboot = fosfat_diskauto(fosdev);
 
       /* Test if the auto-detection and the user param are the same */
-      if (fboot != disk)
-        printf("You have forced the disk type and it seems to be false!\n");
+      if (g_debugger && fboot != disk)
+        printd("disk type forced seems to be false", eWARNING);
 
       switch (disk) {
         case eFD:
           g_fosboot = FOSBOOT_FD;
+          if (g_debugger)
+            printd("floppy disk selected", eNOTICE);
           break;
         case eHD:
           g_fosboot = FOSBOOT_HD;
+          if (g_debugger)
+            printd("hard disk selected", eNOTICE);
           break;
-        case eFAILS:
-          printf("Disk auto-detection fails!\n");
+        case eFAILS: {
+          if (g_debugger) {
+            char debug[256];
+            snprintf(debug, sizeof(debug),
+                     "disk auto detection for \"%s\" has failed", dev);
+            printd(debug, eERROR);
+          }
+        }
         default:
           fclose(fosdev);
           fosdev = NULL;
       }
 
       /* Load the cache if needed */
-      if (fosdev && g_cache)
-        g_cachelist = fosfat_cache_dir(fosdev, FOSFAT_SYSLIST);
+      if (fosdev && g_cache) {
+        if (g_debugger)
+          printd("cache file is loading...", eNOTICE);
+        if (!(g_cachelist = fosfat_cache_dir(fosdev, FOSFAT_SYSLIST))) {
+          fclose(fosdev);
+          fosdev = NULL;
+        }
+        else
+          printd("fosfat is ready", eNOTICE);
+      }
     }
   }
   return fosdev;
@@ -1550,8 +1688,13 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
 void fosfat_closedev(FOSFAT_DEV *dev) {
   if (dev) {
     /* Unload the cache if is loaded */
-    if (g_cachelist)
+    if (g_cachelist) {
+      if (g_debugger)
+        printd("cache file is unloading...", eNOTICE);
       fosfat_cache_unloader(dev, g_cachelist);
+    }
+    if (g_debugger)
+      printd("device is closing...", eNOTICE);
     fclose(dev);
   }
 }
