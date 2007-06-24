@@ -1,3 +1,8 @@
+2007-06-24  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* Add auto-detection for the disk type. The type can
+	be forced with fosmount and fosread if necessary.
+
 2007-06-22  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Second beta released 0.2.1
