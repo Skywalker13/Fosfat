@@ -1317,6 +1317,7 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
   s_fosfat_file *sysdir = NULL;
   s_fosfat_file *listdir = NULL;
   s_fosfat_file *firstfile = NULL;
+  s_fosfat_file *res = NULL;
 
   if (dev && location && (dir = fosfat_search_insys(dev, location, eSBD))) {
     /* Test if it is a directory */
@@ -1354,9 +1355,11 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
   }
   if (sysdir) {
     sysdir->next_file = firstfile;
-    return sysdir;
+    res = sysdir;
   }
-  return firstfile;
+  else
+    res = firstfile;
+  return res;
 }
 
 /** \brief Get a file and put this in a location on the PC.
