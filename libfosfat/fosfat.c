@@ -1404,7 +1404,7 @@ int fosfat_get_file(FOSFAT_DEV *dev, const char *src,
   if (g_debugger) {
     char debug[256];
     if (!res) {
-      snprintf(debug, sizeof(debug), "file \"%s\" cannot copied", src);
+      snprintf(debug, sizeof(debug), "file \"%s\" cannot be copied", src);
       printd(debug, eWARNING);
     }
     else {
