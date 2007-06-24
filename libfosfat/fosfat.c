@@ -1322,31 +1322,33 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
     /* Test if it is a directory */
     if (fosfat_p_isdir(dev, location)) {
       files = dir->first_bl;
-      do {
-        /* Check all files in the BL */
-        for (i = 0; i < FOSFAT_NBL; i++) {
-          if (fosfat_isopenexm(&files->file[i]) &&
-              fosfat_isnotdel(&files->file[i]) &&
-              !fosfat_issystem(&files->file[i]))
-          {
-            /* Complete the linked list with all files */
-            if (listdir) {
-              listdir->next_file = fosfat_stat(&files->file[i]);
-              listdir = listdir->next_file;
+      if (files) {
+        do {
+          /* Check all files in the BL */
+          for (i = 0; i < FOSFAT_NBL; i++) {
+            if (fosfat_isopenexm(&files->file[i]) &&
+                fosfat_isnotdel(&files->file[i]) &&
+                !fosfat_issystem(&files->file[i]))
+            {
+              /* Complete the linked list with all files */
+              if (listdir) {
+                listdir->next_file = fosfat_stat(&files->file[i]);
+                listdir = listdir->next_file;
+              }
+              else {
+                firstfile = fosfat_stat(&files->file[i]);
+                listdir = firstfile;
+              }
             }
-            else {
-              firstfile = fosfat_stat(&files->file[i]);
-              listdir = firstfile;
+            else if (fosfat_issystem(&files->file[i]) &&
+                    !strcasecmp(files->file[i].name, "sys_list"))
+            {
+              sysdir = fosfat_stat(&files->file[i]);
+              strcpy(sysdir->name, "..dir");
             }
           }
-          else if (fosfat_issystem(&files->file[i]) &&
-                   !strcasecmp(files->file[i].name, "sys_list"))
-          {
-            sysdir = fosfat_stat(&files->file[i]);
-            strcpy(sysdir->name, "..dir");
-          }
-        }
-      } while ((files = files->next_bl));
+        } while ((files = files->next_bl));
+      }
     }
     fosfat_free_dir(dir);
   }
