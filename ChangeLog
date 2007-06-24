@@ -3,6 +3,10 @@
 	* Add auto-detection for the disk type. The type can
 	be forced with fosmount and fosread if necessary.
 
+	* libfosfat: an internal debugger can be enabled for
+	know what the FOS is doing. A new option is available
+	in fosread and fosmount.
+
 2007-06-22  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Second beta released 0.2.1
