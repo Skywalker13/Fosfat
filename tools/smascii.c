@@ -43,11 +43,10 @@ int run_conv(const char *input, const char *output, e_newline newline) {
   size_t lng;
 
   if ((in = fopen(input, "r")) && (out = fopen(output, "w"))) {
-    while ((lng = fread((char *)buffer, (size_t)sizeof(char),
-           (size_t)BUFFER_SIZE, in)))
+    while ((lng = fread((char *)buffer, 1, (size_t)BUFFER_SIZE, in)))
     {
       if (sma2iso8859(buffer, (unsigned int)lng, newline))
-        fwrite((char *)buffer, (size_t)sizeof(char), lng, out);
+        fwrite((char *)buffer, 1, lng, out);
       else {
         printf("Conversion error!\n");
         res = 0;

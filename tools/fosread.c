@@ -43,7 +43,7 @@ s_global_info *get_ginfo(FOSFAT_DEV *dev) {
   char *name;
 
   if ((name = fosfat_diskname(dev))) {
-    ginfo = (s_global_info *)malloc(sizeof(s_global_info));
+    ginfo = malloc(sizeof(s_global_info));
     strncpy(ginfo->name, name, FOSFAT_NAMELGT - 1);
     ginfo->name[FOSFAT_NAMELGT - 1] = '\0';
     free(name);

@@ -224,7 +224,7 @@ static int h2d(int val) {
   char *conv;
   int res = 0;
 
-  if ((conv = (char *)malloc(sizeof(val)))) {
+  if ((conv = malloc(sizeof(val)))) {
     snprintf(conv, sizeof(conv), "%X", val);
     res = atoi(conv);
     free(conv);
@@ -464,8 +464,8 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned int block,
     switch (type) {
       case eB0: {
         s_fosfat_b0 *blk;
-        if ((blk = (s_fosfat_b0 *)malloc(sizeof(s_fosfat_b0)))) {
-          if (fread((s_fosfat_b0 *)blk, (size_t)sizeof(unsigned char),
+        if ((blk = malloc(sizeof(s_fosfat_b0)))) {
+          if (fread((s_fosfat_b0 *)blk, 1,
               (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
             return (s_fosfat_b0 *)blk;
           else
@@ -475,8 +475,8 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned int block,
       }
       case eBL: {
         s_fosfat_bl *blk;
-        if ((blk = (s_fosfat_bl *)malloc(sizeof(s_fosfat_bl)))) {
-          if (fread((s_fosfat_bl *)blk, (size_t)sizeof(unsigned char),
+        if ((blk = malloc(sizeof(s_fosfat_bl)))) {
+          if (fread((s_fosfat_bl *)blk, 1,
               (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
           {
             blk->next_bl = NULL;
@@ -492,8 +492,8 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned int block,
       }
       case eBD: {
         s_fosfat_bd *blk;
-        if ((blk = (s_fosfat_bd *)malloc(sizeof(s_fosfat_bd)))) {
-          if (fread((s_fosfat_bd *)blk, (size_t)sizeof(unsigned char),
+        if ((blk = malloc(sizeof(s_fosfat_bd)))) {
+          if (fread((s_fosfat_bd *)blk, 1,
               (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
           {
             blk->next_bd = NULL;
@@ -510,8 +510,8 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned int block,
       }
       case eDATA: {
         s_fosfat_data *blk;
-        if ((blk = (s_fosfat_data *)malloc(sizeof(s_fosfat_data)))) {
-          if (fread((s_fosfat_data *)blk, (size_t)sizeof(unsigned char),
+        if ((blk = malloc(sizeof(s_fosfat_data)))) {
+          if (fread((s_fosfat_data *)blk, 1,
               (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
           {
             blk->next_data = NULL;
@@ -717,9 +717,8 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
             /* When the result is written in a file */
             if (!flag) {
               /* Write the block */
-              if (fwrite((unsigned char *)file_d->data,
-                  (size_t)sizeof(unsigned char),
-                  check_last, f_dst) != check_last)
+              if (fwrite((unsigned char *)file_d->data, 1, check_last, f_dst)
+                  != check_last)
                 res = 0;
             }
             /* When the result is written in RAM (offset and size) */
@@ -1234,7 +1233,7 @@ char *fosfat_symlink(FOSFAT_DEV *dev, const char *location) {
 static s_fosfat_file *fosfat_stat(s_fosfat_blf *file) {
   s_fosfat_file *stat = NULL;
 
-  if (file && (stat = (s_fosfat_file *)malloc(sizeof(s_fosfat_file)))) {
+  if (file && (stat = malloc(sizeof(s_fosfat_file)))) {
     /* Name */
     strncpy(stat->name, file->name, sizeof(stat->name));
     lc(stat->name);
@@ -1415,9 +1414,9 @@ char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path,
   if (dev && path && (file = fosfat_search_insys(dev, path, eSBLF)) &&
       fosfat_isnotdel(file) && !fosfat_isdir(file))
   {
-    buffer = (char *)malloc(sizeof(char) * size);
+    buffer = malloc(size);
     if (buffer) {
-      memset(buffer, 0, sizeof(char) * size);
+      memset(buffer, 0, size);
       file2 = fosfat_read_file(dev, c2l(file->pt, sizeof(file->pt)));
       if (file2)
         fosfat_get(dev, file2, NULL, 0, 1, offset, size, buffer);

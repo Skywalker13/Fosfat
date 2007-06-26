@@ -344,7 +344,7 @@ int main(int argc, char **argv) {
   }
 
   /* table for fuse */
-  arg = (char **)malloc(sizeof(char *) * (3 + fusedebug + fosdebug));
+  arg = malloc(sizeof(char *) * (3 + fusedebug + fosdebug));
   if (arg) {
     arg[0] = strdup(argv[0]);
     if (fusedebug)
