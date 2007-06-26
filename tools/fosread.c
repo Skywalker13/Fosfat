@@ -64,19 +64,10 @@ void print_date(s_fosfat_time *time) {
 }
 
 /** \brief Print a file in the list.
- * \param location where
  * \param file description
  */
-void print_file(const char *location, s_fosfat_file *file) {
-  char *path;
+void print_file(s_fosfat_file *file) {
   char filename[FOSFAT_NAMELGT];
-
-  path = (char *)malloc(sizeof(location) + sizeof(file->name) + sizeof(char));
-
-  if (*location == '\0' || !strcmp(location, "/"))
-    strcpy(path, file->name);
-  else
-    sprintf(path, "%s/%s", location, file->name);
 
   if (file->att.isdir)
     snprintf(filename, strrchr(file->name, '.') - file->name + 1,
@@ -93,7 +84,6 @@ void print_file(const char *location, s_fosfat_file *file) {
   print_date(&file->time_w);
   print_date(&file->time_r);
   printf(" %s\n", filename);
-  free(path);
 }
 
 /** \brief List the content of a directory.
@@ -112,7 +102,7 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
     printf("           ---- --------         -----------");
     printf("      ---------        --------\n");
     do {
-      print_file(path, files);
+      print_file(files);
     } while ((files = files->next_file));
     printf("\nd:directory  h:hidden  e:encoded\n");
     fosfat_free_listdir(first_file);
