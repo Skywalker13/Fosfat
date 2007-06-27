@@ -79,6 +79,7 @@ void print_help(void) {
 }
 
 int main(int argc, char **argv) {
+  int res = 0;
   char *input_file;
   char *output_file;
   e_newline newline = eCR;
@@ -90,8 +91,8 @@ int main(int argc, char **argv) {
     if (argc == 4 && !strcmp(argv[3], "--unix"))
       newline = eLF;
 
-    if (run_conv(input_file, output_file, newline))
-      return 0;
+    if (!run_conv(input_file, output_file, newline))
+      res = -1;
 
     if (input_file)
       free(input_file);
@@ -100,5 +101,5 @@ int main(int argc, char **argv) {
   }
   else
     print_help();
-  return -1;
+  return res;
 }
