@@ -1,3 +1,10 @@
+2007-06-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* libfosfat: change the auto detection function for a
+	better way. Use the name was very bad because a lot
+	of disks have no name. Then the test is does with the
+	CHK (look the code for more informations).
+
 2007-06-24  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Add auto detection for the disk type. The type can
