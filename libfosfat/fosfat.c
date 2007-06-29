@@ -1551,34 +1551,41 @@ static void fosfat_cache_unloader(FOSFAT_DEV *dev, s_cachelist *cache) {
 }
 
 /** \brief Auto detection of the FOSBOOT length.
- *  This function detects if the device is an harddisk or a floppydisk. There
- *  is no explicit information for know that, then the name is tested. If the
- *  NLO begins with '#' and ':' exists in the field, then a FOSBOOT is chosen
- *  and TRUE is returned by the function.
+ *  This function detects if the device is an hard disk or a floppy disk.
+ *  There is no explicit information for know that, then the CHK is tested
+ *  between the SYS_LIST and the first BL and a test for know if the BL's
+ *  pointer in the BD is right.
  * \param dev pointer on the device
- * \return the type of disk
+ * \return the type of disk or eFAILS
  */
 static e_fosfat_disk fosfat_diskauto(FOSFAT_DEV *dev) {
   int i, loop = 1;
   int fboot = -1;
   e_fosfat_disk res = eFAILS;
-  s_fosfat_b0 *block0;
+  s_fosfat_bd *sys_list;
+  s_fosfat_bl *first_bl;
 
   if (dev) {
     g_fosboot = FOSBOOT_FD;
     /* for i = 0, test with FD and when i = 1, test for HD */
     for (i = 0; loop && i < 2; i++) {
-      block0 = fosfat_read_b0(dev, FOSFAT_BLOCK0);
+      sys_list = fosfat_read_bd(dev, FOSFAT_SYSLIST);
+      g_foschk = 0;
+      first_bl = fosfat_read_bl(dev, FOSFAT_SYSLIST + 1);
+      g_foschk = 0;
 
-      if (block0 && *(block0->nlo) == '#' &&
-          my_strnchr(block0->nlo, sizeof(block0->nlo), ':'))
+      if (sys_list && first_bl && !strncmp((char *)sys_list->chk,
+          (char *)first_bl->chk, sizeof(sys_list->chk)) &&
+          c2l(*sys_list->pts, sizeof(*sys_list->pts)) == FOSFAT_SYSLIST + 1)
       {
         loop = 0;
         fboot = g_fosboot;
       }
 
-      if (block0)
-        free(block0);
+      if (sys_list)
+        free(sys_list);
+      if (first_bl)
+        free(first_bl);
 
       if (loop && !i)
         g_fosboot = FOSBOOT_HD;
