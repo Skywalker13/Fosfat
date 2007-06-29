@@ -38,6 +38,22 @@
 #define FOS_DIR             0555
 #define FOS_FILE            0444
 
+#define HELP_TEXT \
+"FUSE extension for a read-only access on Smaky FOS. fosfat-" VERSION "\n\n" \
+"Usage: fosmount [options] device mountpoint\n\n" \
+" -h --help             this help\n" \
+" -v --version          version\n" \
+" -a --harddisk         force an hard disk (default autodetect)\n" \
+" -f --floppydisk       force a floppy disk (default autodetect)\n" \
+" -l --fos-debugger     that will turn on the FOS debugger\n" \
+" -d --fuse-debugger    that will turn on the FUSE debugger\n\n" \
+" device                /dev/fd0 : floppy disk\n" \
+"                       /dev/sda : hard disk, etc\n" \
+" mountpoint            for example, /mnt/smaky\n" \
+"\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
+
+#define VERSION_TEXT "fosmount-" VERSION "\n"
+
 
 static FOSFAT_DEV *dev;
 
@@ -260,24 +276,12 @@ static int fos_read(const char *path, char *buf, size_t size,
 
 /** Print help. */
 void print_info(void) {
-  printf("FUSE extension for a read-only access on Smaky FOS. Fosfat-%s\n\n",
-         VERSION);
-  printf("Usage: fosmount [options] device mountpoint\n\n");
-  printf(" -h --help             this help\n");
-  printf(" -v --version          version\n");
-  printf(" -a --harddisk         force an hard disk (default autodetect)\n");
-  printf(" -f --floppydisk       force a floppy disk (default autodetect)\n");
-  printf(" -l --fos-debugger     that will turn on the FOS debugger\n");
-  printf(" -d --fuse-debugger    that will turn on the FUSE debugger\n\n");
-  printf(" device                /dev/fd0 : floppy disk\n");
-  printf("                       /dev/sda : hard disk, etc\n");
-  printf(" mountpoint            for example, /mnt/smaky\n");
-  printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n");
+  printf(HELP_TEXT);
 }
 
 /** Print version. */
 void print_version(void) {
-  printf("fosmount Fosfat-%s\n", VERSION);
+  printf(VERSION_TEXT);
 }
 
 /** FUSE implemented functions */

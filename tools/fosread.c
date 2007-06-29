@@ -34,6 +34,30 @@ typedef struct ginfo {
   char name[FOSFAT_NAMELGT];
 } s_global_info;
 
+#define HELP_TEXT \
+"Tool for a read-only access on a Smaky disk. fosfat-" VERSION "\n\n" \
+"Usage: fosread [options] device mode [node] [path]\n\n" \
+" -h --help             this help\n" \
+" -v --version          version\n" \
+" -a --harddisk         force an hard disk (default autodetect)\n" \
+" -f --floppydisk       force a floppy disk (default autodetect)\n" \
+" -l --fos-debugger     that will turn on the FOS debugger\n\n" \
+" device                /dev/fd0 : floppy disk\n" \
+"                       /dev/sda : hard disk, etc\n" \
+" mode\n" \
+"   list                list the content of a node\n" \
+"   get                 copy a file from the Smaky's disk in a" \
+" local directory\n" \
+" node                  the tree with the file (or folder)" \
+" for 'get' or 'list'\n" \
+"                       example: foo/bar/toto.text\n" \
+" path                  you can specify a path for save" \
+" the file (with get mode)\n" \
+"\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
+
+#define VERSION_TEXT "fosread-" VERSION "\n"
+
+
 /** \brief Get info from the disk.
  * \param dev pointer on the device
  * \return info
@@ -142,30 +166,12 @@ int get_file(FOSFAT_DEV *dev, const char *path, const char *dst) {
 
 /** Print help. */
 void print_info(void) {
-  printf("Tool for a read-only access on a Smaky disk. Fosfat-");
-  printf("%s\n\n", VERSION);
-  printf("Usage: fosread [options] device mode [node] [path]\n\n");
-  printf(" -h --help             this help\n");
-  printf(" -v --version          version\n");
-  printf(" -a --harddisk         force an hard disk (default autodetect)\n");
-  printf(" -f --floppydisk       force a floppy disk (default autodetect)\n");
-  printf(" -l --fos-debugger     that will turn on the FOS debugger\n\n");
-  printf(" device                for example, /dev/fd0\n");
-  printf(" mode\n");
-  printf("  list                 list the content of a node\n");
-  printf("  get                  copy a file from the Smaky's disk in a");
-  printf(" local directory\n");
-  printf(" node                  the tree with the file (or folder)");
-  printf(" for 'get' or 'list'\n");
-  printf("                       example: foo/bar/toto.text\n");
-  printf(" path                  you can specify a path for save");
-  printf(" the file (with get mode)\n");
-  printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n");
+  printf(HELP_TEXT);
 }
 
 /** Print version. */
 void print_version(void) {
-  printf("fosread Fosfat-%s\n", VERSION);
+  printf(VERSION_TEXT);
 }
 
 int main(int argc, char **argv) {

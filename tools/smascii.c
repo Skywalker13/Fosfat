@@ -31,6 +31,16 @@
 
 #define BUFFER_SIZE 256
 
+#define HELP_TEXT \
+"Tool for convert Smaky text file to " \
+"Extended ASCII (ISO-8859-1).\n\n" \
+"Usage: smascii smaky_file converted_file [--unix]\n\n" \
+" smaky_file            the smaky text file\n" \
+" converted_file        the file converted\n" \
+" --unix                the Carriage Return (Old Mac) will be\n" \
+"                       converted to Line Feed (unix)\n" \
+"\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
+
 /** \brief Run the text conversion.
  * \param input Smaky text file
  * \param output ISO-8859-1 text file
@@ -68,14 +78,7 @@ int run_conv(const char *input, const char *output, e_newline newline) {
 
 /** Print help. */
 void print_help(void) {
-  printf("Tool for convert Smaky text file to ");
-  printf("Extended ASCII (ISO-8859-1).\n\n");
-  printf("Usage: smascii smaky_file converted_file [--unix]\n\n");
-  printf("  smaky_file            the smaky text file\n");
-  printf("  converted_file        the file converted\n");
-  printf("  --unix                the Carriage Return (Old Mac) will be\n");
-  printf("                        converted to Line Feed (unix)\n");
-  printf("\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n");
+  printf(HELP_TEXT);
 }
 
 int main(int argc, char **argv) {
