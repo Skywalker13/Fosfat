@@ -860,7 +860,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
   s_fosfat_blf *loop_blf = NULL;
 
   if (dev && files && location) {
-    if (type)
+    if (type == eSBLF)
       loop_blf = malloc(sizeof(s_fosfat_blf));
 
     loop = files;
@@ -890,7 +890,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
             if (fosfat_isdir(&loop->file[j]) &&
                 fosfat_isdirname(loop->file[j].name, dir[i]))
             {
-              if (type && loop_blf)
+              if (type == eSBLF && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
               unsigned int pt = c2l(loop->file[j].pt,
                                     sizeof(loop->file[j].pt));
@@ -908,7 +908,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
                      (fosfat_islink(&loop->file[j]) &&
                      fosfat_isdirname(loop->file[j].name, dir[i]))))
             {
-              if (type && loop_blf)
+              if (type == eSBLF && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
               unsigned int pt = c2l(loop->file[j].pt,
                                     sizeof(loop->file[j].pt));
@@ -929,7 +929,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
     }
     free(path);
     if (!ontop) {
-      if (type) {
+      if (type == eSBLF) {
         fosfat_free_dir(loop_bd);
         return (s_fosfat_blf *)loop_blf;
       }
