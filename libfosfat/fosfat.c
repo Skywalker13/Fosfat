@@ -272,7 +272,6 @@ void fosfat_debugger(unsigned char state) {
  */
 static void foslog(e_foslog type, const char *msg, ...) {
   va_list va;
-  FILE *output = NULL;
   char debug[256] = "fosfat-";
 
   va_start(va, msg);
@@ -281,20 +280,17 @@ static void foslog(e_foslog type, const char *msg, ...) {
     switch (type) {
       case eERROR:
         strcat(debug, "error");
-        output = stderr;
         break;
       case eWARNING:
         strcat(debug, "warning");
-        output = stdout;
         break;
       case eNOTICE:
         strcat(debug, "notice");
-        output = stdout;
     }
 
-    fprintf(output, "%s: ", debug);
-    vfprintf(output, msg, va);
-    fprintf(output, "\n");
+    fprintf(stderr, "%s: ", debug);
+    vfprintf(stderr, msg, va);
+    fprintf(stderr, "\n");
   }
   va_end (va);
 }
