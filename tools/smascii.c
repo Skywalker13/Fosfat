@@ -41,7 +41,8 @@
 "                       converted to Line Feed (unix)\n" \
 "\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
 
-/** \brief Run the text conversion.
+/**
+ * \brief Run the text conversion.
  * \param input Smaky text file
  * \param output ISO-8859-1 text file
  * \return 1 for success and 0 for error
