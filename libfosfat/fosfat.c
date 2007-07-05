@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdarg.h>
 #include <ctype.h>      /* tolower */
 #include <string.h>     /* strcasecmp strncasecmp strdup strlen strtok
@@ -119,7 +120,7 @@ typedef struct block_list {
   unsigned char prev[4];       //!< Previous BL
   unsigned char reserve[4];    //!< Unused
   /* Not in the block */
-  unsigned int pt;             //!< Block's number of this BL
+  uint32_t pt;                 //!< Block's number of this BL
   /* Linked list */
   struct block_list *next_bl;
 } s_fosfat_bl;
@@ -147,8 +148,8 @@ typedef struct block_desc {
 /** Cache list for name, BD and BL blocks */
 typedef struct cache_list {
   char *name;
-  unsigned int bl;
-  unsigned int bd;
+  uint32_t bl;
+  uint32_t bd;
   unsigned char isdir;
   unsigned char islink;
   /* Linked list */
@@ -161,7 +162,7 @@ typedef struct cache_list {
 static int g_fosboot = -1;
 
 /** Global variable for the CHK */
-static unsigned int g_foschk = 0;
+static uint32_t g_foschk = 0;
 
 /** Global variables for the cache system (search) */
 static unsigned int g_cache = 1;
@@ -180,7 +181,7 @@ static unsigned char g_debugger = 0;
  * \param block the block's number given by the disk
  * \return the address of this block in the physical disk
  */
-static inline unsigned int blk2add(unsigned int block) {
+static inline uint32_t blk2add(uint32_t block) {
   return ((block + g_fosboot) * FOSFAT_BLK);
 }
 
@@ -191,9 +192,9 @@ static inline unsigned int blk2add(unsigned int block) {
  * \param size size of the table (number of bytes)
  * \return the integer value
  */
-static unsigned int c2l(unsigned char *value, int size) {
+static uint32_t c2l(unsigned char *value, int size) {
   int i, j;
-  unsigned int res = 0;
+  uint32_t res = 0;
 
   if (value) {
     for (i = size - 1, j = 0; i >= 0; i--, j++)
@@ -550,9 +551,7 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned int block,
  * \param block block position
  * \return the block0 or NULL if broken
  */
-static inline s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev,
-                                          unsigned int block)
-{
+static inline s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev, uint32_t block) {
   return (dev ? ((s_fosfat_b0 *)fosfat_read_b(dev, block, eB0)) : NULL);
 }
 
@@ -563,9 +562,7 @@ static inline s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev,
  * \param block block position
  * \return the data or NULL if broken
  */
-static inline s_fosfat_data *fosfat_read_d(FOSFAT_DEV *dev,
-                                           unsigned int block)
-{
+static inline s_fosfat_data *fosfat_read_d(FOSFAT_DEV *dev, uint32_t block) {
   return (dev ? ((s_fosfat_data *)fosfat_read_b(dev, block, eDATA)) : NULL);
 }
 
@@ -575,9 +572,7 @@ static inline s_fosfat_data *fosfat_read_d(FOSFAT_DEV *dev,
  * \param block block position
  * \return the BD or NULL if broken
  */
-static inline s_fosfat_bd *fosfat_read_bd(FOSFAT_DEV *dev,
-                                          unsigned int block)
-{
+static inline s_fosfat_bd *fosfat_read_bd(FOSFAT_DEV *dev, uint32_t block) {
   return (dev ? ((s_fosfat_bd *)fosfat_read_b(dev, block, eBD)) : NULL);
 }
 
@@ -587,9 +582,7 @@ static inline s_fosfat_bd *fosfat_read_bd(FOSFAT_DEV *dev,
  * \param block block position
  * \return the BL or NULL if broken
  */
-static inline s_fosfat_bl *fosfat_read_bl(FOSFAT_DEV *dev,
-                                          unsigned int block)
-{
+static inline s_fosfat_bl *fosfat_read_bl(FOSFAT_DEV *dev, uint32_t block) {
   return (dev ? ((s_fosfat_bl *)fosfat_read_b(dev, block, eBL)) : NULL);
 }
 
@@ -604,7 +597,7 @@ static inline s_fosfat_bl *fosfat_read_bl(FOSFAT_DEV *dev,
  * \param type type of this block (eB0, eBL, eBD or eDATA)
  * \return the first block of the linked list created
  */
-static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned int block,
+static void *fosfat_read_data(FOSFAT_DEV *dev, uint32_t block,
                               unsigned char nbs, e_fosfat_type type)
 {
   if (dev) {
@@ -617,11 +610,10 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned int block,
           block_list = first_bl;
           block_list->pt = block;
           for (i = 1; block_list && i < nbs; i++) {
-            block_list->next_bl = fosfat_read_bl(dev, block +
-                                                 (unsigned int)i);
+            block_list->next_bl = fosfat_read_bl(dev, block + (uint32_t)i);
             block_list = block_list->next_bl;
             if (block_list)
-              block_list->pt = block + (unsigned int)i;
+              block_list->pt = block + (uint32_t)i;
           }
           return (s_fosfat_bl *)first_bl;
         }
@@ -634,8 +626,7 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned int block,
         if ((first_data = fosfat_read_d(dev, block))) {
           block_data = first_data;
           for (i = 1; block_data && i < nbs; i++) {
-            block_data->next_data = fosfat_read_d(dev, block +
-                                                  (unsigned int)i);
+            block_data->next_data = fosfat_read_d(dev, block + (uint32_t)i);
             block_data = block_data->next_data;
           }
           return (s_fosfat_data *)first_data;
@@ -660,8 +651,8 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, unsigned int block,
  * \param block the file BD position
  * \return the first BD of the linked list
  */
-static s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, unsigned int block) {
-  unsigned int next;
+static s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, uint32_t block) {
+  uint32_t next;
   s_fosfat_bd *file_desc, *first_bd;
 
   if (dev && (file_desc = fosfat_read_bd(dev, block))) {
@@ -790,9 +781,9 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
  * \param block DIR (or SYS_LIST) BD position
  * \return the first BD of the linked list
  */
-static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, unsigned int block) {
+static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, uint32_t block) {
   unsigned int i;
-  unsigned int next;
+  uint32_t next;
   s_fosfat_bd *dir_desc, *first_bd;
   s_fosfat_bl *dir_list;
 
@@ -918,8 +909,8 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
             {
               if (type == eSBLF && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
-              unsigned int pt = c2l(loop->file[j].pt,
-                                    sizeof(loop->file[j].pt));
+              uint32_t pt = c2l(loop->file[j].pt,
+                                sizeof(loop->file[j].pt));
               if (loop_bd)
                 fosfat_free_dir(loop_bd);
               loop_bd = fosfat_read_dir(dev, pt);
@@ -936,8 +927,8 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
             {
               if (type == eSBLF && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
-              unsigned int pt = c2l(loop->file[j].pt,
-                                    sizeof(loop->file[j].pt));
+              uint32_t pt = c2l(loop->file[j].pt,
+                                sizeof(loop->file[j].pt));
               if (loop_bd)
                 fosfat_free_dir(loop_bd);
               loop_bd = fosfat_read_file(dev, pt);
@@ -981,7 +972,7 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
   char *tmp, *path, *name = NULL;
   char dir[MAX_SPLIT][FOSFAT_NAMELGT];
   s_cachelist *list;
-  unsigned int bd_block = 0, bl_block = 0;
+  uint32_t bd_block = 0, bl_block = 0;
   s_fosfat_bl *bl_found = NULL;
   s_fosfat_blf *blf_found = NULL;
   s_fosfat_bd *bd_found = NULL;
@@ -1509,7 +1500,7 @@ char *fosfat_diskname(FOSFAT_DEV *dev) {
  * \param bl BL block's number
  * \return the cache for a file
  */
-static s_cachelist *fosfat_cache_file(s_fosfat_blf *file, unsigned int bl) {
+static s_cachelist *fosfat_cache_file(s_fosfat_blf *file, uint32_t bl) {
   s_cachelist *cachefile = NULL;
 
   if (file) {
@@ -1532,7 +1523,7 @@ static s_cachelist *fosfat_cache_file(s_fosfat_blf *file, unsigned int bl) {
  * \param pt block's number of the BD
  * \return the first element of the cache list.
  */
-static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, unsigned int pt) {
+static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, uint32_t pt) {
   int i;
   s_fosfat_bd *dir = NULL;
   s_fosfat_bl *files;
