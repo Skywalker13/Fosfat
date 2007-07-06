@@ -41,7 +41,7 @@ typedef struct ginfo {
 " -v --version          version\n" \
 " -a --harddisk         force an hard disk (default autodetect)\n" \
 " -f --floppydisk       force a floppy disk (default autodetect)\n" \
-" -l --fos-debugger     that will turn on the FOS debugger\n\n" \
+" -l --fos-logger       that will turn on the FOS logger\n\n" \
 " device                /dev/fd0 : floppy disk\n" \
 "                       /dev/sda : hard disk, etc\n" \
 " mode\n" \
@@ -192,7 +192,7 @@ int main(int argc, char **argv) {
     { "harddisk",     0, NULL, 'a' },
     { "floppydisk",   0, NULL, 'f' },
     { "help",         0, NULL, 'h' },
-    { "fos-debugger", 0, NULL, 'l' },
+    { "fos-logger",   0, NULL, 'l' },
     { "version",      0, NULL, 'v' },
     { NULL,           0, NULL,  0  }
   };
@@ -215,8 +215,8 @@ int main(int argc, char **argv) {
       case 'f':           /* -f or --floppydisk */
         type = eFD;
         break ;
-      case 'l':           /* -l or --fos-debugger */
-        fosfat_debugger(1);
+      case 'l':           /* -l or --fos-logger */
+        fosfat_logger(1);
         break ;
       case -1:            /* end */
         break ;

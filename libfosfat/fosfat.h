@@ -97,7 +97,7 @@ char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path,
 FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk);
 void fosfat_closedev(FOSFAT_DEV *dev);
 
-/* Internal debugger */
-void fosfat_debugger(unsigned char state);
+/* Internal logger */
+void fosfat_logger(unsigned char state);
 
 #endif /* _FOSFAT_H_ */

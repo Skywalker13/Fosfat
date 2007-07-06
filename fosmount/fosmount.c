@@ -45,7 +45,7 @@
 " -v --version          version\n" \
 " -a --harddisk         force an hard disk (default autodetect)\n" \
 " -f --floppydisk       force a floppy disk (default autodetect)\n" \
-" -l --fos-debugger     that will turn on the FOS debugger\n" \
+" -l --fos-logger       that will turn on the FOS logger\n" \
 " -d --fuse-debugger    that will turn on the FUSE debugger\n\n" \
 " device                /dev/fd0 : floppy disk\n" \
 "                       /dev/sda : hard disk, etc\n" \
@@ -302,7 +302,7 @@ static struct fuse_operations fosfat_oper = {
 
 int main(int argc, char **argv) {
   int next_option;
-  int res = 0, fusedebug = 0, fosdebug = 0;
+  int res = 0, fusedebug = 0, foslog = 0;
   char *device;
   char **arg;
   e_fosfat_disk type = eDAUTO;
@@ -341,8 +341,8 @@ int main(int argc, char **argv) {
         fusedebug = 1;
         break ;
       case 'l':           /* -l or --fos-debugger */
-        fosdebug = 1;
-        fosfat_debugger(1);
+        foslog = 1;
+        fosfat_logger(1);
         break ;
       case -1:            /* end */
         break ;
@@ -355,17 +355,17 @@ int main(int argc, char **argv) {
   }
 
   /* table for fuse */
-  arg = malloc(sizeof(char *) * (3 + fusedebug + fosdebug));
+  arg = malloc(sizeof(char *) * (3 + fusedebug + foslog));
   if (arg) {
     arg[0] = strdup(argv[0]);
     if (fusedebug)
       arg[fusedebug] = strdup("-d");
-    if (fosdebug)
-      arg[fusedebug + fosdebug] = strdup("-f");
+    if (foslog)
+      arg[fusedebug + foslog] = strdup("-f");
     device = strdup(argv[optind]);
-    arg[1 + fusedebug + fosdebug] = strdup(argv[optind + 1]);
+    arg[1 + fusedebug + foslog] = strdup(argv[optind + 1]);
     /* FUSE must be used as single-thread */
-    arg[2 + fusedebug + fosdebug] = strdup("-s");
+    arg[2 + fusedebug + foslog] = strdup("-s");
   }
   else
     return -1;
@@ -377,7 +377,7 @@ int main(int argc, char **argv) {
   }
   else {
     /* FUSE */
-    res = fuse_main(3 + fusedebug + fosdebug, arg, &fosfat_oper, NULL);
+    res = fuse_main(3 + fusedebug + foslog, arg, &fosfat_oper, NULL);
 
     /* Close the device */
     fosfat_closedev(dev);
