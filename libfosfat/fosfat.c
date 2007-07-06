@@ -391,7 +391,7 @@ void fosfat_free_listdir(s_fosfat_file *var) {
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
-static inline int fosfat_isdir(s_fosfat_blf *file) {
+static inline int fosfat_in_isdir(s_fosfat_blf *file) {
   return (file ? (c2l(file->att, sizeof(file->att)) & 0x1000) : 0);
 }
 
@@ -402,7 +402,7 @@ static inline int fosfat_isdir(s_fosfat_blf *file) {
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
-static inline int fosfat_islink(s_fosfat_blf *file) {
+static inline int fosfat_in_islink(s_fosfat_blf *file) {
   return (file ? (c2l(file->att, sizeof(file->att)) & 0x1000000) : 0);
 }
 
@@ -413,7 +413,7 @@ static inline int fosfat_islink(s_fosfat_blf *file) {
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
-static inline int fosfat_isvisible(s_fosfat_blf *file) {
+static inline int fosfat_in_isvisible(s_fosfat_blf *file) {
   return (file ? (c2l(file->att, sizeof(file->att)) & 0x2000) : 0);
 }
 
@@ -424,7 +424,7 @@ static inline int fosfat_isvisible(s_fosfat_blf *file) {
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
-static inline int fosfat_isopenexm(s_fosfat_blf *file) {
+static inline int fosfat_in_isopenexm(s_fosfat_blf *file) {
   return (file ? (((c2l(file->att, sizeof(file->att)) & 0x1)) ||
                   ((c2l(file->att, sizeof(file->att)) & 0x2))) : 0);
 }
@@ -436,7 +436,7 @@ static inline int fosfat_isopenexm(s_fosfat_blf *file) {
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
-static inline int fosfat_isencoded(s_fosfat_blf *file) {
+static inline int fosfat_in_isencoded(s_fosfat_blf *file) {
   return (file ? (c2l(file->att, sizeof(file->att)) & 0x20000) : 0);
 }
 
@@ -447,7 +447,7 @@ static inline int fosfat_isencoded(s_fosfat_blf *file) {
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
-static inline int fosfat_issystem(s_fosfat_blf *file) {
+static inline int fosfat_in_issystem(s_fosfat_blf *file) {
   return (file ? ((file->typ & 0xF8)) : 0);
 }
 
@@ -456,7 +456,7 @@ static inline int fosfat_issystem(s_fosfat_blf *file) {
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
-static inline int fosfat_isnotdel(s_fosfat_blf *file) {
+static inline int fosfat_in_isnotdel(s_fosfat_blf *file) {
   return (file && strlen(file->name) > 0) ? 1 : 0;
 }
 
@@ -899,11 +899,11 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
       do {
         /* Loop for FOSFAT_NBL files in the BL */
         for (j = 0; j < FOSFAT_NBL && ontop && loop; j++) {
-          if (fosfat_isopenexm(&loop->file[j]) &&
-              fosfat_isnotdel(&loop->file[j]))
+          if (fosfat_in_isopenexm(&loop->file[j]) &&
+              fosfat_in_isnotdel(&loop->file[j]))
           {
             /* Test if it is a directory */
-            if (fosfat_isdir(&loop->file[j]) &&
+            if (fosfat_in_isdir(&loop->file[j]) &&
                 fosfat_isdirname(loop->file[j].name, dir[i]))
             {
               if (type == eSBLF && loop_blf)
@@ -919,9 +919,9 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
               break;
             }
             /* Test if it is a file or a soft-link */
-            else if (!fosfat_isdir(&loop->file[j]) &&
+            else if (!fosfat_in_isdir(&loop->file[j]) &&
                      (!strcasecmp(loop->file[j].name, dir[i]) ||
-                     (fosfat_islink(&loop->file[j]) &&
+                     (fosfat_in_islink(&loop->file[j]) &&
                      fosfat_isdirname(loop->file[j].name, dir[i]))))
             {
               if (type == eSBLF && loop_blf)
@@ -1117,13 +1117,13 @@ static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location,
  * \param location file in the path
  * \return a boolean (true for success)
  */
-int fosfat_p_isdir(FOSFAT_DEV *dev, const char *location) {
+int fosfat_isdir(FOSFAT_DEV *dev, const char *location) {
   s_fosfat_blf *entry;
 
   if (dev && location) {
     if (*location && strcmp(location, "/")) {
       if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
-          fosfat_isnotdel(entry) && fosfat_isdir(entry))
+          fosfat_in_isnotdel(entry) && fosfat_in_isdir(entry))
         free(entry);
       else
         return 0;
@@ -1140,12 +1140,12 @@ int fosfat_p_isdir(FOSFAT_DEV *dev, const char *location) {
  * \param location file in the path
  * \return a boolean (true for success)
  */
-int fosfat_p_isvisible(FOSFAT_DEV *dev, const char *location) {
+int fosfat_isvisible(FOSFAT_DEV *dev, const char *location) {
   s_fosfat_blf *entry;
 
   if (dev && location) {
     if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
-        fosfat_isnotdel(entry) && fosfat_isvisible(entry))
+        fosfat_in_isnotdel(entry) && fosfat_in_isvisible(entry))
       free(entry);
     else
       return 0;
@@ -1161,12 +1161,12 @@ int fosfat_p_isvisible(FOSFAT_DEV *dev, const char *location) {
  * \param location file in the path
  * \return a boolean (true for success)
  */
-int fosfat_p_isencoded(FOSFAT_DEV *dev, const char *location) {
+int fosfat_isencoded(FOSFAT_DEV *dev, const char *location) {
   s_fosfat_blf *entry;
 
   if (dev && location) {
     if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
-        fosfat_isnotdel(entry) && fosfat_isencoded(entry))
+        fosfat_in_isnotdel(entry) && fosfat_in_isencoded(entry))
       free(entry);
     else
       return 0;
@@ -1182,12 +1182,12 @@ int fosfat_p_isencoded(FOSFAT_DEV *dev, const char *location) {
  * \param location file in the path
  * \return a boolean (true for success)
  */
-int fosfat_p_isopenexm(FOSFAT_DEV *dev, const char *location) {
+int fosfat_isopenexm(FOSFAT_DEV *dev, const char *location) {
   s_fosfat_blf *entry;
 
   if (dev && location) {
     if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
-        fosfat_isnotdel(entry) && fosfat_isopenexm(entry))
+        fosfat_in_isnotdel(entry) && fosfat_in_isopenexm(entry))
       free(entry);
     else
       return 0;
@@ -1267,10 +1267,10 @@ static s_fosfat_file *fosfat_stat(s_fosfat_blf *file) {
     stat->size = c2l(file->lgf, sizeof(file->lgf));
 
     /* Attributes (field bits) */
-    stat->att.isdir = fosfat_isdir(file) ? 1 : 0;
-    stat->att.isvisible = fosfat_isvisible(file) ? 1 : 0;
-    stat->att.isencoded = fosfat_isencoded(file) ? 1 : 0;
-    stat->att.islink = fosfat_islink(file) ? 1 : 0;
+    stat->att.isdir = fosfat_in_isdir(file) ? 1 : 0;
+    stat->att.isvisible = fosfat_in_isvisible(file) ? 1 : 0;
+    stat->att.isencoded = fosfat_in_isencoded(file) ? 1 : 0;
+    stat->att.islink = fosfat_in_islink(file) ? 1 : 0;
 
     /* Creation date */
     stat->time_c.year = y2k(h2d(file->cd[2]));
@@ -1311,7 +1311,7 @@ s_fosfat_file *fosfat_get_stat(FOSFAT_DEV *dev, const char *location) {
   s_fosfat_file *stat = NULL;
 
   if (dev && location && (entry = fosfat_search_insys(dev, location, eSBLF)) &&
-      fosfat_isnotdel(entry))
+      fosfat_in_isnotdel(entry))
   {
     stat = fosfat_stat(entry);
     free(entry);
@@ -1340,15 +1340,15 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
 
   if (dev && location && (dir = fosfat_search_insys(dev, location, eSBD))) {
     /* Test if it is a directory */
-    if (fosfat_p_isdir(dev, location)) {
+    if (fosfat_isdir(dev, location)) {
       files = dir->first_bl;
       if (files) {
         do {
           /* Check all files in the BL */
           for (i = 0; i < FOSFAT_NBL; i++) {
-            if (fosfat_isopenexm(&files->file[i]) &&
-                fosfat_isnotdel(&files->file[i]) &&
-                !fosfat_issystem(&files->file[i]))
+            if (fosfat_in_isopenexm(&files->file[i]) &&
+                fosfat_in_isnotdel(&files->file[i]) &&
+                !fosfat_in_issystem(&files->file[i]))
             {
               /* Complete the linked list with all files */
               if (listdir) {
@@ -1360,7 +1360,7 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
                 listdir = firstfile;
               }
             }
-            else if (fosfat_issystem(&files->file[i]) &&
+            else if (fosfat_in_issystem(&files->file[i]) &&
                     !strcasecmp(files->file[i].name, "sys_list"))
             {
               sysdir = fosfat_stat(&files->file[i]);
@@ -1406,7 +1406,7 @@ int fosfat_get_file(FOSFAT_DEV *dev, const char *src,
   s_fosfat_bd *file2;
 
   if (dev && src && dst && (file = fosfat_search_insys(dev, src, eSBLF)) &&
-      fosfat_isnotdel(file) && !fosfat_isdir(file))
+      fosfat_in_isnotdel(file) && !fosfat_in_isdir(file))
   {
     file2 = fosfat_read_file(dev, c2l(file->pt, sizeof(file->pt)));
     if (file2 && fosfat_get(dev, file2, dst, output, 0))
@@ -1441,7 +1441,7 @@ char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path,
   s_fosfat_bd *file2;
 
   if (dev && path && (file = fosfat_search_insys(dev, path, eSBLF)) &&
-      fosfat_isnotdel(file) && !fosfat_isdir(file))
+      fosfat_in_isnotdel(file) && !fosfat_in_isdir(file))
   {
     buffer = malloc(size);
     if (buffer) {
@@ -1506,8 +1506,8 @@ static s_cachelist *fosfat_cache_file(s_fosfat_blf *file, uint32_t bl) {
     cachefile = malloc(sizeof(s_cachelist));
     cachefile->next = NULL;
     cachefile->sub = NULL;
-    cachefile->isdir = fosfat_isdir(file) ? 1 : 0;
-    cachefile->islink = fosfat_islink(file) ? 1 : 0;
+    cachefile->isdir = fosfat_in_isdir(file) ? 1 : 0;
+    cachefile->islink = fosfat_in_islink(file) ? 1 : 0;
     cachefile->name = strdup(file->name);
     cachefile->bl = bl;
     cachefile->bd = c2l(file->pt, sizeof(file->pt));
@@ -1535,8 +1535,8 @@ static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, uint32_t pt) {
       do {
         /* Check all files in the BL */
         for (i = 0; i < FOSFAT_NBL; i++) {
-          if (fosfat_isopenexm(&files->file[i]) &&
-              fosfat_isnotdel(&files->file[i]))
+          if (fosfat_in_isopenexm(&files->file[i]) &&
+              fosfat_in_isnotdel(&files->file[i]))
           {
             /* Complete the linked list with all files */
             if (list) {
@@ -1548,8 +1548,8 @@ static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, uint32_t pt) {
               list = firstfile;
             }
             /* If the file is a directory, then do a recursive cache */
-            if (list && fosfat_isdir(&files->file[i]) &&
-                !fosfat_issystem(&files->file[i]))
+            if (list && fosfat_in_isdir(&files->file[i]) &&
+                !fosfat_in_issystem(&files->file[i]))
               list->sub = fosfat_cache_dir(dev, list->bd);
           }
         }

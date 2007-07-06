@@ -232,7 +232,7 @@ static int fos_open(const char *path, struct fuse_file_info *fi) {
   if((fi->flags & 3) != O_RDONLY)
     return -EACCES;
 
-  if(!fosfat_p_isopenexm(dev, path))
+  if(!fosfat_isopenexm(dev, path))
     return -ENOENT;
 
   return 0;

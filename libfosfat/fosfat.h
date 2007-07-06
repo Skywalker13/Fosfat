@@ -76,10 +76,10 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location);
 void fosfat_free_listdir(s_fosfat_file *var);
 
 /* Test attributes and type on a file since a location */
-int fosfat_p_isdir(FOSFAT_DEV *dev, const char *location);
-int fosfat_p_isvisible(FOSFAT_DEV *dev, const char *location);
-int fosfat_p_isencoded(FOSFAT_DEV *dev, const char *location);
-int fosfat_p_isopenexm(FOSFAT_DEV *dev, const char *location);
+int fosfat_isdir(FOSFAT_DEV *dev, const char *location);
+int fosfat_isvisible(FOSFAT_DEV *dev, const char *location);
+int fosfat_isencoded(FOSFAT_DEV *dev, const char *location);
+int fosfat_isopenexm(FOSFAT_DEV *dev, const char *location);
 
 /* Get informations */
 s_fosfat_file *fosfat_get_stat(FOSFAT_DEV *dev, const char *location);
