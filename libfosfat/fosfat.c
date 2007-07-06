@@ -977,9 +977,6 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
   s_fosfat_bd *bd_found = NULL;
 
   if (dev && location) {
-    if (type == eSBLF)
-      blf_found = malloc(sizeof(s_fosfat_blf));
-
     list = g_cachelist;
     path = strdup(location);
 
@@ -1046,8 +1043,10 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
           for (i = 0; bl_found && i < FOSFAT_NBL; i++) {
             if (!strcasecmp(bl_found->file[i].name, name)) {
               free(name);
-              memcpy(blf_found, &bl_found->file[i], sizeof(*blf_found));
-              return (s_fosfat_blf *)blf_found;
+              if ((blf_found = malloc(sizeof(s_fosfat_blf)))) {
+                memcpy(blf_found, &bl_found->file[i], sizeof(*blf_found));
+                return (s_fosfat_blf *)blf_found;
+              }
             }
           }
         }
@@ -1055,7 +1054,6 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
     }
     if (name)
       free(name);
-    free(blf_found);
   }
   return NULL;
 }
