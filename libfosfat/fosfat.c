@@ -1502,8 +1502,7 @@ char *fosfat_diskname(FOSFAT_DEV *dev) {
 static s_cachelist *fosfat_cache_file(s_fosfat_blf *file, uint32_t bl) {
   s_cachelist *cachefile = NULL;
 
-  if (file) {
-    cachefile = malloc(sizeof(s_cachelist));
+  if (file && (cachefile = malloc(sizeof(s_cachelist)))) {
     cachefile->next = NULL;
     cachefile->sub = NULL;
     cachefile->isdir = fosfat_in_isdir(file) ? 1 : 0;
