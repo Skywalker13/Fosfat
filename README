@@ -1,22 +1,33 @@
 
-                                        _aaa
-                                  _j?\aj?  )?46/
-                                aP'        _j? Q/
-                              )W4aa        )?QQ
-                                )6P'   _aaa _J' 6
-                                J?6aaj?46)?6  aP
-                                Qa/ )Q aP4aj6Jga/
-                                  ?????'    f   f
-              aaaa/    aaaa  aaaa   aaa _aaaaf   f aaaa/     _aaaa/
-            aJ?   ??6aP'  ?4P?  )46P' )?Q    f   fj'   6    _P   j'
-          _f        ]            P          f   Q'   J4/  _P   ]'
-          )6   ??Q6aj            f   _a/    f   '   J  4/_P   j'
-            jQaa    ?Q   ]    f   f   ]_f    f      )/   4P   ]'
-          ]'  ??'   4   ]    f   f   )?     f   6   )/      j(
-          _f        _Q   ]    f   6     _    f   P6   ?/    ]'
-          ???6aaaj??]aaajaaaa6aaaP?4aP?4aaaa6aaaf)6aaaJ   a'
-                                                      J   a'
-                                                    jaaaj'
+  The Fosblup                             _QP???Q6/
+                                        _Q'     ?4/
+                                        ]6       )Q
+                                          4QQQ6   _Q         _aaaa/
+                                  _aaa   _Q   46aQP'       _Q?'  )?Q/
+                            jQQQ?QQQQQQQQ6/ ]P            Q'       Q/
+                            _QQQQaQ??4Qf )??QQf        _aajf        ]f
+                          _QQP???    )W/    ?46/ aaaQ??? )Q/       j'
+                          _QQP     _a/ )6    _ajQQ??     _ajQa/   aQP
+                          ]fQ jQQ/QQQQ6 Q   ]P'     _ajQP?'  )?????
+                          j QQQQQQQQQQQjP   ]6/_ajQP?'
+                          4 QQP?   ?4QQ?     ?????]f
+            _aaaaa    aaaaj/]f       ]f            Q
+          _jP?  )4QQQP??' ]6)Q/     _Q' jQ6/      _f
+          j(    ]Q       aaQ6)4QQQQQP'aQQQQQ      j(
+          Q      Q6aajQP??  ?Q/ aaajQQQQQQQ'    aQ'
+          4g      ?QP        )46Q??' ]P4P'   _aj?'
+          ?6aaaaaQ?           )??6aajQQ6aaaQ??4a
+            ?????                  ??????46    Q/
+                                          4f    4g
+                                            4f    46     aaaa/
+                                            )4/    46aajP?????Qa
+                                            )4/    4Q??4Qa    Q
+                                              )W/  aQf    46   Q
+                                              ]P????       QajQ'
+                                              ]f          _P?
+                                              )W/       _aP'
+                                              )?6aaaaaj??
+                                                  )?'
 
 
 FOSFAT
@@ -30,8 +41,7 @@ tool 'fosread' can work directly with your device but it is limited for an
 console utilisation.
 The tool 'fosmount' uses FUSE for mount in _read-only_ your device in your
 tree. And you can convert the smaky's text files with smascii. You can
-compile 'fosmount' with >=fuse-2.6.x. Maybe it works with older version but
-it needs to test.
+compile 'fosmount' with >=fuse-2.6.x.
 
 Look the help with each application for the command line. Or look on the
 website.
