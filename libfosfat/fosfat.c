@@ -883,9 +883,9 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
     path = strdup(location);
 
     /* Split the path into a table */
-    if ((tmp = strtok((char *)path, "/")) != NULL) {
+    if ((tmp = strtok((char *)path, "/"))) {
       snprintf(dir[nb], sizeof(dir[nb]), "%s", tmp);
-      while ((tmp = strtok(NULL, "/")) != NULL && nb < MAX_SPLIT - 1)
+      while ((tmp = strtok(NULL, "/")) && nb < MAX_SPLIT - 1)
         snprintf(dir[++nb], sizeof(dir[nb]), "%s", tmp);
     }
     else
@@ -981,9 +981,9 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
     path = strdup(location);
 
     /* Split the path into a table */
-    if ((tmp = strtok((char *)path, "/")) != NULL) {
+    if ((tmp = strtok((char *)path, "/"))) {
       snprintf(dir[nb], sizeof(dir[nb]), "%s", tmp);
-      while ((tmp = strtok(NULL, "/")) != NULL && nb < MAX_SPLIT - 1)
+      while ((tmp = strtok(NULL, "/")) && nb < MAX_SPLIT - 1)
         snprintf(dir[++nb], sizeof(dir[nb]), "%s", tmp);
     }
     else
