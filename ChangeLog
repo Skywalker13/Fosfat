@@ -1,3 +1,9 @@
+2007-07-13  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* Change license GPLv2 to GPLv3.
+
+	* Fix a lot of memory leak.
+
 2007-07-07  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Third beta released 0.2.2
