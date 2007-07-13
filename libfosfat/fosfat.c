@@ -1045,10 +1045,13 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
               free(name);
               if ((blf_found = malloc(sizeof(s_fosfat_blf)))) {
                 memcpy(blf_found, &bl_found->file[i], sizeof(*blf_found));
+                free(bl_found);
                 return (s_fosfat_blf *)blf_found;
               }
             }
           }
+          if (bl_found)
+            free(bl_found);
         }
       }
     }
@@ -1116,19 +1119,21 @@ static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location,
  * \return a boolean (true for success)
  */
 int fosfat_isdir(FOSFAT_DEV *dev, const char *location) {
+  int res = 0;
   s_fosfat_blf *entry;
 
   if (dev && location) {
-    if (*location && strcmp(location, "/")) {
-      if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
-          fosfat_in_isnotdel(entry) && fosfat_in_isdir(entry))
+    if (strcmp(location, "/")) {
+      if ((entry = fosfat_search_insys(dev, location, eSBLF))) {
+        if (fosfat_in_isnotdel(entry) && fosfat_in_isdir(entry))
+          res = 1;
         free(entry);
-      else
-        return 0;
+      }
     }
-    return 1;
+    else
+      res = 1;
   }
-  return 0;
+  return res;
 }
 
 /**
@@ -1139,17 +1144,17 @@ int fosfat_isdir(FOSFAT_DEV *dev, const char *location) {
  * \return a boolean (true for success)
  */
 int fosfat_isvisible(FOSFAT_DEV *dev, const char *location) {
+  int res = 0;
   s_fosfat_blf *entry;
 
   if (dev && location) {
-    if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
-        fosfat_in_isnotdel(entry) && fosfat_in_isvisible(entry))
+    if ((entry = fosfat_search_insys(dev, location, eSBLF))) {
+      if (fosfat_in_isnotdel(entry) && fosfat_in_isvisible(entry))
+        res = 1;
       free(entry);
-    else
-      return 0;
-    return 1;
+    }
   }
-  return 0;
+  return res;
 }
 
 /**
@@ -1160,17 +1165,17 @@ int fosfat_isvisible(FOSFAT_DEV *dev, const char *location) {
  * \return a boolean (true for success)
  */
 int fosfat_isencoded(FOSFAT_DEV *dev, const char *location) {
+  int res = 0;
   s_fosfat_blf *entry;
 
   if (dev && location) {
-    if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
-        fosfat_in_isnotdel(entry) && fosfat_in_isencoded(entry))
+    if ((entry = fosfat_search_insys(dev, location, eSBLF))) {
+      if (fosfat_in_isnotdel(entry) && fosfat_in_isencoded(entry))
+        res = 1;
       free(entry);
-    else
-      return 0;
-    return 1;
+    }
   }
-  return 0;
+  return res;
 }
 
 /**
@@ -1181,17 +1186,17 @@ int fosfat_isencoded(FOSFAT_DEV *dev, const char *location) {
  * \return a boolean (true for success)
  */
 int fosfat_isopenexm(FOSFAT_DEV *dev, const char *location) {
+  int res = 0;
   s_fosfat_blf *entry;
 
   if (dev && location) {
-    if ((entry = fosfat_search_insys(dev, location, eSBLF)) &&
-        fosfat_in_isnotdel(entry) && fosfat_in_isopenexm(entry))
+    if ((entry = fosfat_search_insys(dev, location, eSBLF))) {
+      if (fosfat_in_isnotdel(entry) && fosfat_in_isopenexm(entry))
+        res = 1;
       free(entry);
-    else
-      return 0;
-    return 1;
+    }
   }
-  return 0;
+  return res;
 }
 
 /**
@@ -1308,10 +1313,9 @@ s_fosfat_file *fosfat_get_stat(FOSFAT_DEV *dev, const char *location) {
   s_fosfat_blf *entry;
   s_fosfat_file *stat = NULL;
 
-  if (dev && location && (entry = fosfat_search_insys(dev, location, eSBLF)) &&
-      fosfat_in_isnotdel(entry))
-  {
-    stat = fosfat_stat(entry);
+  if (dev && location && (entry = fosfat_search_insys(dev, location, eSBLF))) {
+    if (fosfat_in_isnotdel(entry))
+      stat = fosfat_stat(entry);
     free(entry);
   }
 
@@ -1403,14 +1407,14 @@ int fosfat_get_file(FOSFAT_DEV *dev, const char *src,
   s_fosfat_blf *file;
   s_fosfat_bd *file2;
 
-  if (dev && src && dst && (file = fosfat_search_insys(dev, src, eSBLF)) &&
-      fosfat_in_isnotdel(file) && !fosfat_in_isdir(file))
-  {
-    file2 = fosfat_read_file(dev, c2l(file->pt, sizeof(file->pt)));
-    if (file2 && fosfat_get(dev, file2, dst, output, 0))
-      res = 1;
+  if (dev && src && dst && (file = fosfat_search_insys(dev, src, eSBLF))) {
+    if (fosfat_in_isnotdel(file) && !fosfat_in_isdir(file)) {
+      file2 = fosfat_read_file(dev, c2l(file->pt, sizeof(file->pt)));
+      if (file2 && fosfat_get(dev, file2, dst, output, 0))
+        res = 1;
+      fosfat_free_file(file2);
+    }
     free(file);
-    fosfat_free_file(file2);
   }
 
   if (g_logger) {

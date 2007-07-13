@@ -257,27 +257,30 @@ static int fos_read(const char *path, char *buf, size_t size,
   (void)fi;
 
   /* Get the stats and test if it is a file */
-  if ((file = fosfat_get_stat(dev, path)) && !file->att.isdir) {
-    length = file->size;
-    if (offset < length) {
-      /* Fix the size in function of the offset */
-      if (offset + (signed)size > length)
-        size = length - offset;
-      /* Read the data */
-      buf_tmp = fosfat_get_buffer(dev, path, offset, size);
-      /* Copy the data for FUSE */
-      if (buf_tmp) {
-        memcpy(buf, buf_tmp, size);
-        free(buf_tmp);
+  if ((file = fosfat_get_stat(dev, path))) {
+    if (!file->att.isdir) {
+      length = file->size;
+      if (offset < length) {
+        /* Fix the size in function of the offset */
+        if (offset + (signed)size > length)
+          size = length - offset;
+        /* Read the data */
+        buf_tmp = fosfat_get_buffer(dev, path, offset, size);
+        /* Copy the data for FUSE */
+        if (buf_tmp) {
+          memcpy(buf, buf_tmp, size);
+          free(buf_tmp);
+        }
+        else
+          size = -ENOENT;
       }
       else
-        return -ENOENT;
+        size = 0;
     }
-    else
-      size = 0;
+    free(file);
   }
   else
-    return -ENOENT;
+    size = -ENOENT;
   return size;
 }
 
@@ -301,6 +304,7 @@ static struct fuse_operations fosfat_oper = {
 };
 
 int main(int argc, char **argv) {
+  int i;
   int next_option;
   int res = 0, fusedebug = 0, foslog = 0;
   char *device;
@@ -378,6 +382,10 @@ int main(int argc, char **argv) {
   else {
     /* FUSE */
     res = fuse_main(3 + fusedebug + foslog, arg, &fosfat_oper, NULL);
+
+    for (i = 0; i < 3 + fusedebug + foslog; i++)
+      free(*(arg + i));
+    free(arg);
 
     /* Close the device */
     fosfat_closedev(dev);
