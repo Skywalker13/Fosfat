@@ -72,52 +72,52 @@ typedef enum foslog {
 
 /** Data Block (256 bytes) */
 typedef struct block_data {
-  unsigned char data[256];     //!< Data
+  uint8_t data[256];           //!< Data
   /* Linked list */
   struct block_data *next_data;
 } s_fosfat_data;
 
 /** Block 0 (256 bytes) */
 typedef struct block_0 {
-  unsigned char sys[44];       //!< SYSTEM folder
-  char nlo[16];                //!< Disk name
-  unsigned char chk[4];        //!< Check control
-  unsigned char mes[172];      //!< Message
-  unsigned char change;        //!< Need of change the CHK number
-  unsigned char bonchk;        //!< New format
-  unsigned char oldchk[4];     //!< Old CHK value
-  unsigned char newchk[4];     //!< New CHK value
-  unsigned char reserve[10];   //!< Unused
+  uint8_t sys[44];             //!< SYSTEM folder
+  int8_t nlo[16];              //!< Disk name
+  uint8_t chk[4];              //!< Check control
+  uint8_t mes[172];            //!< Message
+  uint8_t change;              //!< Need of change the CHK number
+  uint8_t bonchk;              //!< New format
+  uint8_t oldchk[4];           //!< Old CHK value
+  uint8_t newchk[4];           //!< New CHK value
+  uint8_t reserve[10];         //!< Unused
 } s_fosfat_b0;
 
 /** File in a Block List (60 bytes) */
 typedef struct block_listf {
-  char name[16];               //!< Filename
-  unsigned char typ;           //!< Filetype
-  unsigned char ope;           //!< Open counter
-  unsigned char att[4];        //!< Attributes
-  unsigned char lg[4];         //!< Length in blocks
-  unsigned char lgb[2];        //!< Number of bytes in the last block
-  unsigned char cd[3];         //!< Date of Creation
-  unsigned char ch[3];         //!< Hour of Creation
-  unsigned char wd[3];         //!< Date of the last Write
-  unsigned char wh[3];         //!< Hour of the last Write
-  unsigned char rd[3];         //!< Date of the last Read
-  unsigned char rh[3];         //!< Hour of the last Read
-  unsigned char secid[3];      //!< Security ID
-  unsigned char clope;         //!< Open mode before CLOSE
-  unsigned char pt[4];         //!< Pointer on the BD
-  unsigned char lgf[4];        //!< File size in bytes
-  unsigned char code[2];       //!< Code control
+  int8_t name[16];             //!< Filename
+  uint8_t typ;                 //!< Filetype
+  uint8_t ope;                 //!< Open counter
+  uint8_t att[4];              //!< Attributes
+  uint8_t lg[4];               //!< Length in blocks
+  uint8_t lgb[2];              //!< Number of bytes in the last block
+  uint8_t cd[3];               //!< Date of Creation
+  uint8_t ch[3];               //!< Hour of Creation
+  uint8_t wd[3];               //!< Date of the last Write
+  uint8_t wh[3];               //!< Hour of the last Write
+  uint8_t rd[3];               //!< Date of the last Read
+  uint8_t rh[3];               //!< Hour of the last Read
+  uint8_t secid[3];            //!< Security ID
+  uint8_t clope;               //!< Open mode before CLOSE
+  uint8_t pt[4];               //!< Pointer on the BD
+  uint8_t lgf[4];              //!< File size in bytes
+  uint8_t code[2];             //!< Code control
 } s_fosfat_blf;
 
 /** Block List (256 bytes) */
 typedef struct block_list {
   s_fosfat_blf file[4];        //!< 4 BL files (240 bytes)
-  unsigned char next[4];       //!< Next BL
-  unsigned char chk[4];        //!< Check control
-  unsigned char prev[4];       //!< Previous BL
-  unsigned char reserve[4];    //!< Unused
+  uint8_t next[4];             //!< Next BL
+  uint8_t chk[4];              //!< Check control
+  uint8_t prev[4];             //!< Previous BL
+  uint8_t reserve[4];          //!< Unused
   /* Not in the block */
   uint32_t pt;                 //!< Block's number of this BL
   /* Linked list */
@@ -126,19 +126,19 @@ typedef struct block_list {
 
 /** Block Description (256 bytes) */
 typedef struct block_desc {
-  unsigned char next[4];       //!< Next BD
-  unsigned char prev[4];       //!< Previous BD
-  unsigned char npt[2];        //!< Number of tranches in the BD
-  unsigned char pts[42][4];    //!< Pointers on the tranches (max 42 tranches)
-  char name[16];               //!< Filename
-  unsigned char nbs[42];       //!< Length (in blocks) of each tranches
-  unsigned char reserve[4];    //!< Unused
-  unsigned char lst[2];        //!< Number of byte in the last tranche
-  unsigned char hac[2];        //!< Hashing function if LIST
-  unsigned char nbl[2];        //!< Number of BL used if LIST
-  unsigned char chk[4];        //!< Check control
-  unsigned char off[4];        //!< Offset (in blocks) of all previous BD
-  unsigned char free[2];       //!< Unused
+  uint8_t next[4];             //!< Next BD
+  uint8_t prev[4];             //!< Previous BD
+  uint8_t npt[2];              //!< Number of tranches in the BD
+  uint8_t pts[42][4];          //!< Pointers on the tranches (max 42 tranches)
+  int8_t name[16];             //!< Filename
+  uint8_t nbs[42];             //!< Length (in blocks) of each tranches
+  uint8_t reserve[4];          //!< Unused
+  uint8_t lst[2];              //!< Number of byte in the last tranche
+  uint8_t hac[2];              //!< Hashing function if LIST
+  uint8_t nbl[2];              //!< Number of BL used if LIST
+  uint8_t chk[4];              //!< Check control
+  uint8_t off[4];              //!< Offset (in blocks) of all previous BD
+  uint8_t free[2];             //!< Unused
   /* Linked list */
   struct block_desc *next_bd;
   struct block_list *first_bl;
@@ -191,7 +191,7 @@ static inline uint32_t blk2add(uint32_t block) {
  * \param size size of the table (number of bytes)
  * \return the integer value
  */
-static uint32_t c2l(unsigned char *value, int size) {
+static uint32_t c2l(uint8_t *value, int size) {
   int i, j;
   uint32_t res = 0;
 
@@ -457,7 +457,7 @@ static inline int fosfat_in_issystem(s_fosfat_blf *file) {
  * \return a boolean (true for success)
  */
 static inline int fosfat_in_isnotdel(s_fosfat_blf *file) {
-  return (file && strlen(file->name) > 0) ? 1 : 0;
+  return (file && strlen((char *)file->name) > 0) ? 1 : 0;
 }
 
 /**
@@ -597,7 +597,7 @@ static inline s_fosfat_bl *fosfat_read_bl(FOSFAT_DEV *dev, uint32_t block) {
  * \return the first block of the linked list created
  */
 static void *fosfat_read_data(FOSFAT_DEV *dev, uint32_t block,
-                              unsigned char nbs, e_fosfat_type type)
+                              uint8_t nbs, e_fosfat_type type)
 {
   if (dev) {
     switch (type) {
@@ -730,7 +730,7 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
             /* When the result is written in a file */
             if (!flag) {
               /* Write the block */
-              if (fwrite((unsigned char *)file_d->data, 1, check_last, f_dst)
+              if (fwrite((uint8_t *)file_d->data, 1, check_last, f_dst)
                   != check_last)
                 res = 0;
             }
@@ -904,7 +904,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
           {
             /* Test if it is a directory */
             if (fosfat_in_isdir(&loop->file[j]) &&
-                fosfat_isdirname(loop->file[j].name, dir[i]))
+                fosfat_isdirname((char *)loop->file[j].name, dir[i]))
             {
               if (type == eSBLF && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
@@ -920,9 +920,9 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
             }
             /* Test if it is a file or a soft-link */
             else if (!fosfat_in_isdir(&loop->file[j]) &&
-                     (!strcasecmp(loop->file[j].name, dir[i]) ||
+                     (!strcasecmp((char *)loop->file[j].name, dir[i]) ||
                      (fosfat_in_islink(&loop->file[j]) &&
-                     fosfat_isdirname(loop->file[j].name, dir[i]))))
+                     fosfat_isdirname((char *)loop->file[j].name, dir[i]))))
             {
               if (type == eSBLF && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
@@ -1041,7 +1041,7 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
         case eSBLF: {
           bl_found = fosfat_read_bl(dev, bl_block);
           for (i = 0; bl_found && i < FOSFAT_NBL; i++) {
-            if (!strcasecmp(bl_found->file[i].name, name)) {
+            if (!strcasecmp((char *)bl_found->file[i].name, name)) {
               free(name);
               if ((blf_found = malloc(sizeof(s_fosfat_blf)))) {
                 memcpy(blf_found, &bl_found->file[i], sizeof(*blf_found));
@@ -1263,7 +1263,7 @@ static s_fosfat_file *fosfat_stat(s_fosfat_blf *file) {
 
   if (file && (stat = malloc(sizeof(s_fosfat_file)))) {
     /* Name */
-    strncpy(stat->name, file->name, sizeof(stat->name));
+    strncpy(stat->name, (char *)file->name, sizeof(stat->name));
     lc(stat->name);
 
     /* Size (bytes) */
@@ -1363,7 +1363,7 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
               }
             }
             else if (fosfat_in_issystem(&files->file[i]) &&
-                    !strcasecmp(files->file[i].name, "sys_list"))
+                    !strcasecmp((char *)files->file[i].name, "sys_list"))
             {
               sysdir = fosfat_stat(&files->file[i]);
               strcpy(sysdir->name, "..dir");
@@ -1482,7 +1482,7 @@ char *fosfat_diskname(FOSFAT_DEV *dev) {
   char *name = NULL;
 
   if (dev && (block0 = fosfat_read_b0(dev, FOSFAT_BLOCK0))) {
-    name = strdup(block0->nlo);
+    name = strdup((char *)block0->nlo);
     free(block0);
   }
 
@@ -1509,7 +1509,7 @@ static s_cachelist *fosfat_cache_file(s_fosfat_blf *file, uint32_t bl) {
     cachefile->sub = NULL;
     cachefile->isdir = fosfat_in_isdir(file) ? 1 : 0;
     cachefile->islink = fosfat_in_islink(file) ? 1 : 0;
-    cachefile->name = strdup(file->name);
+    cachefile->name = strdup((char *)file->name);
     cachefile->bl = bl;
     cachefile->bd = c2l(file->pt, sizeof(file->pt));
   }
