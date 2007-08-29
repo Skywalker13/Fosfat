@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _ASCII_H_
-#define _ASCII_H_
+#ifndef ASCII_H_
+#define ASCII_H_
 
 /** New line */
 typedef enum newline {
@@ -34,4 +34,4 @@ typedef enum newline {
 
 char *sma2iso8859(char *buffer, unsigned int size, e_newline ret);
 
-#endif /* _ASCII_H_ */
+#endif /* ASCII_H_ */

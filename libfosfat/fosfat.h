@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _FOSFAT_H_
-#define _FOSFAT_H_
+#ifndef FOSFAT_H_
+#define FOSFAT_H_
 
 #define FOSFAT_DEV      FILE
 #define FOSFAT_NAMELGT  17
@@ -100,4 +100,4 @@ void fosfat_closedev(FOSFAT_DEV *dev);
 /* Internal logger */
 void fosfat_logger(unsigned char state);
 
-#endif /* _FOSFAT_H_ */
+#endif /* FOSFAT_H_ */
