@@ -15,11 +15,9 @@ distclean: clean
 	rm -f config.mak
 
 install:
+	$(MAKE) -C libfosfat install
 	$(MAKE) -C tools install
 	$(MAKE) -C fosmount install
-
-install-lib:
-	$(MAKE) -C libfosfat install
 
 uninstall:
 	$(MAKE) -C libfosfat uninstall
