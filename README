@@ -54,12 +54,10 @@ BUILD
  make
  make install
 
-It will install 'fosread', 'fosmount' and 'smascii' in your local directory.
+It will install 'fosread', 'fosmount' and 'smascii' and libfosfat in your
+local directory.
 Use `./configure --help` for more informations.
 
- make install-lib
-
-Will install the static library in your local directory.
 The include is fosfat.h.
 For more informations, consult the comments in the sources.
 
