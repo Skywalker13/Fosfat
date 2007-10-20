@@ -13,6 +13,6 @@ Description: Library Fosfat and FUSE extension
  formatted disk. Currently, only a tool and a FUSE extension that
  use this library can be used for reading a directory and copying
  a file. Smaky was a system developed in Switzerland at the EPFL
- (Ecole Polytechnique Fédérale de Lausanne).
+ (Ecole Polytechnique Federale de Lausanne).
  .
  Homepage: http://home.gna.org/fosfat/
