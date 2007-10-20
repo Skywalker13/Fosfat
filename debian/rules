@@ -18,4 +18,4 @@ cleanbuilddir::
 
 makebuilddir::
 	mkdir -p $(CURDIR)/debian/fosfat/bin
-	./configure --prefix=$(CURDIR)/debian/fosfat
+	./configure --prefix=$(CURDIR)/debian/fosfat --enable-static --disable-shared
