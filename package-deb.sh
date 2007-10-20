@@ -23,6 +23,7 @@ find "$PACKAGE/$DIR" \( -name .svn -or \
                         -name .depend* -or \
                         -name '*.o' -or \
                         -name '*.a' -or \
+                        -name '*.so*' -or \
                         -name '*~' \
                      \) -exec rm -rf '{}' \; 2>/dev/null
 find "$PACKAGE/$DIR" \( -name 'fosread' -or \
