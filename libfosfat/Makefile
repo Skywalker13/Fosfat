@@ -10,7 +10,7 @@ endif
 
 LIBNAME = libfosfat
 STATIC_LIBNAME = ${LIBNAME}.a
-SHARED_LIBNAME = ${LIBNAME}.so.${VERSION}
+SHARED_LIBNAME = ${LIBNAME}.so
 
 SRCS = fosfat.c
 
@@ -38,11 +38,12 @@ clean:
 install: $(BUILD_RULES)
 	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(STATIC_LIBNAME) $(libdir) || continue
 	[ $(BUILD_SHARED) = yes ] && $(INSTALL) -c $(SHARED_LIBNAME) $(libdir) || continue
+	[ $(BUILD_SHARED) = yes ] && cp -s $(libdir)/$(SHARED_LIBNAME) $(libdir)/$(SHARED_LIBNAME).${VERSION} || continue
 	$(INSTALL) -c -m 644 fosfat.h $(includedir)
 
 uninstall:
 	rm -f $(libdir)/$(STATIC_LIBNAME)
-	rm -f $(libdir)/$(SHARED_LIBNAME)
+	rm -f $(libdir)/$(SHARED_LIBNAME)*
 	rm -f $(includedir)/fosfat.h
 
 depend:
