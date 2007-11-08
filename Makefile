@@ -14,10 +14,14 @@ distclean: clean
 	rm -f config.log
 	rm -f config.mak
 
-install:
-	$(MAKE) -C libfosfat install
+install: install-deb install-dev
+
+install-deb:
 	$(MAKE) -C tools install
 	$(MAKE) -C fosmount install
+
+install-dev:
+	$(MAKE) -C libfosfat install
 
 uninstall:
 	$(MAKE) -C libfosfat uninstall
