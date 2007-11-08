@@ -54,7 +54,7 @@ BUILD
  make
  make install
 
-It will install 'fosread', 'fosmount' and 'smascii' and libfosfat in your
+It will install 'fosread', 'fosmount', 'smascii' and libfosfat in your
 local directory.
 Use `./configure --help` for more informations.
 
