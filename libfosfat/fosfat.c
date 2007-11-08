@@ -173,10 +173,12 @@ static unsigned char g_logger = 0;
 
 /**
  * \brief Translate a block number to an address.
+ *
  *  This function depend if the media is an HARD DISK or an 3"1/2 DISK.
  *  The FOSBOOT is the double in number of blocks for an hard disk.
  *  The real address is the address given by the disk + the size of the
  *  FOSBOOT part.
+ *
  * \param block the block's number given by the disk
  * \return the address of this block in the physical disk
  */
@@ -186,7 +188,9 @@ static inline uint32_t blk2add(uint32_t block) {
 
 /**
  * \brief Convert char table to an integer.
+ *
  *  This convertion will swapped all bytes and returned an int value.
+ *
  * \param value pointer on the char table
  * \param size size of the table (number of bytes)
  * \return the integer value
@@ -204,6 +208,7 @@ static uint32_t c2l(uint8_t *value, int size) {
 
 /**
  * \brief Change a string in lower case.
+ *
  * \param data the string
  * \return a pointer on this string
  */
@@ -219,8 +224,10 @@ static char *lc(char *data) {
 
 /**
  * \brief Hex to dec convertion.
+ *
  *  Convert an integer in base 10 with the value shown in base 16, in an
  *  integer with the value shown in base 10.
+ *
  * \param val the value
  * \return the new integer
  */
@@ -238,6 +245,7 @@ static int h2d(int val) {
 
 /**
  * \brief Convert the year to y2k.
+ *
  * \param y year on two digits
  * \return the year on four digits
  */
@@ -247,6 +255,7 @@ static inline int y2k(int y) {
 
 /**
  * \brief Like strchr but limited to a length.
+ *
  * \param s string
  * \param count number of chars
  * \param c char searched
@@ -264,6 +273,7 @@ static char *my_strnchr(const char *s, size_t count, int c) {
 
 /**
  * \brief Enable or disable the internal FOS logger.
+ *
  * \param state 1 or 0
  */
 void fosfat_logger(unsigned char state) {
@@ -275,6 +285,7 @@ void fosfat_logger(unsigned char state) {
 
 /**
  * \brief Print function for the internal FOS logger.
+ *
  * \param msg text shown
  * \param type of logging
  */
@@ -305,8 +316,10 @@ static void foslog(e_foslog type, const char *msg, ...) {
 
 /**
  * \brief Free a DATA file variable.
+ *
  *  It will be used only when a data is loaded for copy a file on the PC,
  *  for freed each block after each write.
+ *
  * \param var pointer on the data block
  */
 static void fosfat_free_data(s_fosfat_data *var) {
@@ -322,9 +335,11 @@ static void fosfat_free_data(s_fosfat_data *var) {
 
 /**
  * \brief Free a BD file variable.
+ *
  *  It must be used only with a BD that is (or can be) use as the first
  *  member of a linked list.
  *  This function must be used after all fosfat_read_file()!
+ *
  * \param var pointer on the description block
  */
 static void fosfat_free_file(s_fosfat_bd *var) {
@@ -340,9 +355,11 @@ static void fosfat_free_file(s_fosfat_bd *var) {
 
 /**
  * \brief Free a BD dir variable.
+ *
  *  It must be used only with a BD that is (or can be) use as the first
  *  member of a linked list for a dir (with BL linked list into).
  *  This function must be used after all fosfat_read_dir()!
+ *
  * \param var pointer on the description block
  */
 static void fosfat_free_dir(s_fosfat_bd *var) {
@@ -370,7 +387,9 @@ static void fosfat_free_dir(s_fosfat_bd *var) {
 
 /**
  * \brief Free a List Dir variable.
+ *
  *  This function must be used after all fosfat_list_dir()!
+ *
  * \param var pointer on the description block
  */
 void fosfat_free_listdir(s_fosfat_file *var) {
@@ -386,8 +405,10 @@ void fosfat_free_listdir(s_fosfat_file *var) {
 
 /**
  * \brief Test if the file is a directory.
+ *
  *  This function read the ATT and return the value of the 12th bit,
  *  mask 0x1000.
+ *
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
@@ -397,8 +418,10 @@ static inline int fosfat_in_isdir(s_fosfat_blf *file) {
 
 /**
  * \brief Test if the file is a soft-link.
+ *
  *  This function read the ATT and return the value of the 24th bit,
  *  mask 0x1000000.
+ *
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
@@ -408,8 +431,10 @@ static inline int fosfat_in_islink(s_fosfat_blf *file) {
 
 /**
  * \brief Test if the file is visible.
+ *
  *  This function read the ATT and return the value of the 13th bit,
  *  mask 0x2000.
+ *
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
@@ -419,8 +444,10 @@ static inline int fosfat_in_isvisible(s_fosfat_blf *file) {
 
 /**
  * \brief Test if the file is 'open exclusif' and 'multiple'.
+ *
  *  This function read the ATT and return the value of the 1st or 2th bit,
  *  mask 0x1 and 0x2.
+ *
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
@@ -431,8 +458,10 @@ static inline int fosfat_in_isopenexm(s_fosfat_blf *file) {
 
 /**
  * \brief Test if the file is encoded.
+ *
  *  This function read the ATT and return the value of the 17th bit,
  *  mask 0x20000.
+ *
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
@@ -442,8 +471,10 @@ static inline int fosfat_in_isencoded(s_fosfat_blf *file) {
 
 /**
  * \brief Test if the file is system (5 MSB bits).
+ *
  *  This function read the TYP and return the value of the 3-7th bits,
  *  mask 0xF8.
+ *
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
@@ -453,6 +484,7 @@ static inline int fosfat_in_issystem(s_fosfat_blf *file) {
 
 /**
  * \brief Test if the file is not deleted.
+ *
  * \param file pointer on the file (in the BL)
  * \return a boolean (true for success)
  */
@@ -462,11 +494,13 @@ static inline int fosfat_in_isnotdel(s_fosfat_blf *file) {
 
 /**
  * \brief Read a block defined by a type.
+ *
  *  This function read a block on the disk and return the structure in
  *  function of the type chosen. Each type use 256 bytes, but the structures
  *  are always bigger. The order of the attributes in each structures is
  *  very important, because the informations from the device are just copied
  *  directly without parsing.
+ *
  * \param dev pointer on the device
  * \param block block position
  * \param type type of this block (eB0, eBL, eBD or eDATA)
@@ -544,8 +578,10 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned int block,
 
 /**
  * \brief Read the first usefull block (0).
+ *
  *  This block contents some informations on the disk. But no information
  *  are critical for read the file list.
+ *
  * \param dev pointer on the device
  * \param block block position
  * \return the block0 or NULL if broken
@@ -556,7 +592,9 @@ static inline s_fosfat_b0 *fosfat_read_b0(FOSFAT_DEV *dev, uint32_t block) {
 
 /**
  * \brief Read data block.
+ *
  *  This block contents only a char table of 256 bytes for the raw data.
+ *
  * \param dev pointer on the device
  * \param block block position
  * \return the data or NULL if broken
@@ -567,6 +605,7 @@ static inline s_fosfat_data *fosfat_read_d(FOSFAT_DEV *dev, uint32_t block) {
 
 /**
  * \brief Read a Description Block (BD).
+ *
  * \param dev pointer on the device
  * \param block block position
  * \return the BD or NULL if broken
@@ -577,6 +616,7 @@ static inline s_fosfat_bd *fosfat_read_bd(FOSFAT_DEV *dev, uint32_t block) {
 
 /**
  * \brief Read a Block List (BL).
+ *
  * \param dev pointer on the device
  * \param block block position
  * \return the BL or NULL if broken
@@ -587,9 +627,11 @@ static inline s_fosfat_bl *fosfat_read_bl(FOSFAT_DEV *dev, uint32_t block) {
 
 /**
  * \brief Read data of some blocks and create linked list if necessary.
+ *
  *  When a directory or a file is read, the content is showed as data. But
  *  for a directory, really it is a BL. This function create the linked list
  *  for a DATA block or a BL for a number of consecutive blocks.
+ *
  * \param dev pointer on the device
  * \param block the first block (start) for the linked list
  * \param nbs number of consecutive blocks
@@ -644,8 +686,10 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, uint32_t block,
 
 /**
  * \brief Read a file description.
+ *
  *  A linked list is created for found all BD. And each BD have a linked list
  *  for found all DATA.
+ *
  * \param dev pointer on the device
  * \param block the file BD position
  * \return the first BD of the linked list
@@ -675,11 +719,13 @@ static s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, uint32_t block) {
 
 /**
  * \brief Get a file and put this in a location on the PC.
+ *
  *  This function read all BD->DATA of a file BD, and write the data in a
  *  new file on your disk. An output variable can be used for that the current
  *  size is printed for each PTS. The properties like "Creation Date" are not
  *  saved in the new file. All Linux file system are the same attributes for
  *  them files. And for example, ext2/3 have no "Creation Date".
+ *
  * \param dev pointer on the device
  * \param file file description block
  * \param dst destination on your PC
@@ -772,10 +818,12 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
 
 /**
  * \brief Read a complete .DIR (or SYS_LIST).
+ *
  *  A linked list is created for found all files. The first BD is returned.
  *  You can use this function for read all SYS_LIST, even in each folder. But
  *  the result will be always the same (recursive). Warning for not to do an
  *  infinite loop /!\
+ *
  * \param dev pointer on the device
  * \param block DIR (or SYS_LIST) BD position
  * \return the first BD of the linked list
@@ -829,9 +877,11 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, uint32_t block) {
 
 /**
  * \brief Test if two names are the same or not.
+ *
  *  This function must be used only for particular purpose, because that will
  *  no test if it is a directory or not, but only the names. That is very
  *  useful for fosfat_search_bdlf() and fosfat_search_incache().
+ *
  * \param realname the name of the file in the FOS
  * \param searchname the name in the path
  * \return true if it seems to be a dir name
@@ -856,9 +906,11 @@ static inline int fosfat_isdirname(const char *realname,
 
 /**
  * \brief Search a BD or a BLF from a location.
+ *
  *  A good example for use this function, is the BL of the first SYS_LIST in
  *  the disk. It will search the file BD since this BL.
  *  The location must be not bigger of MAX_SPLIT /!\
+ *
  * \param dev pointer on the device
  * \param location path for found the BD/BLF (foo/bar/file)
  * \param files first BL for start the search
@@ -958,7 +1010,9 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
 
 /**
  * \brief Search a BD or a BLF from a location in the cache.
+ *
  *  The location must be not bigger of MAX_SPLIT /!\
+ *
  * \param dev pointer on the device
  * \param location path for found the BD/BLF (foo/bar/file)
  * \param type eSBD or eSBLF
@@ -1063,7 +1117,9 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
 
 /**
  * \brief Search a BD or a BLF from a location in the first SYS_LIST.
+ *
  *  That uses fosfat_search_bdlf().
+ *
  * \param dev pointer on the device
  * \param location path for found the BD (foo/bar/file)
  * \param type eSBD or eSBLF
@@ -1113,7 +1169,9 @@ static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location,
 
 /**
  * \brief Test if the file is a directory.
+ *
  *  This function uses a string location.
+ *
  * \param dev pointer on the device
  * \param location file in the path
  * \return a boolean (true for success)
@@ -1138,7 +1196,9 @@ int fosfat_isdir(FOSFAT_DEV *dev, const char *location) {
 
 /**
  * \brief Test if the file is visible.
+ *
  *  This function uses a string location.
+ *
  * \param dev pointer on the device
  * \param location file in the path
  * \return a boolean (true for success)
@@ -1159,7 +1219,9 @@ int fosfat_isvisible(FOSFAT_DEV *dev, const char *location) {
 
 /**
  * \brief Test if the file is encoded.
+ *
  *  This function uses a string location.
+ *
  * \param dev pointer on the device
  * \param location file in the path
  * \return a boolean (true for success)
@@ -1180,7 +1242,9 @@ int fosfat_isencoded(FOSFAT_DEV *dev, const char *location) {
 
 /**
  * \brief Test if the file is valid.
+ *
  *  This function uses a string location.
+ *
  * \param dev pointer on the device
  * \param location file in the path
  * \return a boolean (true for success)
@@ -1201,8 +1265,10 @@ int fosfat_isopenexm(FOSFAT_DEV *dev, const char *location) {
 
 /**
  * \brief Read the data for get the target path of a symlink.
+ *
  *  A Smaky's symlink is a simple file with the target's path in the data.
  *  This function read the data and extract the right path.
+ *
  * \param dev pointer on the device
  * \param file BD of the symlink
  * \return the target path
@@ -1233,7 +1299,9 @@ static char *fosfat_get_link(FOSFAT_DEV *dev, s_fosfat_bd *file) {
 
 /**
  * \brief Get the target of a symlink.
+ *
  *  This function is high level.
+ *
  * \param dev pointer on the device
  * \param location file in the path
  * \return the target path
@@ -1254,7 +1322,9 @@ char *fosfat_symlink(FOSFAT_DEV *dev, const char *location) {
 
 /**
  * \brief Return all informations on one file.
+ *
  *  This function uses the BLF and get only useful attributes.
+ *
  * \param file BLF on the file
  * \return the stat
  */
@@ -1304,7 +1374,9 @@ static s_fosfat_file *fosfat_stat(s_fosfat_blf *file) {
 
 /**
  * \brief Return all informations on one file.
+ *
  *  This function is high level.
+ *
  * \param dev pointer on the device
  * \param location file in the path
  * \return the stat
@@ -1326,7 +1398,9 @@ s_fosfat_file *fosfat_get_stat(FOSFAT_DEV *dev, const char *location) {
 
 /**
  * \brief Return a linked list with all files of a directory.
+ *
  *  This function is high level.
+ *
  * \param dev pointer on the device
  * \param location directory in the path
  * \return the linked list
@@ -1392,8 +1466,10 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
 
 /**
  * \brief Get a file and put this in a location on the PC.
+ *
  *  This function create a copy from src to dst. An output variable can be
  *  used for that the current size is printed for each PTS.
+ *
  * \param dev pointer on the device
  * \param src source on the Smaky disk
  * \param dst destination on your PC
@@ -1428,7 +1504,9 @@ int fosfat_get_file(FOSFAT_DEV *dev, const char *src,
 
 /**
  * \brief Get a buffer from a file in the FOS.
+ *
  *  The buffer can be selected with an offset in the file and with a size.
+ *
  * \param dev pointer on the device
  * \param path source on the Smaky disk
  * \param offset start address in the file
@@ -1474,6 +1552,7 @@ char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path,
 
 /**
  * \brief Get the name of a disk.
+ *
  * \param dev pointer on the device
  * \return the name
  */
@@ -1497,6 +1576,7 @@ char *fosfat_diskname(FOSFAT_DEV *dev) {
 
 /**
  * \brief Put file information in the cache list structure.
+ *
  * \param file BLF element in the BL
  * \param bl BL block's number
  * \return the cache for a file
@@ -1518,7 +1598,9 @@ static s_cachelist *fosfat_cache_file(s_fosfat_blf *file, uint32_t bl) {
 
 /**
  * \brief List all files on the disk for fill the global cache list.
+ *
  *  This function is recursive!
+ *
  * \param dev pointer on the device
  * \param pt block's number of the BD
  * \return the first element of the cache list.
@@ -1566,7 +1648,9 @@ static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, uint32_t pt) {
 
 /**
  * \brief Unload the cache.
+ *
  *  This function releases all the cache when the device is closed.
+ *
  * \param dev the device name
  * \param cache the first element of the cache list
  */
@@ -1586,10 +1670,12 @@ static void fosfat_cache_unloader(FOSFAT_DEV *dev, s_cachelist *cache) {
 
 /**
  * \brief Auto detection of the FOSBOOT length.
+ *
  *  This function detects if the device is an hard disk or a floppy disk.
  *  There is no explicit information for know that, then the CHK is tested
  *  between the SYS_LIST and the first BL and a test for know if the BL's
  *  pointer in the BD is right.
+ *
  * \param dev pointer on the device
  * \return the type of disk or eFAILS
  */
@@ -1645,7 +1731,9 @@ static e_fosfat_disk fosfat_diskauto(FOSFAT_DEV *dev) {
 
 /**
  * \brief Open the device.
+ *
  *  That hides the fopen processing. A device can be read like a file.
+ *
  * \param dev the device name
  * \param disk disk type
  * \return the device handle
@@ -1710,7 +1798,9 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
 
 /**
  * \brief Close the device.
+ *
  *  That hides the fclose processing.
+ *
  * \param dev the device handle
  */
 void fosfat_closedev(FOSFAT_DEV *dev) {

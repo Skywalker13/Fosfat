@@ -62,6 +62,7 @@ static FOSFAT_DEV *dev;
 
 /**
  * \brief Convert 's_fosfat_file' to 'struct stat'.
+ *
  * \param file file description
  * \return the stat
  */
@@ -116,6 +117,7 @@ static struct stat *in_stat(s_fosfat_file *file) {
 
 /**
  * \brief Get the file stat from a path an return as struct stat.
+ *
  * \param path (/foo/bar)
  * \return the stat
  */
@@ -132,6 +134,7 @@ static struct stat *get_stat(const char *path) {
 
 /**
  * \brief FUSE : read the target of a symlink.
+ *
  * \param path (foo/bar)
  * \param dst target
  * \param size max length
@@ -154,6 +157,7 @@ static int fos_readlink(const char *path, char *dst, size_t size) {
 
 /**
  * \brief FUSE : get attributes of a file.
+ *
  * \param path (foo/bar)
  * \param stbuf attributes
  * \return 0 for success
@@ -184,6 +188,7 @@ static int fos_getattr(const char *path, struct stat *stbuf) {
 
 /**
  * \brief FUSE : read a directory.
+ *
  * \param path (foo/bar)
  * \param buf buffer for filler
  * \param filler function for put each entry
@@ -224,6 +229,7 @@ static int fos_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
 /**
  * \brief FUSE : test if a file can be opened.
+ *
  * \param path (foo/bar)
  * \param fi flags
  * \return 0 for success
@@ -242,6 +248,7 @@ static int fos_open(const char *path, struct fuse_file_info *fi) {
 
 /**
  * \brief FUSE : read the data of a file.
+ *
  * \param path (foo/bar)
  * \param buf buffer for put the data
  * \param size size in bytes

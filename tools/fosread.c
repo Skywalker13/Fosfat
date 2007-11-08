@@ -62,6 +62,7 @@ typedef struct ginfo {
 
 /**
  * \brief Get info from the disk.
+ *
  * \param dev pointer on the device
  * \return info
  */
@@ -84,6 +85,7 @@ s_global_info *get_ginfo(FOSFAT_DEV *dev) {
 
 /**
  * \brief Print date and hour.
+ *
  * \param time date and hour
  */
 void print_date(s_fosfat_time *time) {
@@ -93,6 +95,7 @@ void print_date(s_fosfat_time *time) {
 
 /**
  * \brief Print a file in the list.
+ *
  * \param file description
  */
 void print_file(s_fosfat_file *file) {
@@ -117,6 +120,7 @@ void print_file(s_fosfat_file *file) {
 
 /**
  * \brief List the content of a directory.
+ *
  * \param dev pointer on the device
  * \param path where in the tree
  * \return true if it is ok
@@ -146,6 +150,7 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
 
 /**
  * \brief Copy a file from the disk.
+ *
  * \param dev pointer on the device
  * \param path where in the tree
  * \param dst where in local

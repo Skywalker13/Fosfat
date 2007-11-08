@@ -54,6 +54,7 @@ static unsigned char smaky2iso8859_charset[] = {
 
 /**
  * \brief Convert smaky char to ISO-8859-1 char.
+ *
  * \param value the char
  * \param newline CR or LF
  * \return the new char
@@ -67,6 +68,7 @@ static inline unsigned char char_sma2iso8859(unsigned char value,
 
 /**
  * \brief Convert a buffer of chars.
+ *
  * \param buffer pointer on the buffer
  * \param size the length
  * \param newline CR or LF
