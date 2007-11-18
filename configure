@@ -686,6 +686,7 @@ append_config "MAKE=$make"
 append_config "CC=$cc"
 append_config "AR=$ar"
 append_config "RANLIB=$ranlib"
+append_config "LN=ln"
 
 append_config "BUILD_STATIC=$static"
 append_config "BUILD_SHARED=$shared"

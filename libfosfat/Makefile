@@ -31,17 +31,19 @@ lib_static: $(OBJS)
 	$(RANLIB) $(STATIC_LIBNAME)
 
 lib_shared: $(OBJS)
-	$(CC) -shared -Wl,-soname,$(SHARED_LIBNAME) \
-	$(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(SHARED_LIBNAME) 
+	$(CC) -shared -Wl,-soname,$(SHARED_LIBNAME).${VERSION} \
+	$(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(SHARED_LIBNAME).${VERSION}
 
 clean:
 	rm -f *.o *.a *.so*
 	rm -f .depend
 
 install: $(BUILD_RULES)
-	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(STATIC_LIBNAME) $(libdir) || continue
-	[ $(BUILD_SHARED) = yes ] && $(INSTALL) -c $(SHARED_LIBNAME) $(libdir) || continue
-	[ $(BUILD_SHARED) = yes ] && cp -s $(libdir)/$(SHARED_LIBNAME) $(libdir)/$(SHARED_LIBNAME).${VERSION} || continue
+	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(STATIC_LIBNAME) $(libdir); \
+	if [ $(BUILD_SHARED) = yes ]; then \
+	  $(INSTALL) -c $(SHARED_LIBNAME).${VERSION} $(libdir); \
+	  $(LN) -sf $(SHARED_LIBNAME).${VERSION} $(libdir)/$(SHARED_LIBNAME); \
+	fi
 	$(INSTALL) -c -m 644 fosfat.h $(includedir)
 
 uninstall:
