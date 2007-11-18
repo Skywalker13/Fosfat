@@ -32,6 +32,7 @@ find "$PACKAGE/$DIR" \( -name 'fosread' -or \
                      \) -exec rm -f '{}' \; 2>/dev/null
 
 cd "$PACKAGE"
+sed -i "s/EXTRA=.*/EXTRA=/" $DIR/VERSION
 tar -czf "fosfat_$VERSION.$PATCHLEVEL.$SUBLEVEL.orig.tar.gz" "$DIR"
 
 cp -pPR ../debian "$DIR"
