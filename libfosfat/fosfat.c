@@ -219,6 +219,7 @@ static char *lc(char *data) {
     for (i = 0; data[i] != '\0'; i++)
       data[i] = tolower(data[i]);
   }
+
   return data;
 }
 
@@ -240,6 +241,7 @@ static int h2d(int val) {
     res = atoi(conv);
     free(conv);
   }
+
   return res;
 }
 
@@ -268,6 +270,7 @@ static char *my_strnchr(const char *s, size_t count, int c) {
     if (*(s + i) == (const char)c)
       return (char *)(s + i);
   }
+
   return NULL;
 }
 
@@ -300,9 +303,11 @@ static void foslog(e_foslog type, const char *msg, ...) {
       case eERROR:
         strcat(log, "error");
         break;
+
       case eWARNING:
         strcat(log, "warning");
         break;
+
       case eNOTICE:
         strcat(log, "notice");
     }
@@ -370,12 +375,14 @@ static void fosfat_free_dir(s_fosfat_bd *var) {
   if (bd) {
     do {
       bl = bd->first_bl;
+
       /* Freed all BL */
       while (bl) {
         free_bl = bl;
         bl = bl->next_bl;
         free(free_bl);
       }
+
       /* And after, freed the BD */
       free_bd = bd;
       bd = bd->next_bd;
@@ -514,6 +521,7 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned int block,
     switch (type) {
       case eB0: {
         s_fosfat_b0 *blk;
+
         if ((blk = malloc(sizeof(s_fosfat_b0)))) {
           if (fread((s_fosfat_b0 *)blk, 1,
               (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
@@ -523,13 +531,16 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned int block,
         }
         break;
       }
+
       case eBL: {
         s_fosfat_bl *blk;
+
         if ((blk = malloc(sizeof(s_fosfat_bl)))) {
           if (fread((s_fosfat_bl *)blk, 1,
               (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
           {
             blk->next_bl = NULL;
+
             /* Check the CHK value */
             if (!g_foschk)
               g_foschk = c2l(blk->chk, sizeof(blk->chk));
@@ -540,14 +551,17 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned int block,
         }
         break;
       }
+
       case eBD: {
         s_fosfat_bd *blk;
+
         if ((blk = malloc(sizeof(s_fosfat_bd)))) {
           if (fread((s_fosfat_bd *)blk, 1,
               (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
           {
             blk->next_bd = NULL;
             blk->first_bl = NULL;
+
             /* Check the CHK value */
             if (!g_foschk)
               g_foschk = c2l(blk->chk, sizeof(blk->chk));
@@ -558,8 +572,10 @@ static void *fosfat_read_b(FOSFAT_DEV *dev, unsigned int block,
         }
         break;
       }
+
       case eDATA: {
         s_fosfat_data *blk;
+
         if ((blk = malloc(sizeof(s_fosfat_data)))) {
           if (fread((s_fosfat_data *)blk, 1,
               (size_t)FOSFAT_BLK, dev) == (size_t)FOSFAT_BLK)
@@ -650,9 +666,11 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, uint32_t block,
         if ((first_bl = fosfat_read_bl(dev, block))) {
           block_list = first_bl;
           block_list->pt = block;
+
           for (i = 1; block_list && i < nbs; i++) {
             block_list->next_bl = fosfat_read_bl(dev, block + (uint32_t)i);
             block_list = block_list->next_bl;
+
             if (block_list)
               block_list->pt = block + (uint32_t)i;
           }
@@ -660,12 +678,14 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, uint32_t block,
         }
         break;
       }
+
       case eDATA: {
         unsigned char i;
         s_fosfat_data *block_data, *first_data;
 
         if ((first_data = fosfat_read_d(dev, block))) {
           block_data = first_data;
+
           for (i = 1; block_data && i < nbs; i++) {
             block_data->next_data = fosfat_read_d(dev, block + (uint32_t)i);
             block_data = block_data->next_data;
@@ -674,6 +694,7 @@ static void *fosfat_read_data(FOSFAT_DEV *dev, uint32_t block,
         }
         break;
       }
+
       /* Only for no compilation warning because
        * all types are not in the switch
        */
@@ -702,6 +723,7 @@ static s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, uint32_t block) {
     file_desc->next_bd = NULL;
     file_desc->first_bl = NULL;     // Useless in this case
     first_bd = file_desc;
+
     /* Go to the next BD if exists (create the linked list for BD) */
     while (file_desc && file_desc->next &&
            (next = c2l(file_desc->next, sizeof(file_desc->next))))
@@ -709,9 +731,11 @@ static s_fosfat_bd *fosfat_read_file(FOSFAT_DEV *dev, uint32_t block) {
       file_desc->next_bd = fosfat_read_bd(dev, next);
       file_desc = file_desc->next_bd;
     }
+
     /* End of the BD linked list */
     if (file_desc)
       file_desc->next_bd = NULL;
+
     return first_bd;
   }
   return NULL;
@@ -767,12 +791,14 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
             sizeof(file->pts[i])), file->nbs[i], eDATA)))
         {
           first_d = file_d;
+
           /* Loop for all data blocks */
           do {
             check_last = (i == c2l(file->npt, sizeof(file->npt)) - 1 &&
                           !file_d->next_data) ?
                           (size_t)c2l(file->lst, sizeof(file->lst)) :
                           (size_t)FOSFAT_BLK;
+
             /* When the result is written in a file */
             if (!flag) {
               /* Write the block */
@@ -787,14 +813,17 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
               int first_pts = op_offset + op_inoff - (signed)size;
               int cp = (op_size - op_inoff > (signed)check_last - first_pts) ?
                        ((signed)check_last - first_pts) : (op_size - op_inoff);
+
               /* Copy the tranche */
               memcpy(op_buffer + op_inoff, file_d->data + first_pts, cp);
               op_inoff += check_last - first_pts;
+
               if (op_size <= op_inoff)
                 res = 0;
             }
             size += check_last;
           } while (res && file_d->next_data && (file_d = file_d->next_data));
+
           /* Freed all data */
           fosfat_free_data(first_d);
           if (res && output)
@@ -806,6 +835,7 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
     } while (res && file->next_bd && (file = file->next_bd));
     if (!flag) {
       fclose(f_dst);
+
       /* If fails then remove the incomplete file */
       if (!res)
         remove(dst);
@@ -813,6 +843,7 @@ static int fosfat_get(FOSFAT_DEV *dev, s_fosfat_bd *file,
   }
   else
     res = 0;
+
   return res;
 }
 
@@ -838,11 +869,13 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, uint32_t block) {
     dir_desc->next_bd = NULL;
     dir_desc->first_bl = NULL;
     first_bd = dir_desc;
+
     do {
       /* Get the first pointer */
       dir_desc->first_bl = fosfat_read_data(dev, c2l(dir_desc->pts[0],
                            sizeof(dir_desc->pts[0])), dir_desc->nbs[0], eBL);
       dir_list = dir_desc->first_bl;
+
       /* Go to the last BL */
       while (dir_list && dir_list->next_bl)
         dir_list = dir_list->next_bl;
@@ -854,10 +887,12 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, uint32_t block) {
         dir_list->next_bl = fosfat_read_data(dev, c2l(dir_desc->pts[i],
                             sizeof(dir_desc->pts[i])), dir_desc->nbs[i], eBL);
         dir_list = dir_list->next_bl;
+
         /* Go to the last BL */
         while (dir_list && dir_list->next_bl)
           dir_list = dir_list->next_bl;
       }
+
       /* End of the BL linked list */
       if (dir_list)
         dir_list->next_bl = NULL;
@@ -865,13 +900,16 @@ static s_fosfat_bd *fosfat_read_dir(FOSFAT_DEV *dev, uint32_t block) {
     } while ((next = c2l(dir_desc->next, sizeof(dir_desc->next))) &&
              (dir_desc->next_bd = fosfat_read_bd(dev, next)) &&
              (dir_desc = dir_desc->next_bd));
+
     /* End of the BD linked list */
     dir_desc->next_bd = NULL;
+
     return first_bd;
   }
 
   if (g_logger)
     foslog(eERROR, "directory to block %i cannot be read", block);
+
   return NULL;
 }
 
@@ -901,6 +939,7 @@ static inline int fosfat_isdirname(const char *realname,
         strlen(searchname) == strlen(realname)
       ))
     return 1;
+
   return 0;
 }
 
@@ -947,6 +986,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
     /* Loop for all directories in the path */
     for (i = 0; i < nb; i++) {
       ontop = 1;
+
       /* Loop for all BL */
       do {
         /* Loop for FOSFAT_NBL files in the BL */
@@ -960,13 +1000,18 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
             {
               if (type == eSBLF && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
+
               uint32_t pt = c2l(loop->file[j].pt,
                                 sizeof(loop->file[j].pt));
+
               if (loop_bd)
                 fosfat_free_dir(loop_bd);
+
               loop_bd = fosfat_read_dir(dev, pt);
+
               if (loop_bd)
                 loop = loop_bd->first_bl;
+
               ontop = 0;  // dir found
               break;
             }
@@ -978,10 +1023,13 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
             {
               if (type == eSBLF && loop_blf)
                 memcpy(loop_blf, &loop->file[j], sizeof(*loop_blf));
+
               uint32_t pt = c2l(loop->file[j].pt,
                                 sizeof(loop->file[j].pt));
+
               if (loop_bd)
                 fosfat_free_dir(loop_bd);
+
               loop_bd = fosfat_read_file(dev, pt);
               loop = NULL;
               ontop = 0;  // file (or soft-link) found
@@ -995,6 +1043,7 @@ static void *fosfat_search_bdlf(FOSFAT_DEV *dev, const char *location,
         }
       } while (ontop && loop && (loop = loop->next_bl));
     }
+
     free(path);
     if (!ontop) {
       if (type == eSBLF) {
@@ -1047,14 +1096,18 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
     /* Loop for all directories in the path */
     for (i = 0; list && i < nb; i++) {
       ontop = 1;
+
       do {
         /* Test if it is a directory */
         if (list->isdir && fosfat_isdirname(list->name, dir[i])) {
           bd_block = list->bd;
           bl_block = list->bl;
+
           if (name)
             free(name);
+
           name = strdup(list->name);
+
           /* Go to the next level */
           list = list->sub;
           ontop = 0;
@@ -1070,8 +1123,10 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
         {
           bd_block = list->bd;
           bl_block = list->bl;
+
           if (name)
             free(name);
+
           name = strdup(list->name);
           ontop = 0;
           isdir = 0;
@@ -1081,37 +1136,47 @@ static void *fosfat_search_incache(FOSFAT_DEV *dev, const char *location,
       } while (ontop && list && (list = list->next));
     }
     free(path);
+
     if (!ontop) {
       switch (type) {
         case eSBD: {
           if (name)
             free(name);
+
           if (isdir)
             bd_found = fosfat_read_dir(dev, bd_block);
           else
             bd_found = fosfat_read_file(dev, bd_block);
+
           return (s_fosfat_bd *)bd_found;
         }
+
         case eSBLF: {
           bl_found = fosfat_read_bl(dev, bl_block);
+
           for (i = 0; bl_found && i < FOSFAT_NBL; i++) {
             if (!strcasecmp((char *)bl_found->file[i].name, name)) {
               free(name);
+
               if ((blf_found = malloc(sizeof(s_fosfat_blf)))) {
                 memcpy(blf_found, &bl_found->file[i], sizeof(*blf_found));
                 free(bl_found);
+
                 return (s_fosfat_blf *)blf_found;
               }
             }
           }
+
           if (bl_found)
             free(bl_found);
         }
       }
     }
+
     if (name)
       free(name);
   }
+
   return NULL;
 }
 
@@ -1142,8 +1207,10 @@ static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location,
      */
     if (!g_cache && (syslist = fosfat_read_dir(dev, FOSFAT_SYSLIST))) {
       files = syslist->first_bl;
+
       if ((search = fosfat_search_bdlf(dev, location, files, type))) {
         fosfat_free_dir(syslist);
+
         if (type == eSBLF)
           return (s_fosfat_blf *)search;
         else
@@ -1164,6 +1231,7 @@ static void *fosfat_search_insys(FOSFAT_DEV *dev, const char *location,
 
   if (g_logger)
     foslog(eWARNING, "file \"%s\" not found", location);
+
   return NULL;
 }
 
@@ -1185,12 +1253,14 @@ int fosfat_isdir(FOSFAT_DEV *dev, const char *location) {
       if ((entry = fosfat_search_insys(dev, location, eSBLF))) {
         if (fosfat_in_isnotdel(entry) && fosfat_in_isdir(entry))
           res = 1;
+
         free(entry);
       }
     }
     else
       res = 1;
   }
+
   return res;
 }
 
@@ -1211,9 +1281,11 @@ int fosfat_isvisible(FOSFAT_DEV *dev, const char *location) {
     if ((entry = fosfat_search_insys(dev, location, eSBLF))) {
       if (fosfat_in_isnotdel(entry) && fosfat_in_isvisible(entry))
         res = 1;
+
       free(entry);
     }
   }
+
   return res;
 }
 
@@ -1234,9 +1306,11 @@ int fosfat_isencoded(FOSFAT_DEV *dev, const char *location) {
     if ((entry = fosfat_search_insys(dev, location, eSBLF))) {
       if (fosfat_in_isnotdel(entry) && fosfat_in_isencoded(entry))
         res = 1;
+
       free(entry);
     }
   }
+
   return res;
 }
 
@@ -1257,9 +1331,11 @@ int fosfat_isopenexm(FOSFAT_DEV *dev, const char *location) {
     if ((entry = fosfat_search_insys(dev, location, eSBLF))) {
       if (fosfat_in_isnotdel(entry) && fosfat_in_isopenexm(entry))
         res = 1;
+
       free(entry);
     }
   }
+
   return res;
 }
 
@@ -1282,8 +1358,10 @@ static char *fosfat_get_link(FOSFAT_DEV *dev, s_fosfat_bd *file) {
                           file->nbs[0], eDATA);
   if (data) {
     start = (char *)data->data + 3;
+
     while ((it = my_strnchr(start, strlen(start), ':')))
       *it = '/';
+
     it = strrchr(start, '/');
     if (it)
       *it = '\0';
@@ -1294,6 +1372,7 @@ static char *fosfat_get_link(FOSFAT_DEV *dev, s_fosfat_bd *file) {
 
     fosfat_free_data(data);
   }
+
   return path;
 }
 
@@ -1317,6 +1396,7 @@ char *fosfat_symlink(FOSFAT_DEV *dev, const char *location) {
 
   if (g_logger && !link)
     foslog(eERROR, "target of symlink \"%s\" not found", location);
+
   return link;
 }
 
@@ -1369,6 +1449,7 @@ static s_fosfat_file *fosfat_stat(s_fosfat_blf *file) {
 
     stat->next_file = NULL;
   }
+
   return stat;
 }
 
@@ -1388,11 +1469,13 @@ s_fosfat_file *fosfat_get_stat(FOSFAT_DEV *dev, const char *location) {
   if (dev && location && (entry = fosfat_search_insys(dev, location, eSBLF))) {
     if (fosfat_in_isnotdel(entry))
       stat = fosfat_stat(entry);
+
     free(entry);
   }
 
   if (g_logger && !stat)
     foslog(eWARNING, "stat of \"%s\" not found", location);
+
   return stat;
 }
 
@@ -1418,6 +1501,7 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
     /* Test if it is a directory */
     if (fosfat_isdir(dev, location)) {
       files = dir->first_bl;
+
       if (files) {
         do {
           /* Check all files in the BL */
@@ -1448,6 +1532,7 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
     }
     fosfat_free_dir(dir);
   }
+
   if (sysdir) {
     sysdir->next_file = firstfile;
     res = sysdir;
@@ -1461,6 +1546,7 @@ s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location) {
     else
       foslog(eNOTICE, "directory \"%s\" is read successfully", location);
   }
+
   return res;
 }
 
@@ -1486,10 +1572,13 @@ int fosfat_get_file(FOSFAT_DEV *dev, const char *src,
   if (dev && src && dst && (file = fosfat_search_insys(dev, src, eSBLF))) {
     if (fosfat_in_isnotdel(file) && !fosfat_in_isdir(file)) {
       file2 = fosfat_read_file(dev, c2l(file->pt, sizeof(file->pt)));
+
       if (file2 && fosfat_get(dev, file2, dst, output, 0))
         res = 1;
+
       fosfat_free_file(file2);
     }
+
     free(file);
   }
 
@@ -1499,6 +1588,7 @@ int fosfat_get_file(FOSFAT_DEV *dev, const char *src,
     else
       foslog(eNOTICE, "get file \"%s\" and save to \"%s\"", src, dst);
   }
+
   return res;
 }
 
@@ -1524,16 +1614,20 @@ char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path,
       fosfat_in_isnotdel(file) && !fosfat_in_isdir(file))
   {
     buffer = malloc(size);
+
     if (buffer) {
       memset(buffer, 0, size);
       file2 = fosfat_read_file(dev, c2l(file->pt, sizeof(file->pt)));
+
       if (file2)
         fosfat_get(dev, file2, NULL, 0, 1, offset, size, buffer);
       else {
         free(buffer);
         buffer = NULL;
       }
+
       free(file);
+
       if (file2)
         fosfat_free_file(file2);
     }
@@ -1547,6 +1641,7 @@ char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path,
       foslog(eNOTICE, "data (offset:%i size:%i) of \"%s\" correctly read",
              offset, size, path);
   }
+
   return buffer;
 }
 
@@ -1571,6 +1666,7 @@ char *fosfat_diskname(FOSFAT_DEV *dev) {
     else
       foslog(eNOTICE, "disk name found (%s)", name);
   }
+
   return name;
 }
 
@@ -1593,6 +1689,7 @@ static s_cachelist *fosfat_cache_file(s_fosfat_blf *file, uint32_t bl) {
     cachefile->bl = bl;
     cachefile->bd = c2l(file->pt, sizeof(file->pt));
   }
+
   return cachefile;
 }
 
@@ -1614,6 +1711,7 @@ static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, uint32_t pt) {
 
   if (dev && (dir = fosfat_read_dir(dev, pt))) {
     files = dir->first_bl;
+
     if (files) {
       do {
         /* Check all files in the BL */
@@ -1630,6 +1728,7 @@ static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, uint32_t pt) {
               firstfile = fosfat_cache_file(&files->file[i], files->pt);
               list = firstfile;
             }
+
             /* If the file is a directory, then do a recursive cache */
             if (list && fosfat_in_isdir(&files->file[i]) &&
                 !fosfat_in_issystem(&files->file[i]))
@@ -1643,6 +1742,7 @@ static s_cachelist *fosfat_cache_dir(FOSFAT_DEV *dev, uint32_t pt) {
 
   if (g_logger && !firstfile)
     foslog(eERROR, "cache to block %i not correctly loaded", pt);
+
   return firstfile;
 }
 
@@ -1661,6 +1761,7 @@ static void fosfat_cache_unloader(FOSFAT_DEV *dev, s_cachelist *cache) {
   while (it) {
     if (it->sub)
       fosfat_cache_unloader(dev, it->sub);
+
     tofree = it;
     it = it->next;
     free(tofree->name);
@@ -1688,6 +1789,7 @@ static e_fosfat_disk fosfat_diskauto(FOSFAT_DEV *dev) {
 
   if (dev) {
     g_fosboot = FOSBOOT_FD;
+
     /* for i = 0, test with FD and when i = 1, test for HD */
     for (i = 0; loop && i < 2; i++) {
       sys_list = fosfat_read_bd(dev, FOSFAT_SYSLIST);
@@ -1716,13 +1818,16 @@ static e_fosfat_disk fosfat_diskauto(FOSFAT_DEV *dev) {
       case FOSBOOT_FD:
         res = eFD;
         break;
+
       case FOSBOOT_HD:
         res = eHD;
         break;
+
       default:
         res = eFAILS;
     }
   }
+
   /* Restore the fosboot */
   g_fosboot = -1;
 
@@ -1746,10 +1851,12 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
     /* Open the device */
     if (g_logger)
       foslog(eNOTICE, "device is opening ...");
+
     if ((fosdev = fopen(dev, "r"))) {
       if (disk == eDAUTO) {
         if (g_logger)
           foslog(eNOTICE, "auto detection in progress ...");
+
         disk = fosfat_diskauto(fosdev);
         fboot = disk;
       }
@@ -1766,15 +1873,18 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
           if (g_logger)
             foslog(eNOTICE, "floppy disk selected");
           break;
+
         case eHD:
           g_fosboot = FOSBOOT_HD;
           if (g_logger)
             foslog(eNOTICE, "hard disk selected");
           break;
+
         case eFAILS: {
           if (g_logger)
             foslog(eERROR, "disk auto detection for \"%s\" has failed", dev);
         }
+
         default:
           fclose(fosdev);
           fosdev = NULL;
@@ -1784,6 +1894,7 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
       if (fosdev && g_cache) {
         if (g_logger)
           foslog(eNOTICE, "cache file is loading ...");
+
         if (!(g_cachelist = fosfat_cache_dir(fosdev, FOSFAT_SYSLIST))) {
           fclose(fosdev);
           fosdev = NULL;
@@ -1793,6 +1904,7 @@ FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk) {
       }
     }
   }
+
   return fosdev;
 }
 
@@ -1809,10 +1921,13 @@ void fosfat_closedev(FOSFAT_DEV *dev) {
     if (g_cachelist) {
       if (g_logger)
         foslog(eNOTICE, "cache file is unloading ...");
+
       fosfat_cache_unloader(dev, g_cachelist);
     }
+
     if (g_logger)
       foslog(eNOTICE, "device is closing ...");
+
     fclose(dev);
   }
 }
