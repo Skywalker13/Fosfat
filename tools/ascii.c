@@ -83,5 +83,6 @@ char *sma2iso8859(char *buffer, unsigned int size, e_newline newline) {
   }
   else
     return NULL;
+
   return buffer;
 }

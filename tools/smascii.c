@@ -73,10 +73,12 @@ int run_conv(const char *input, const char *output, e_newline newline) {
     printf("Reading or writing error!\n");
     res = 0;
   }
+
   if (in)
     fclose(in);
   if (out)
     fclose(out);
+
   return res;
 }
 
@@ -108,5 +110,6 @@ int main(int argc, char **argv) {
   }
   else
     print_help();
+
   return res;
 }

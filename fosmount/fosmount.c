@@ -87,8 +87,10 @@ static struct stat *in_stat(s_fosfat_file *file) {
     st->st_mode = S_IFREG | FOS_FILE;
     st->st_nlink = 1;
   }
+
   /* Size */
   st->st_size = file->size;
+
   /* Time */
   time.tm_year = file->time_r.year - 1900;
   time.tm_mon = file->time_r.month - 1;
@@ -129,6 +131,7 @@ static struct stat *get_stat(const char *path) {
     st = in_stat(file);
     free(file);
   }
+
   return st;
 }
 
@@ -150,8 +153,10 @@ static int fos_readlink(const char *path, char *dst, size_t size) {
     memcpy(dst, link, strlen(link) + 1);
     res = 0;
   }
+
   if (link)
     free(link);
+
   return res;
 }
 
@@ -210,11 +215,14 @@ static int fos_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
   /* Files and directories */
   if ((files = fosfat_list_dir(dev, path))) {
     first_file = files;
+
     do {
       struct stat *st = in_stat(files);
       char *name = strdup(files->name);
+
       if (strstr(name, ".dir"))
         *(name + strlen(name) - 4) = '\0';
+
       /* Add entry in the file list */
       filler(buf, name, st, 0);
       free(st);
@@ -224,6 +232,7 @@ static int fos_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
   }
   else
     return -ENOENT;
+
   return 0;
 }
 
@@ -269,12 +278,15 @@ static int fos_read(const char *path, char *buf, size_t size,
   if ((file = fosfat_get_stat(dev, path))) {
     if (!file->att.isdir) {
       length = file->size;
+
       if (offset < length) {
         /* Fix the size in function of the offset */
         if (offset + (signed)size > length)
           size = length - offset;
+
         /* Read the data */
         buf_tmp = fosfat_get_buffer(dev, path, offset, size);
+
         /* Copy the data for FUSE */
         if (buf_tmp) {
           memcpy(buf, buf_tmp, size);
@@ -290,6 +302,7 @@ static int fos_read(const char *path, char *buf, size_t size,
   }
   else
     size = -ENOENT;
+
   return size;
 }
 
@@ -371,12 +384,15 @@ int main(int argc, char **argv) {
   arg = malloc(sizeof(char *) * (3 + fusedebug + foslog));
   if (arg) {
     arg[0] = strdup(argv[0]);
+
     if (fusedebug)
       arg[fusedebug] = strdup("-d");
     if (foslog)
       arg[fusedebug + foslog] = strdup("-f");
+
     device = strdup(argv[optind]);
     arg[1 + fusedebug + foslog] = strdup(argv[optind + 1]);
+
     /* FUSE must be used as single-thread */
     arg[2 + fusedebug + foslog] = strdup("-s");
   }

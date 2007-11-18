@@ -80,6 +80,7 @@ s_global_info *get_ginfo(FOSFAT_DEV *dev) {
     printf("ERROR: I can't read the name of this disk!\n");
     ginfo = NULL;
   }
+
   return ginfo;
 }
 
@@ -106,6 +107,7 @@ void print_file(s_fosfat_file *file) {
              "%s", file->name);
   else
     strncpy(filename, file->name, FOSFAT_NAMELGT - 1);
+
   filename[FOSFAT_NAMELGT - 1] = '\0';
 
   printf("%c%c%c %11i", file->att.isdir ? 'd' : '-',
@@ -135,9 +137,11 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
     printf("      last view        filename\n");
     printf("           ---- --------         -----------");
     printf("      ---------        --------\n");
+
     do {
       print_file(files);
     } while ((files = files->next_file));
+
     printf("\nd:directory  h:hidden  e:encoded\n");
     fosfat_free_listdir(first_file);
   }
@@ -145,6 +149,7 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
     printf("ERROR: I can't found this path!\n");
     return 0;
   }
+
   return 1;
 }
 
@@ -164,7 +169,9 @@ int get_file(FOSFAT_DEV *dev, const char *path, const char *dst) {
     new_file = strdup((strrchr(path, '/') ? strrchr(path, '/') + 1 : path));
   else
     new_file = strdup(dst);
+
   printf("File \"%s\" is copying ...\n", path);
+
   if (fosfat_get_file(dev, path, new_file, 1)) {
     res = 1;
     printf("Okay..\n");
@@ -255,6 +262,7 @@ int main(int argc, char **argv) {
   /* Get globals informations on the disk */
   if (!res && (ginfo = get_ginfo(dev))) {
     printf("Smaky disk %s\n", ginfo->name);
+
     /* Show the list of a directory */
     if (!strcasecmp(mode, "list")) {
       if (!node) {
@@ -267,6 +275,7 @@ int main(int argc, char **argv) {
         free(node);
       }
     }
+
     /* Get a file from the disk */
     else if (!strcmp(mode, "get") && node) {
       get_file(dev, node, path ? path : "./");
@@ -275,11 +284,14 @@ int main(int argc, char **argv) {
     }
     else
       print_info();
+
     free(ginfo);
   }
+
   /* Close the disk */
   fosfat_closedev(dev);
   free(device);
   free(mode);
+
   return res;
 }
