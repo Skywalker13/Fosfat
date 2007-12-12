@@ -34,7 +34,7 @@
 
 typedef struct ginfo {
   char name[FOSFAT_NAMELGT];
-} s_global_info;
+} global_info_t;
 
 #define HELP_TEXT \
 "Tool for a read-only access on a Smaky disk. fosfat-" VERSION "\n\n" \
@@ -66,12 +66,12 @@ typedef struct ginfo {
  * \param fosfat the main structure
  * \return info
  */
-s_global_info *get_ginfo(s_fosfat *fosfat) {
-  s_global_info *ginfo;
+global_info_t *get_ginfo(fosfat_t *fosfat) {
+  global_info_t *ginfo;
   char *name;
 
   if ((name = fosfat_diskname(fosfat))) {
-    ginfo = malloc(sizeof(s_global_info));
+    ginfo = malloc(sizeof(global_info_t));
     strncpy(ginfo->name, name, FOSFAT_NAMELGT - 1);
     ginfo->name[FOSFAT_NAMELGT - 1] = '\0';
     free(name);
@@ -89,7 +89,7 @@ s_global_info *get_ginfo(s_fosfat *fosfat) {
  *
  * \param time date and hour
  */
-void print_date(s_fosfat_time *time) {
+void print_date(fosfat_time_t *time) {
   printf(" %4i-%02i-%02i %02i:%02i", time->year, time->month,
                                      time->day, time->hour, time->minute);
 }
@@ -99,7 +99,7 @@ void print_date(s_fosfat_time *time) {
  *
  * \param file description
  */
-void print_file(s_fosfat_file *file) {
+void print_file(fosfat_file_t *file) {
   char filename[FOSFAT_NAMELGT];
 
   if (file->att.isdir)
@@ -127,8 +127,8 @@ void print_file(s_fosfat_file *file) {
  * \param path where in the tree
  * \return true if it is ok
  */
-int list_dir(s_fosfat *fosfat, const char *path) {
-  s_fosfat_file *files, *first_file;
+int list_dir(fosfat_t *fosfat, const char *path) {
+  fosfat_file_t *files, *first_file;
 
   if ((files = fosfat_list_dir(fosfat, path))) {
     first_file = files;
@@ -161,7 +161,7 @@ int list_dir(s_fosfat *fosfat, const char *path) {
  * \param dst where in local
  * \return true if it is ok
  */
-int get_file(s_fosfat *fosfat, const char *path, const char *dst) {
+int get_file(fosfat_t *fosfat, const char *path, const char *dst) {
   int res = 0;
   char *new_file;
 
@@ -195,10 +195,10 @@ void print_version(void) {
 
 int main(int argc, char **argv) {
   int res = 0, i, next_option;
-  e_fosfat_disk type = eDAUTO;
+  fosfat_disk_t type = eDAUTO;
   char *device = NULL, *mode = NULL, *node = NULL, *path = NULL;
-  s_fosfat *fosfat;
-  s_global_info *ginfo = NULL;
+  fosfat_t *fosfat;
+  global_info_t *ginfo = NULL;
 
   const char *const short_options = "afhlv";
 

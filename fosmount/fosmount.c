@@ -57,16 +57,16 @@
 #define VERSION_TEXT "fosmount-" VERSION "\n"
 
 
-static s_fosfat *fosfat;
+static fosfat_t *fosfat;
 
 
 /**
- * \brief Convert 's_fosfat_file' to 'struct stat'.
+ * \brief Convert 'fosfat_file_t' to 'struct stat'.
  *
  * \param file file description
  * \return the stat
  */
-static struct stat *in_stat(s_fosfat_file *file) {
+static struct stat *in_stat(fosfat_file_t *file) {
   struct stat *st;
   struct tm time;
 
@@ -125,7 +125,7 @@ static struct stat *in_stat(s_fosfat_file *file) {
  */
 static struct stat *get_stat(const char *path) {
   struct stat *st = NULL;
-  s_fosfat_file *file;
+  fosfat_file_t *file;
 
   if ((file = fosfat_get_stat(fosfat, path))) {
     st = in_stat(file);
@@ -204,7 +204,7 @@ static int fos_getattr(const char *path, struct stat *stbuf) {
 static int fos_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                        off_t offset, struct fuse_file_info *fi)
 {
-  s_fosfat_file *files, *first_file;
+  fosfat_file_t *files, *first_file;
 
   (void)offset;
   (void)fi;
@@ -270,7 +270,7 @@ static int fos_read(const char *path, char *buf, size_t size,
 {
   int length;
   char *buf_tmp;
-  s_fosfat_file *file;
+  fosfat_file_t *file;
 
   (void)fi;
 
@@ -331,7 +331,7 @@ int main(int argc, char **argv) {
   int res = 0, fusedebug = 0, foslog = 0;
   char *device;
   char **arg;
-  e_fosfat_disk type = eDAUTO;
+  fosfat_disk_t type = eDAUTO;
 
   const char *const short_options = "adfhlv";
 
