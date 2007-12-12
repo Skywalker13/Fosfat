@@ -83,11 +83,11 @@ typedef struct cache_list_s {
 
 /** Main fosfat structure */
 typedef struct fosfat_s {
-  FOSFAT_DEV *dev;                  //!< physical device
-  int fosboot;                      //!< FOSBOOT address
-  uint32_t foschk;                  //!< CHK
-  unsigned int cache;               //!< use cache system (search)
-  cachelist_t *cachelist;           //!< cache data
+  FOSFAT_DEV *dev;             //!< physical device
+  int fosboot;                 //!< FOSBOOT address
+  uint32_t foschk;             //!< CHK
+  unsigned int cache;          //!< use cache system (search)
+  cachelist_t *cachelist;      //!< cache data
 } fosfat_t;
 
 
