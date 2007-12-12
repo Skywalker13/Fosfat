@@ -3,7 +3,7 @@ Section: misc
 Priority: optional
 Maintainer: Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 Build-Depends: cdbs, debhelper (>= 5), pkg-config (>= 0.20), libfuse-dev (>= 2.6)
-Standards-Version: 3.7.2
+Standards-Version: 3.7.3
 
 Package: fosfat
 Architecture: any
@@ -14,5 +14,3 @@ Description: Library Fosfat and FUSE extension
  use this library can be used for reading a directory and copying
  a file. Smaky was a system developed in Switzerland at the EPFL
  (Ecole Polytechnique Federale de Lausanne).
- .
- Homepage: http://home.gna.org/fosfat/
