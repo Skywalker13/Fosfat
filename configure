@@ -578,6 +578,9 @@ check_cflags -D_LARGEFILE_SOURCE
 check_cflags -D_FILE_OFFSET_BITS=64
 check_cflags -D_REENTRANT
 
+# add needed compiler flags
+check_cflags -D_GNU_SOURCE
+
 #################################################
 #   check for debug symbols
 #################################################

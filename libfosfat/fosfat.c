@@ -23,14 +23,12 @@
  *
  */
 
-#define _GNU_SOURCE     /* strcasestr */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>      /* tolower */
 #include <string.h>     /* strcasecmp strncasecmp strdup strlen strtok
-                           memcmp memcpy */
+                           memcmp memcpy strcasestr */
 
 #include "fosfat.h"
 
