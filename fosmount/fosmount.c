@@ -57,7 +57,7 @@
 #define VERSION_TEXT "fosmount-" VERSION "\n"
 
 
-static FOSFAT_DEV *dev;
+static s_fosfat *fosfat;
 
 
 /**
@@ -127,7 +127,7 @@ static struct stat *get_stat(const char *path) {
   struct stat *st = NULL;
   s_fosfat_file *file;
 
-  if ((file = fosfat_get_stat(dev, path))) {
+  if ((file = fosfat_get_stat(fosfat, path))) {
     st = in_stat(file);
     free(file);
   }
@@ -147,7 +147,7 @@ static int fos_readlink(const char *path, char *dst, size_t size) {
   int res = -ENOENT;
   char *link;
 
-  link = fosfat_symlink(dev, path);
+  link = fosfat_symlink(fosfat, path);
 
   if (strlen(link) < size) {
     memcpy(dst, link, strlen(link) + 1);
@@ -213,7 +213,7 @@ static int fos_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
   filler(buf, "..", NULL, 0);
 
   /* Files and directories */
-  if ((files = fosfat_list_dir(dev, path))) {
+  if ((files = fosfat_list_dir(fosfat, path))) {
     first_file = files;
 
     do {
@@ -249,7 +249,7 @@ static int fos_open(const char *path, struct fuse_file_info *fi) {
   if((fi->flags & 3) != O_RDONLY)
     return -EACCES;
 
-  if(!fosfat_isopenexm(dev, path))
+  if(!fosfat_isopenexm(fosfat, path))
     return -ENOENT;
 
   return 0;
@@ -275,7 +275,7 @@ static int fos_read(const char *path, char *buf, size_t size,
   (void)fi;
 
   /* Get the stats and test if it is a file */
-  if ((file = fosfat_get_stat(dev, path))) {
+  if ((file = fosfat_get_stat(fosfat, path))) {
     if (!file->att.isdir) {
       length = file->size;
 
@@ -285,7 +285,7 @@ static int fos_read(const char *path, char *buf, size_t size,
           size = length - offset;
 
         /* Read the data */
-        buf_tmp = fosfat_get_buffer(dev, path, offset, size);
+        buf_tmp = fosfat_get_buffer(fosfat, path, offset, size);
 
         /* Copy the data for FUSE */
         if (buf_tmp) {
@@ -400,7 +400,7 @@ int main(int argc, char **argv) {
     return -1;
 
   /* Open the floppy disk (or hard disk) */
-  if (!(dev = fosfat_opendev(device, type))) {
+  if (!(fosfat = fosfat_open(device, type))) {
     printf("Could not open %s for mounting!\n", device);
     res = -1;
   }
@@ -413,7 +413,7 @@ int main(int argc, char **argv) {
     free(arg);
 
     /* Close the device */
-    fosfat_closedev(dev);
+    fosfat_close(fosfat);
   }
 
   /* Free */

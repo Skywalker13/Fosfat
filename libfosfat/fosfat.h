@@ -26,6 +26,8 @@
 #ifndef FOSFAT_H_
 #define FOSFAT_H_
 
+#include <inttypes.h>
+
 #define FOSFAT_DEV      FILE
 #define FOSFAT_NAMELGT  17
 
@@ -67,35 +69,56 @@ typedef struct file_info {
   struct file_info *next_file;
 } s_fosfat_file;
 
+/** Cache list for name, BD and BL blocks */
+typedef struct cache_list {
+  char *name;
+  uint32_t bl;                 //!< BL Address
+  uint32_t bd;                 //!< BD Address
+  unsigned char isdir;         //!< If is a directory
+  unsigned char islink;        //!< If is a soft link
+  /* Linked list */
+  struct cache_list *sub;
+  struct cache_list *next;
+} s_cachelist;
+
+/** Main fosfat structure */
+typedef struct fosfat {
+  FOSFAT_DEV *dev;                  //!< physical device
+  int fosboot;                      //!< FOSBOOT address
+  uint32_t foschk;                  //!< CHK
+  unsigned int cache;               //!< use cache system (search)
+  s_cachelist *cachelist;           //!< cache data
+} s_fosfat;
+
 
 /* Disk */
-char *fosfat_diskname(FOSFAT_DEV *dev);
+char *fosfat_diskname(s_fosfat *fosfat);
 
 /* Read a folder */
-s_fosfat_file *fosfat_list_dir(FOSFAT_DEV *dev, const char *location);
+s_fosfat_file *fosfat_list_dir(s_fosfat *fosfat, const char *location);
 void fosfat_free_listdir(s_fosfat_file *var);
 
 /* Test attributes and type on a file since a location */
-int fosfat_isdir(FOSFAT_DEV *dev, const char *location);
-int fosfat_isvisible(FOSFAT_DEV *dev, const char *location);
-int fosfat_isencoded(FOSFAT_DEV *dev, const char *location);
-int fosfat_isopenexm(FOSFAT_DEV *dev, const char *location);
+int fosfat_isdir(s_fosfat *fosfat, const char *location);
+int fosfat_isvisible(s_fosfat *fosfat, const char *location);
+int fosfat_isencoded(s_fosfat *fosfat, const char *location);
+int fosfat_isopenexm(s_fosfat *fosfat, const char *location);
 
 /* Get informations */
-s_fosfat_file *fosfat_get_stat(FOSFAT_DEV *dev, const char *location);
+s_fosfat_file *fosfat_get_stat(s_fosfat *fosfat, const char *location);
 
 /* Get a symlink's target */
-char *fosfat_symlink(FOSFAT_DEV *dev, const char *location);
+char *fosfat_symlink(s_fosfat *fosfat, const char *location);
 
 /* Get a file */
-int fosfat_get_file(FOSFAT_DEV *dev, const char *src,
+int fosfat_get_file(s_fosfat *fosfat, const char *src,
                     const char *dst, int output);
-char *fosfat_get_buffer(FOSFAT_DEV *dev, const char *path,
+char *fosfat_get_buffer(s_fosfat *fosfat, const char *path,
                         int offset, int size);
 
 /* Open and close the device */
-FOSFAT_DEV *fosfat_opendev(const char *dev, e_fosfat_disk disk);
-void fosfat_closedev(FOSFAT_DEV *dev);
+s_fosfat *fosfat_open(const char *fosfat, e_fosfat_disk disk);
+void fosfat_close(s_fosfat *fosfat);
 
 /* Internal logger */
 void fosfat_logger(unsigned char state);

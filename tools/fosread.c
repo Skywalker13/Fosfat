@@ -63,14 +63,14 @@ typedef struct ginfo {
 /**
  * \brief Get info from the disk.
  *
- * \param dev pointer on the device
+ * \param fosfat the main structure
  * \return info
  */
-s_global_info *get_ginfo(FOSFAT_DEV *dev) {
+s_global_info *get_ginfo(s_fosfat *fosfat) {
   s_global_info *ginfo;
   char *name;
 
-  if ((name = fosfat_diskname(dev))) {
+  if ((name = fosfat_diskname(fosfat))) {
     ginfo = malloc(sizeof(s_global_info));
     strncpy(ginfo->name, name, FOSFAT_NAMELGT - 1);
     ginfo->name[FOSFAT_NAMELGT - 1] = '\0';
@@ -123,14 +123,14 @@ void print_file(s_fosfat_file *file) {
 /**
  * \brief List the content of a directory.
  *
- * \param dev pointer on the device
+ * \param fosfat the main structure
  * \param path where in the tree
  * \return true if it is ok
  */
-int list_dir(FOSFAT_DEV *dev, const char *path) {
+int list_dir(s_fosfat *fosfat, const char *path) {
   s_fosfat_file *files, *first_file;
 
-  if ((files = fosfat_list_dir(dev, path))) {
+  if ((files = fosfat_list_dir(fosfat, path))) {
     first_file = files;
     printf("path: %s\n\n", path);
     printf("           size creation         last change");
@@ -156,12 +156,12 @@ int list_dir(FOSFAT_DEV *dev, const char *path) {
 /**
  * \brief Copy a file from the disk.
  *
- * \param dev pointer on the device
+ * \param fosfat the main structure
  * \param path where in the tree
  * \param dst where in local
  * \return true if it is ok
  */
-int get_file(FOSFAT_DEV *dev, const char *path, const char *dst) {
+int get_file(s_fosfat *fosfat, const char *path, const char *dst) {
   int res = 0;
   char *new_file;
 
@@ -172,7 +172,7 @@ int get_file(FOSFAT_DEV *dev, const char *path, const char *dst) {
 
   printf("File \"%s\" is copying ...\n", path);
 
-  if (fosfat_get_file(dev, path, new_file, 1)) {
+  if (fosfat_get_file(fosfat, path, new_file, 1)) {
     res = 1;
     printf("Okay..\n");
   }
@@ -197,7 +197,7 @@ int main(int argc, char **argv) {
   int res = 0, i, next_option;
   e_fosfat_disk type = eDAUTO;
   char *device = NULL, *mode = NULL, *node = NULL, *path = NULL;
-  FOSFAT_DEV *dev;
+  s_fosfat *fosfat;
   s_global_info *ginfo = NULL;
 
   const char *const short_options = "afhlv";
@@ -254,23 +254,23 @@ int main(int argc, char **argv) {
   }
 
   /* Open the floppy disk (or hard disk) */
-  if (!(dev = fosfat_opendev(device, type))) {
+  if (!(fosfat = fosfat_open(device, type))) {
     printf("Could not open %s for reading!\n", device);
     res = -1;
   }
 
   /* Get globals informations on the disk */
-  if (!res && (ginfo = get_ginfo(dev))) {
+  if (!res && (ginfo = get_ginfo(fosfat))) {
     printf("Smaky disk %s\n", ginfo->name);
 
     /* Show the list of a directory */
     if (!strcasecmp(mode, "list")) {
       if (!node) {
-        if (!list_dir(dev, "/"))
+        if (!list_dir(fosfat, "/"))
           res = -1;
       }
       else if (node) {
-        if (!list_dir(dev, node))
+        if (!list_dir(fosfat, node))
           res = -1;
         free(node);
       }
@@ -278,7 +278,7 @@ int main(int argc, char **argv) {
 
     /* Get a file from the disk */
     else if (!strcmp(mode, "get") && node) {
-      get_file(dev, node, path ? path : "./");
+      get_file(fosfat, node, path ? path : "./");
       free(node);
       free(path);
     }
@@ -289,7 +289,7 @@ int main(int argc, char **argv) {
   }
 
   /* Close the disk */
-  fosfat_closedev(dev);
+  fosfat_close(fosfat);
   free(device);
   free(mode);
 
