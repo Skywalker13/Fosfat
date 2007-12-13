@@ -69,19 +69,6 @@ typedef struct file_info_s {
   struct file_info_s *next_file;
 } fosfat_file_t;
 
-/** Cache list for name, BD and BL blocks */
-typedef struct cache_list_s {
-  char *name;
-  uint32_t bl;                 //!< BL Address
-  uint32_t bd;                 //!< BD Address
-  unsigned char isdir;         //!< If is a directory
-  unsigned char islink;        //!< If is a soft link
-  unsigned char isdel;         //!< If is deleted
-  /* Linked list */
-  struct cache_list_s *sub;
-  struct cache_list_s *next;
-} cachelist_t;
-
 struct fosfat_s;
 typedef struct fosfat_s fosfat_t;
 
