@@ -141,6 +141,16 @@ typedef struct block_desc_s {
   struct block_list_s *first_bl;
 } fosfat_bd_t;
 
+/** Main fosfat structure */
+struct fosfat_s {
+  FOSFAT_DEV *dev;             //!< physical device
+  int fosboot;                 //!< FOSBOOT address
+  uint32_t foschk;             //!< CHK
+  unsigned int cache;          //!< use cache system (search)
+  unsigned char viewdel;       //!< list deleted files
+  cachelist_t *cachelist;      //!< cache data
+};
+
 
 /** Global variable for internal logger */
 static unsigned char g_logger = 0;
