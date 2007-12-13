@@ -46,6 +46,8 @@
 #define FOSBOOT_FD      0x10
 #define FOSBOOT_HD      0x20
 
+#define FOSFAT_DEV      FILE
+
 /** List of all block types */
 typedef enum block_type {
   eB0,                         //!< Block 0

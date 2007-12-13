@@ -28,7 +28,6 @@
 
 #include <inttypes.h>
 
-#define FOSFAT_DEV      FILE
 #define FOSFAT_NAMELGT  17
 
 /** Disk types */
