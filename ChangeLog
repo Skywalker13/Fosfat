@@ -1,3 +1,9 @@
+2007-12-13  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* libfosfat: first implementation of an undelete tool
+	just disabled by default. The next step is added some
+	options for list and restore files.
+
 2007-12-12  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: add support for multiple device. A new
