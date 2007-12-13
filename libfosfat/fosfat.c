@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <inttypes.h>
 #include <ctype.h>      /* tolower */
 #include <string.h>     /* strcasecmp strncasecmp strdup strlen strtok
                            memcmp memcpy strcasestr */
