@@ -55,6 +55,7 @@ typedef struct att_s {
   int isvisible : 1;
   int isencoded : 1;
   int islink    : 1;
+  int isdel     : 1;
 } fosfat_att_t;
 
 /** List of files in a directory */
@@ -76,6 +77,7 @@ typedef struct cache_list_s {
   uint32_t bd;                 //!< BD Address
   unsigned char isdir;         //!< If is a directory
   unsigned char islink;        //!< If is a soft link
+  unsigned char isdel;         //!< If is deleted
   /* Linked list */
   struct cache_list_s *sub;
   struct cache_list_s *next;
@@ -87,6 +89,7 @@ typedef struct fosfat_s {
   int fosboot;                 //!< FOSBOOT address
   uint32_t foschk;             //!< CHK
   unsigned int cache;          //!< use cache system (search)
+  unsigned char viewdel;       //!< list deleted files
   cachelist_t *cachelist;      //!< cache data
 } fosfat_t;
 
