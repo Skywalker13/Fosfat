@@ -1887,9 +1887,10 @@ static fosfat_disk_t fosfat_diskauto(fosfat_t *fosfat) {
  *
  * \param dev the device name
  * \param disk disk type
+ * \param flag F_UNDELETE or 0 for nothing
  * \return the device handle
  */
-fosfat_t *fosfat_open(const char *dev, fosfat_disk_t disk) {
+fosfat_t *fosfat_open(const char *dev, fosfat_disk_t disk, unsigned int flag) {
   fosfat_disk_t fboot;
   fosfat_t *fosfat = NULL;
 
@@ -1897,7 +1898,7 @@ fosfat_t *fosfat_open(const char *dev, fosfat_disk_t disk) {
     fosfat->fosboot = -1;
     fosfat->foschk = 0;
     fosfat->cache = 1;
-    fosfat->viewdel = 0;
+    fosfat->viewdel = (flag & F_UNDELETE) == F_UNDELETE ? 1 : 0;
     fosfat->cachelist = NULL;
 
     /* Open the device */

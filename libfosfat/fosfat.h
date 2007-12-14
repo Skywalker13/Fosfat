@@ -28,6 +28,8 @@
 
 #define FOSFAT_NAMELGT  17
 
+#define F_UNDELETE  0x01
+
 /** Disk types */
 typedef enum disk_type {
   eFD,                         //!< Floppy Disk
@@ -97,7 +99,7 @@ char *fosfat_get_buffer(fosfat_t *fosfat, const char *path,
                         int offset, int size);
 
 /* Open and close the device */
-fosfat_t *fosfat_open(const char *fosfat, fosfat_disk_t disk);
+fosfat_t *fosfat_open(const char *dev, fosfat_disk_t disk, unsigned int flag);
 void fosfat_close(fosfat_t *fosfat);
 
 /* Internal logger */

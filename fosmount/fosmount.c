@@ -398,7 +398,7 @@ int main(int argc, char **argv) {
     return -1;
 
   /* Open the floppy disk (or hard disk) */
-  if (!(fosfat = fosfat_open(device, type))) {
+  if (!(fosfat = fosfat_open(device, type, 0))) {
     printf("Could not open %s for mounting!\n", device);
     res = -1;
   }

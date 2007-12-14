@@ -252,7 +252,7 @@ int main(int argc, char **argv) {
   }
 
   /* Open the floppy disk (or hard disk) */
-  if (!(fosfat = fosfat_open(device, type))) {
+  if (!(fosfat = fosfat_open(device, type, 0))) {
     printf("Could not open %s for reading!\n", device);
     res = -1;
   }
