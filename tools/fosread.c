@@ -108,10 +108,10 @@ void print_file(fosfat_file_t *file) {
 
   filename[FOSFAT_NAMELGT - 1] = '\0';
 
-  printf("%c%c%c %11i", file->att.isdir ? 'd' : '-',
-                        file->att.isvisible ? '-' : 'h',
-                        file->att.isencoded ? 'e' : '-',
-                        file->size);
+  printf("%c%c%c %8i", file->att.isdir ? 'd' : '-',
+                       file->att.isvisible ? '-' : 'h',
+                       file->att.isencoded ? 'e' : '-',
+                       file->size);
   print_date(&file->time_c);
   print_date(&file->time_w);
   print_date(&file->time_r);
@@ -131,9 +131,9 @@ int list_dir(fosfat_t *fosfat, const char *path) {
   if ((files = fosfat_list_dir(fosfat, path))) {
     first_file = files;
     printf("path: %s\n\n", path);
-    printf("           size creation         last change");
+    printf("        size creation         last change");
     printf("      last view        filename\n");
-    printf("           ---- --------         -----------");
+    printf("        ---- --------         -----------");
     printf("      ---------        --------\n");
 
     do {
