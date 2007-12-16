@@ -34,6 +34,17 @@ typedef struct ginfo {
   char name[FOSFAT_NAMELGT];
 } global_info_t;
 
+#ifdef _WIN32
+#define HELP_DEVICE \
+"a : floppy disk\n" \
+"                       c : hard disk, etc\n"
+#else
+#undef HELP_DEVICE
+#define HELP_DEVICE \
+"/dev/fd0 : floppy disk\n" \
+"                       /dev/sda : hard disk, etc\n"
+#endif
+
 #define HELP_TEXT \
 "Tool for a read-only access on a Smaky disk. fosfat-" VERSION "\n\n" \
 "Usage: fosread [options] device mode [node] [path]\n\n" \
@@ -42,8 +53,7 @@ typedef struct ginfo {
 " -a --harddisk         force an hard disk (default autodetect)\n" \
 " -f --floppydisk       force a floppy disk (default autodetect)\n" \
 " -l --fos-logger       that will turn on the FOS logger\n\n" \
-" device                /dev/fd0 : floppy disk\n" \
-"                       /dev/sda : hard disk, etc\n" \
+" device                " HELP_DEVICE \
 " mode\n" \
 "   list                list the content of a node\n" \
 "   get                 copy a file from the Smaky's disk in a" \
