@@ -139,7 +139,7 @@ int list_dir(fosfat_t *fosfat, const char *loc) {
   char *path;
   fosfat_file_t *files, *first_file;
 
-  if (fosfat_islink(fosfat, loc))
+  if (strcmp(loc, "/") && fosfat_islink(fosfat, loc))
     path = fosfat_symlink(fosfat, loc);
   else
     path = strdup(loc);
