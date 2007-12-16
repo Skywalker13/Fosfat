@@ -2,6 +2,9 @@
 
 . ./VERSION
 
+make distclean
+make win32-zip
+
 DIR=fosfat-$VERSION.$PATCHLEVEL.$SUBLEVEL
 PACKAGE=package-win32
 

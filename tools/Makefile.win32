@@ -2,14 +2,13 @@ ifeq (,$(wildcard ../config.win32))
 $(error "../config.win32 is not present, run `make win32` !")
 endif
 include ../config.win32
-include ../VERSION
 
 APPNAME1 = fosread
 APPNAME2 = smascii
 SRCS1 = fosread.c
 SRCS2 = ascii.c smascii.c
 
-CFLAGS1 = $(CFLAGS) -I../libfosfat -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)\"
+CFLAGS1 = $(CFLAGS) -I../libfosfat
 LDFLAGS1 = $(LDFLAGS) -L../libfosfat -lfosfat
 
 CFLAGS2 = $(CFLAGS)

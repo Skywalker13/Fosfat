@@ -38,12 +38,21 @@ uninstall:
 	$(MAKE) -C tools uninstall
 	$(MAKE) -C fosmount uninstall
 
-win32:
-	./win32.sh
+win32-dev:
+	./win32-gen.sh
+
+win32-build:
+	./win32-gen.sh build
+
+win32-common:
 	cp -f libfosfat/Makefile.win32 libfosfat/Makefile
 	cp -f tools/Makefile.win32 tools/Makefile
 	$(MAKE) -C libw32disk
 	$(MAKE) -C libfosfat
 	$(MAKE) -C tools
+
+win32: win32-dev win32-common
+
+win32-zip: win32-build win32-common
 
 .phony: clean distclean

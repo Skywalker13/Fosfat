@@ -2,6 +2,8 @@
 
 . ./VERSION
 
+[ "$1" = build ] && EXTRA=""
+
 touch config.mak
 
 CONFIGFILE="config.win32"
@@ -9,7 +11,7 @@ CONFIGFILE="config.win32"
 cc="i586-mingw32msvc-gcc"
 cxx="i586-mingw32msvc-g++"
 
-cflags="-Wall -Wextra -Werror -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3"
+cflags="-Wall -Wextra -Werror -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -DVERSION=\"\\\"$VERSION.$PATCHLEVEL.$SUBLEVEL$EXTRA\\\"\""
 ldflags=
 
 append_config(){
