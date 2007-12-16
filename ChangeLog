@@ -12,6 +12,7 @@
 
 	* fosread: fix symlink support, now that is possible
 	for read like a directory.
+	Add support for list and restore deleted files.
 
 2007-12-13  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
