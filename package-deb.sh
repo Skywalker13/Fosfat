@@ -15,15 +15,18 @@ cp -pPR Makefile \
         TODO \
         ChangeLog \
         configure \
+        win32-gen.sh \
         fosmount \
         tools \
         libfosfat \
+        libw32disk \
         "$PACKAGE/$DIR"
 find "$PACKAGE/$DIR" \( -name .svn -or \
                         -name .depend* -or \
                         -name '*.o' -or \
                         -name '*.a' -or \
                         -name '*.so*' -or \
+                        -name '*.dll' -or \
                         -name '*~' \
                      \) -exec rm -rf '{}' \; 2>/dev/null
 find "$PACKAGE/$DIR" \( -name 'fosread' -or \
