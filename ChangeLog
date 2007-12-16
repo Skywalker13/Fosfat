@@ -1,5 +1,7 @@
 2007-12-16  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
+	* New major beta released 0.3.0
+
 	* Add Window$ support, and use MingW32 for compile
 	DLL libraries, fosread and smascii. A script
 	package-win32.sh can be used for create a zip package.

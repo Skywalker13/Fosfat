@@ -1,3 +1,10 @@
+fosfat (0.3.0-0ubuntu0) gutsy; urgency=low
+
+  * New major beta release
+  * Support of multiple devices, undelete, Window$ and symlink in fosread.
+
+ -- Mathieu Schroeter <mathieu.schroeter@gamesover.ch>  Sun, 16 Dec 2007 16:00:00 +0100
+
 fosfat (0.2.3-0ubuntu0) gutsy; urgency=low
 
   * Fourth beta release
