@@ -678,7 +678,7 @@ static void *fosfat_read_b(fosfat_t *fosfat, unsigned int block,
 }
 
 /**
- * \brief Read the first usefull block (0).
+ * \brief Read the first useful block (0).
  *
  *  This block contents some informations on the disk. But no information
  *  are critical for read the file list.
