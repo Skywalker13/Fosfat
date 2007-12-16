@@ -11,7 +11,10 @@ PACKAGE=package-win32
 rm -rf "$PACKAGE"
 mkdir -p "$PACKAGE/$DIR"
 
-cp -pP libfosfat/fosfat.dll \
+cp -pP README \
+       TODO \
+       COPYING \
+       libfosfat/fosfat.dll \
        libw32disk/w32disk.dll \
        tools/fosread.exe \
        tools/smascii.exe \
