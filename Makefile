@@ -34,6 +34,8 @@ install-dev:
 	$(MAKE) -C libfosfat install
 
 uninstall:
+	cp -f libfosfat/Makefile.linux libfosfat/Makefile
+	cp -f tools/Makefile.linux tools/Makefile
 	$(MAKE) -C libfosfat uninstall
 	$(MAKE) -C tools uninstall
 	$(MAKE) -C fosmount uninstall
