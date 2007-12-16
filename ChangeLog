@@ -2,7 +2,7 @@
 
 	* New major beta released 0.3.0
 
-	* Add Window$ support, and use MingW32 for compile
+	* Add Window$ support, and use MinGW32 for compile
 	DLL libraries, fosread and smascii. A script
 	package-win32.sh can be used for create a zip package.
 

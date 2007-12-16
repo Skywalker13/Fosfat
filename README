@@ -64,7 +64,7 @@ BUILD
 
    make win32
 
-   It will compile all DLLs and binaries for win32 with MingW32.
+   It will compile all DLLs and binaries for win32 with MinGW32.
 
 
 The include is fosfat.h.
