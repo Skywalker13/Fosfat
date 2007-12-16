@@ -39,7 +39,7 @@ $(APPNAME2): $(OBJS2)
 	$(CC) $(OBJS2) $(LDFLAGS2) -o $(APPNAME2)
 
 clean:
-	rm -f *.o $(APPNAME1) $(APPNAME2)
+	rm -f *.o $(APPNAME1) $(APPNAME2) $(APPNAME1).exe $(APPNAME2).exe
 	rm -f .depend*
 
 install: $(TARGETI)

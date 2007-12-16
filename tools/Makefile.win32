@@ -4,8 +4,8 @@ endif
 include ../config.win32
 include ../VERSION
 
-APPNAME1 = fosread.exe
-APPNAME2 = smascii.exe
+APPNAME1 = fosread
+APPNAME2 = smascii
 SRCS1 = fosread.c
 SRCS2 = ascii.c smascii.c
 
@@ -26,13 +26,13 @@ all: depend $(APPNAME1) $(APPNAME2)
 	$(CC) -c $(CFLAGS1) $(OPTFLAGS) -o $@ $<
 
 $(APPNAME1): $(OBJS1)
-	$(CC) $(OBJS1) $(LDFLAGS1) $(EXTRALIBS) -o $(APPNAME1)
+	$(CC) $(OBJS1) $(LDFLAGS1) $(EXTRALIBS) -o $(APPNAME1).exe
 
 $(APPNAME2): $(OBJS2)
-	$(CC) $(OBJS2) $(LDFLAGS2) -o $(APPNAME2)
+	$(CC) $(OBJS2) $(LDFLAGS2) -o $(APPNAME2).exe
 
 clean:
-	rm -f *.o $(APPNAME1) $(APPNAME2)
+	rm -f *.o $(APPNAME1).exe $(APPNAME2).exe $(APPNAME1) $(APPNAME2)
 	rm -f .depend*
 
 depend:
