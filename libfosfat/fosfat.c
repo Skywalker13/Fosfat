@@ -533,7 +533,7 @@ static void *fosfat_read_b(fosfat_t *fosfat, unsigned int block,
 {
 #ifdef _WIN32
   size_t ssize, csector;
-  char *buffer;
+  int8_t *buffer;
 
   /* sector seems to be always 512 with Window$ */
   ssize = w32disk_sectorsize(fosfat->dev);
