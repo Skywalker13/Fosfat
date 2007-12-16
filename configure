@@ -711,5 +711,7 @@ append_config "DEBUG=$debug"
 append_config "TOOLS=$tools"
 append_config "FOSMOUNT=$fosmount"
 
+touch config.win32
+
 clean
 exit 0

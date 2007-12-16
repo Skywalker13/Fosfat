@@ -1,0 +1,42 @@
+ifeq (,$(wildcard ../config.win32))
+$(error "../config.win32 is not present, run `make win32` !")
+endif
+include ../config.win32
+
+BUILD_RULES += lib_dll
+CFLAGS += -DBUILD_DLL -I../libw32disk/
+LDFLAGS += -L../libw32disk/ -lw32disk
+
+LIBNAME = fosfat
+STATIC_LIBNAME = lib${LIBNAME}dll.a
+SHARED_LIBNAME = ${LIBNAME}.dll
+
+SRCS = fosfat.c
+
+OBJS = $(SRCS:.c=.o)
+
+.SUFFIXES: .c .o
+
+all: depend $(BUILD_RULES)
+
+.c.o:
+	$(CC) -c $(CFLAGS) $(OPTFLAGS) -o $@ $<
+
+lib_dll: $(OBJS)
+	$(CXX) $(CFLAGS) $(OPTFLAGS) -shared -o $(SHARED_LIBNAME) -Wl,--out-implib,$(STATIC_LIBNAME) $(OBJS) $(LDFLAGS)
+
+clean:
+	rm -f *.o *.a *.dll *.so*
+	rm -f .depend
+
+depend:
+	$(CC) -MM $(CFLAGS) $(OPTFLAGS) $(SRCS) 1>.depend
+
+.phony: clean depend
+
+#
+# include dependency files if they exist
+#
+ifneq ($(wildcard .depend),)
+include .depend
+endif

@@ -35,7 +35,7 @@ lib_shared: $(OBJS)
 	$(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(SHARED_LIBNAME).${VERSION}
 
 clean:
-	rm -f *.o *.a *.so*
+	rm -f *.o *.a *.dll *.so*
 	rm -f .depend
 
 install: $(BUILD_RULES)
