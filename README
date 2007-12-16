@@ -50,13 +50,22 @@ website.
 BUILD
 ~~~~~
 
- ./configure
- make
- make install
+ * For GNU/Linux (all)
 
-It will install 'fosread', 'fosmount', 'smascii' and libfosfat in your
-local directory.
-Use `./configure --help` for more informations.
+   ./configure
+   make
+   make install
+
+   It will install 'fosread', 'fosmount', 'smascii' and libfosfat in your
+   local directory.
+   Use `./configure --help` for more informations.
+
+ * For Window$ (only fosread and smascii)
+
+   make win32
+
+   It will compile all DLLs and binaries for win32 with MingW32.
+
 
 The include is fosfat.h.
 For more informations, consult the comments in the sources.
@@ -68,9 +77,18 @@ http://home.gna.org/fosfat/
 PACKAGE (only from trunk)
 ~~~~~~~
 
- ./package-deb
+ * For GNU/Linux
 
-It will build a Debian Ubuntu package for your architecture.
+   ./package-deb.sh
+
+   It will build a Debian Ubuntu package for your architecture.
+
+ * For Window$
+
+   ./package-win32.sh
+
+   It will create an optimised zip package with DLLs and binaries.
+   `zip` and `upx` are needed.
 
 
 AUTHOR
