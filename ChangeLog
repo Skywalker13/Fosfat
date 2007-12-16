@@ -1,3 +1,15 @@
+2007-12-16  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* Add Window$ support, and use MingW32 for compile
+	DLL libraries, fosread and smascii. A script
+	package-win32.sh can be used for create a zip package.
+
+	* libfosfat: add support for Window$ through
+	libw32disk.
+
+	* libw32disk: add C wrapper for use original Disk.cxx
+	class with libfosfat.
+
 2007-12-13  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: first implementation of an undelete tool
