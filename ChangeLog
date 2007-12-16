@@ -10,6 +10,9 @@
 	* libw32disk: add C wrapper for use original Disk.cxx
 	class with libfosfat.
 
+	* fosread: fix symlink support, now that is possible
+	for read like a directory.
+
 2007-12-13  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: first implementation of an undelete tool
