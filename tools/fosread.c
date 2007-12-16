@@ -52,7 +52,9 @@ typedef struct ginfo {
 " -v --version          version\n" \
 " -a --harddisk         force an hard disk (default autodetect)\n" \
 " -f --floppydisk       force a floppy disk (default autodetect)\n" \
-" -l --fos-logger       that will turn on the FOS logger\n\n" \
+" -l --fos-logger       that will turn on the FOS logger\n" \
+" -u --undelete         enable the undelete mode, even deleted files will\n" \
+"                       be listed and sometimes restorable with 'get' mode.\n\n" \
 " device                " HELP_DEVICE \
 " mode\n" \
 "   list                list the content of a node\n" \
@@ -125,7 +127,12 @@ void print_file(fosfat_file_t *file) {
   print_date(&file->time_c);
   print_date(&file->time_w);
   print_date(&file->time_r);
-  printf(" %s\n", filename);
+  printf(" %s", filename);
+
+  if (file->att.isdel)
+    printf(" (X)");
+
+  printf("\n");
 }
 
 /**
@@ -156,7 +163,7 @@ int list_dir(fosfat_t *fosfat, const char *loc) {
       print_file(files);
     } while ((files = files->next_file));
 
-    printf("\nd:directory  l:link  h:hidden  e:encoded\n");
+    printf("\nd:directory  l:link  h:hidden  e:encoded    (X):undelete\n");
     fosfat_free_listdir(first_file);
   }
   else {
@@ -215,19 +222,21 @@ void print_version(void) {
 }
 
 int main(int argc, char **argv) {
-  int res = 0, i, next_option;
+  int res = 0, i, next_option, undelete = 0;
+  int flags = 0;
   fosfat_disk_t type = eDAUTO;
   char *device = NULL, *mode = NULL, *node = NULL, *path = NULL;
   fosfat_t *fosfat;
   global_info_t *ginfo = NULL;
 
-  const char *const short_options = "afhlv";
+  const char *const short_options = "afhluv";
 
   const struct option long_options[] = {
     { "harddisk",     0, NULL, 'a' },
     { "floppydisk",   0, NULL, 'f' },
     { "help",         0, NULL, 'h' },
     { "fos-logger",   0, NULL, 'l' },
+    { "undelete",     0, NULL, 'u' },
     { "version",      0, NULL, 'v' },
     { NULL,           0, NULL,  0  }
   };
@@ -253,6 +262,9 @@ int main(int argc, char **argv) {
       case 'l':           /* -l or --fos-logger */
         fosfat_logger(1);
         break ;
+      case 'u':           /* -l or --fos-logger */
+        undelete = 1;
+        break ;
       case -1:            /* end */
         break ;
     }
@@ -274,8 +286,11 @@ int main(int argc, char **argv) {
       path = strdup(argv[optind + 3]);
   }
 
+  if (undelete)
+    flags = F_UNDELETE;
+
   /* Open the floppy disk (or hard disk) */
-  if (!(fosfat = fosfat_open(device, type, 0))) {
+  if (!(fosfat = fosfat_open(device, type, flags))) {
     printf("Could not open %s for reading!\n", device);
     res = -1;
   }
