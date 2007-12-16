@@ -82,6 +82,7 @@ void fosfat_free_listdir(fosfat_file_t *var);
 
 /* Test attributes and type on a file since a location */
 int fosfat_isdir(fosfat_t *fosfat, const char *location);
+int fosfat_islink(fosfat_t *fosfat, const char *location);
 int fosfat_isvisible(fosfat_t *fosfat, const char *location);
 int fosfat_isencoded(fosfat_t *fosfat, const char *location);
 int fosfat_isopenexm(fosfat_t *fosfat, const char *location);

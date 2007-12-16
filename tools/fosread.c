@@ -110,7 +110,7 @@ void print_date(fosfat_time_t *time) {
 void print_file(fosfat_file_t *file) {
   char filename[FOSFAT_NAMELGT];
 
-  if (file->att.isdir)
+  if (file->att.isdir || file->att.islink)
     snprintf(filename, strrchr(file->name, '.') - file->name + 1,
              "%s", file->name);
   else
@@ -118,7 +118,7 @@ void print_file(fosfat_file_t *file) {
 
   filename[FOSFAT_NAMELGT - 1] = '\0';
 
-  printf("%c%c%c %8i", file->att.isdir ? 'd' : '-',
+  printf("%c%c%c %8i", file->att.isdir ? 'd' : (file->att.islink ? 'l' : '-'),
                        file->att.isvisible ? '-' : 'h',
                        file->att.isencoded ? 'e' : '-',
                        file->size);
@@ -135,8 +135,14 @@ void print_file(fosfat_file_t *file) {
  * \param path where in the tree
  * \return true if it is ok
  */
-int list_dir(fosfat_t *fosfat, const char *path) {
+int list_dir(fosfat_t *fosfat, const char *loc) {
+  char *path;
   fosfat_file_t *files, *first_file;
+
+  if (fosfat_islink(fosfat, loc))
+    path = fosfat_symlink(fosfat, loc);
+  else
+    path = strdup(loc);
 
   if ((files = fosfat_list_dir(fosfat, path))) {
     first_file = files;
@@ -150,13 +156,16 @@ int list_dir(fosfat_t *fosfat, const char *path) {
       print_file(files);
     } while ((files = files->next_file));
 
-    printf("\nd:directory  h:hidden  e:encoded\n");
+    printf("\nd:directory  l:link  h:hidden  e:encoded\n");
     fosfat_free_listdir(first_file);
   }
   else {
+    free(path);
     printf("ERROR: I can't found this path!\n");
     return 0;
   }
+
+  free(path);
 
   return 1;
 }
@@ -178,14 +187,18 @@ int get_file(fosfat_t *fosfat, const char *path, const char *dst) {
   else
     new_file = strdup(dst);
 
-  printf("File \"%s\" is copying ...\n", path);
+  if (!fosfat_islink(fosfat, path) && !fosfat_isdir(fosfat, path)) {
+    printf("File \"%s\" is copying ...\n", path);
 
-  if (fosfat_get_file(fosfat, path, new_file, 1)) {
-    res = 1;
-    printf("Okay..\n");
+    if (fosfat_get_file(fosfat, path, new_file, 1)) {
+      res = 1;
+      printf("Okay..\n");
+    }
+    else
+      printf("ERROR: I can't copy the file!\n");
   }
   else
-    printf("ERROR: I can't copy the file!\n");
+    printf("ERROR: I can't copy a directory or a link!\n");
 
   free(new_file);
   return res;

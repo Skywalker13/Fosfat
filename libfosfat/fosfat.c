@@ -1368,6 +1368,31 @@ int fosfat_isdir(fosfat_t *fosfat, const char *location) {
 }
 
 /**
+ * \brief Test if the file is a link.
+ *
+ *  This function uses a string location.
+ *
+ * \param fosfat the main structure
+ * \param location file in the path
+ * \return a boolean (true for success)
+ */
+int fosfat_islink(fosfat_t *fosfat, const char *location) {
+  int res = 0;
+  fosfat_blf_t *entry;
+
+  if (fosfat && location) {
+    if ((entry = fosfat_search_insys(fosfat, location, eSBLF))) {
+      if (fosfat_in_islink(entry))
+        res = 1;
+
+      free(entry);
+    }
+  }
+
+  return res;
+}
+
+/**
  * \brief Test if the file is visible.
  *
  *  This function uses a string location.
