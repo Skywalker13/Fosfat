@@ -21,7 +21,6 @@ cp -pP README \
        "$PACKAGE/$DIR"
 
 cd "$PACKAGE"
-upx --best $DIR/*.*
 zip -r -9 "fosfat_$VERSION.$PATCHLEVEL.$SUBLEVEL.win32.zip" "$DIR"
 
 rm -rf "$DIR"

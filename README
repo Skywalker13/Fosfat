@@ -88,7 +88,7 @@ PACKAGE (only from trunk)
    ./package-win32.sh
 
    It will create an optimised zip package with DLLs and binaries.
-   `zip` and `upx` are needed.
+   `zip` is needed.
 
 
 AUTHOR

@@ -24,6 +24,7 @@ all: depend $(BUILD_RULES)
 
 lib_dll: $(OBJS)
 	$(CXX) $(CFLAGS) $(OPTFLAGS) -shared -o $(SHARED_LIBNAME) -Wl,--out-implib,$(STATIC_LIBNAME) $(OBJS) $(LDFLAGS)
+	$(STRIP) $(SHARED_LIBNAME)
 
 clean:
 	rm -f *.o *.a *.dll *.so*
