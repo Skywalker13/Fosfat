@@ -9,7 +9,7 @@ static inline void Multiply512(DWORD Input, DWORD& lowResult,
                                DWORD& highResult)
 {
   lowResult = Input << 9;
-  highResult = Input >> (32-9);
+  highResult = Input >> (32 - 9);
 }
 
 static inline HANDLE Get_Win95_vwin32() {
@@ -71,7 +71,7 @@ static bool Win95_ReadSectors(HANDLE vwin32Device, unsigned DriveIndex,
   //  6 == VWIN32_DIOC_DOS_DRIVEINFO
   return
     DeviceIoControl (vwin32Device, VWIN32_DIOC_DOS_DRIVEINFO, &regs,
-                     sizeof(regs), &regs, sizeof(regs), &cbOutputBuffer,NULL)
+                     sizeof(regs), &regs, sizeof(regs), &cbOutputBuffer, NULL)
                      && !(regs.Flags & 1);
 }
 
@@ -92,7 +92,7 @@ static bool WinNT_ReadSectors(HANDLE DiskDevice, void *Buffer,
     return false;
 
   DWORD cbRead;
-  LONG lByteIndex_high=ByteIndex_high;
+  LONG lByteIndex_high = ByteIndex_high;
 
   SetLastError(ERROR_SUCCESS);
 
