@@ -187,10 +187,11 @@ static unsigned char g_logger = 0;
  *  The FOSBOOT is the double in number of blocks for an hard disk.
  *  The real address is the address given by the disk + the size of the
  *  FOSBOOT part.
+ *  For Win32, it is a sector's number.
  *
  * \param block the block's number given by the disk
  * \param fosboot offset in the FOS address
- * \return the address of this block in the physical disk
+ * \return the address of this block on the disk (or the sector for win32)
  */
 static inline uint32_t blk2add(uint32_t block, int fosboot) {
 #ifdef _WIN32
@@ -276,7 +277,7 @@ static inline int y2k(int y) {
  * \param s string
  * \param count number of chars
  * \param c char searched
- * \return the pointer on the char or NULL is not found
+ * \return the pointer on the char or NULL if not found
  */
 static char *my_strnchr(const char *s, size_t count, int c) {
   size_t i;
@@ -304,8 +305,9 @@ void fosfat_logger(unsigned char state) {
 /**
  * \brief Print function for the internal FOS logger.
  *
- * \param msg text shown
  * \param type of logging
+ * \param msg text shown
+ * \param ... variables
  */
 static void foslog(foslog_t type, const char *msg, ...) {
   va_list va;
@@ -729,7 +731,7 @@ static inline fosfat_bl_t *fosfat_read_bl(fosfat_t *fosfat, uint32_t block) {
 /**
  * \brief Read data of some blocks and create linked list if necessary.
  *
- *  When a directory or a file is read, the content is showed as data. But
+ *  When a directory or a file is read, the content is shown as data. But
  *  for a directory, really it is a BL. This function create the linked list
  *  for a DATA block or a BL for a number of consecutive blocks.
  *
@@ -827,19 +829,22 @@ static fosfat_bd_t *fosfat_read_file(fosfat_t *fosfat, uint32_t block) {
 }
 
 /**
- * \brief Get a file and put this in a location on the PC.
+ * \brief Get a file and put this in a location on the PC or in a buffer.
  *
  *  This function read all BD->DATA of a file BD, and write the data in a
  *  new file on your disk. An output variable can be used for that the current
  *  size is printed for each PTS. The properties like "Creation Date" are not
  *  saved in the new file. All Linux file system are the same attributes for
  *  them files. And for example, ext2/3 have no "Creation Date".
+ *  The data can be saved in a buffer if the flag is used with an offset,
+ *  size and a buffer.
  *
  * \param fosfat the main structure
  * \param file file description block
  * \param dst destination on your PC
  * \param output TRUE for print the size
  * \param flag use the optional arguments or not
+ * \param ... offset, size and buffer
  * \return a boolean (true for success)
  */
 static int fosfat_get(fosfat_t *fosfat, fosfat_bd_t *file,
@@ -1034,6 +1039,8 @@ static inline int fosfat_isdirname(const char *realname,
 
 /**
  * \brief Search a BD or a BLF from a location.
+ *
+ *  DEPRECIATE (use the cache instead) !
  *
  *  A good example for use this function, is the BL of the first SYS_LIST in
  *  the disk. It will search the file BD since this BL.
@@ -1283,7 +1290,8 @@ static void *fosfat_search_incache(fosfat_t *fosfat, const char *location,
 /**
  * \brief Search a BD or a BLF from a location in the first SYS_LIST.
  *
- *  That uses fosfat_search_bdlf().
+ *  That uses fosfat_search_bdlf() and fosfat_search_incache().
+ *  But always use the cache is recommanded!
  *
  * \param fosfat the main structure
  * \param location path for found the BD (foo/bar/file)
@@ -1990,6 +1998,8 @@ static fosfat_disk_t fosfat_diskauto(fosfat_t *fosfat) {
  * \brief Open the device.
  *
  *  That hides the fopen processing. A device can be read like a file.
+ *  But for Win32, the w32disk library is used for Win9x and WinNT low
+ *  level access on the disk.
  *
  * \param dev the device name
  * \param disk disk type
@@ -2084,7 +2094,8 @@ fosfat_t *fosfat_open(const char *dev, fosfat_disk_t disk, unsigned int flag) {
 /**
  * \brief Close the device.
  *
- *  That hides the fclose processing.
+ *  That hides the fclose processing. And it uses the w32disk library with
+ *  Win9x and WinNT.
  *
  * \param fosfat the main structure
  */
