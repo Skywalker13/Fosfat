@@ -90,7 +90,7 @@ EXPORT size_t w32disk_sectorsize(win32disk_t *disk) {
 
   wdisk = disk->wdisk;
 
-  return (size_t) wdisk->SectorSize();
+  return (size_t)wdisk->SectorSize();
 }
 
 /**
@@ -114,7 +114,7 @@ EXPORT int w32disk_readsectors(win32disk_t *disk, void *buffer,
 
   wdisk = disk->wdisk;
 
-  return (int) wdisk->ReadSectors(buffer, sector_index, (std::size_t)csectors);
+  return (int)wdisk->ReadSectors(buffer, sector_index, (std::size_t)csectors);
 }
 
 /**
@@ -133,7 +133,7 @@ EXPORT unsigned int w32disk_getdriveindex(win32disk_t *disk) {
 
   wdisk = disk->wdisk;
 
-  return (int) wdisk->GetDriveIndex();
+  return (int)wdisk->GetDriveIndex();
 }
 
 /**
@@ -150,5 +150,5 @@ EXPORT int w32disk_valid(win32disk_t *disk) {
 
   wdisk = disk->wdisk;
 
-  return (int) wdisk->Valid();
+  return (int)wdisk->Valid();
 }
