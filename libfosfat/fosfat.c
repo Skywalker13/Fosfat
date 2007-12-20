@@ -153,9 +153,9 @@ typedef struct cache_list_s {
   char *name;
   uint32_t bl;                 //!< BL Address
   uint32_t bd;                 //!< BD Address
-  unsigned char isdir;         //!< If is a directory
-  unsigned char islink;        //!< If is a soft link
-  unsigned char isdel;         //!< If is deleted
+  int isdir;                   //!< If is a directory
+  int islink;                  //!< If is a soft link
+  int isdel;                   //!< If is deleted
   /* Linked list */
   struct cache_list_s *sub;
   struct cache_list_s *next;
@@ -171,13 +171,13 @@ struct fosfat_s {
   int fosboot;                 //!< FOSBOOT address
   uint32_t foschk;             //!< CHK
   unsigned int cache;          //!< use cache system (search)
-  unsigned char viewdel;       //!< list deleted files
+  int viewdel;                 //!< list deleted files
   cachelist_t *cachelist;      //!< cache data
 };
 
 
 /** Global variable for internal logger */
-static unsigned char g_logger = 0;
+static int g_logger = 0;
 
 
 /**
@@ -295,7 +295,7 @@ static char *my_strnchr(const char *s, size_t count, int c) {
  *
  * \param state 1 or 0
  */
-void fosfat_logger(unsigned char state) {
+void fosfat_logger(int state) {
   if (state)
     g_logger = 1;
   else
@@ -747,7 +747,7 @@ static void *fosfat_read_data(fosfat_t *fosfat, uint32_t block,
   if (fosfat) {
     switch (type) {
       case eBL: {
-        unsigned char i;
+        int i;
         fosfat_bl_t *block_list, *first_bl;
 
         if ((first_bl = fosfat_read_bl(fosfat, block))) {
@@ -767,7 +767,7 @@ static void *fosfat_read_data(fosfat_t *fosfat, uint32_t block,
       }
 
       case eDATA: {
-        unsigned char i;
+        int i;
         fosfat_data_t *block_data, *first_data;
 
         if ((first_data = fosfat_read_d(fosfat, block))) {

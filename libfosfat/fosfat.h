@@ -104,6 +104,6 @@ fosfat_t *fosfat_open(const char *dev, fosfat_disk_t disk, unsigned int flag);
 void fosfat_close(fosfat_t *fosfat);
 
 /* Internal logger */
-void fosfat_logger(unsigned char state);
+void fosfat_logger(int state);
 
 #endif /* FOSFAT_H_ */
