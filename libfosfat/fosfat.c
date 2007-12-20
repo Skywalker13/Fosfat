@@ -530,7 +530,7 @@ static inline int fosfat_in_isnotdel(fosfat_blf_t *file) {
  * \param type type of this block (eB0, eBL, eBD or eDATA)
  * \return a pointer on the new block or NULL if broken
  */
-static void *fosfat_read_b(fosfat_t *fosfat, unsigned int block,
+static void *fosfat_read_b(fosfat_t *fosfat, uint32_t block,
                            fosfat_type_t type)
 {
 #ifdef _WIN32
