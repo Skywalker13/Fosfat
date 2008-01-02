@@ -180,6 +180,7 @@ struct fosfat_s {
 static int g_logger = 0;
 
 
+#ifdef __linux__
 /**
  * \brief Translate a block number to an address.
  *
@@ -187,20 +188,34 @@ static int g_logger = 0;
  *  The FOSBOOT is the double in number of blocks for an hard disk.
  *  The real address is the address given by the disk + the size of the
  *  FOSBOOT part.
- *  For Win32, it is a sector's number.
  *
  * \param block the block's number given by the disk
  * \param fosboot offset in the FOS address
- * \return the address of this block on the disk (or the sector for win32)
+ * \return the address of this block on the disk
  */
 static inline uint32_t blk2add(uint32_t block, int fosboot) {
+  return ((block + fosboot) * FOSFAT_BLK);
+}
+#endif
+
 #ifdef _WIN32
+/**
+ * \brief Translate a block number to a sector.
+ *
+ *  This function depend if the media is an HARD DISK or an 3"1/2 DISK.
+ *  The FOSBOOT is the double in number of blocks for an hard disk.
+ *  The real address is the sector given by the disk with the size of the
+ *  FOSBOOT part.
+ *
+ * \param block the block's number given by the disk
+ * \param fosboot offset in the FOS address
+ * \return the sector on the disk
+ */
+static inline uint32_t blk2sector(uint32_t block, int fosboot) {
   // FIXME: div by 2 only right if the sector size is 512
   return ((block + fosboot) / 2);
-#else
-  return ((block + fosboot) * FOSFAT_BLK);
-#endif
 }
+#endif
 
 /**
  * \brief Convert char table to an integer.
@@ -561,7 +576,7 @@ static void *fosfat_read_b(fosfat_t *fosfat, uint32_t block,
 
         if ((blk = malloc(sizeof(fosfat_b0_t)))) {
 #ifdef _WIN32
-          if (w32disk_readsectors(fosfat->dev, buffer, blk2add(block,
+          if (w32disk_readsectors(fosfat->dev, buffer, blk2sector(block,
                                   fosfat->fosboot), csector))
           {
             memcpy(blk, buffer + (((block + fosfat->fosboot) % 2) ?
@@ -585,7 +600,7 @@ static void *fosfat_read_b(fosfat_t *fosfat, uint32_t block,
 
         if ((blk = malloc(sizeof(fosfat_bl_t)))) {
 #ifdef _WIN32
-          if (w32disk_readsectors(fosfat->dev, buffer, blk2add(block,
+          if (w32disk_readsectors(fosfat->dev, buffer, blk2sector(block,
                                   fosfat->fosboot), csector))
           {
             memcpy(blk, buffer + (((block + fosfat->fosboot) % 2) ?
@@ -617,7 +632,7 @@ static void *fosfat_read_b(fosfat_t *fosfat, uint32_t block,
 
         if ((blk = malloc(sizeof(fosfat_bd_t)))) {
 #ifdef _WIN32
-          if (w32disk_readsectors(fosfat->dev, buffer, blk2add(block,
+          if (w32disk_readsectors(fosfat->dev, buffer, blk2sector(block,
                                   fosfat->fosboot), csector))
           {
             memcpy(blk, buffer + (((block + fosfat->fosboot) % 2) ?
@@ -650,7 +665,7 @@ static void *fosfat_read_b(fosfat_t *fosfat, uint32_t block,
 
         if ((blk = malloc(sizeof(fosfat_data_t)))) {
 #ifdef _WIN32
-          if (w32disk_readsectors(fosfat->dev, buffer, blk2add(block,
+          if (w32disk_readsectors(fosfat->dev, buffer, blk2sector(block,
                                   fosfat->fosboot), csector))
           {
             memcpy(blk, buffer + (((block + fosfat->fosboot) % 2) ?
