@@ -215,6 +215,21 @@ static inline uint32_t blk2sector(uint32_t block, int fosboot) {
   // FIXME: div by 2 only right if the sector size is 512
   return ((block + fosboot) / 2);
 }
+
+/**
+ * \brief Return the offset in the block for get the right Smaky's block.
+ *
+ *  Smaky's blocks are of 256 bytes and Win32 uses 512. This function search
+ *  if an offset of 256 is necessary for get the right Smaky's block, or not.
+ *
+ * \param block the block's number given by the disk
+ * \param fosboot offset in the FOS address
+ * \return the offset in the Win32's block
+ */
+static inline uint32_t sec_offset(uint32_t block, int fosboot) {
+  // FIXME: modulo by 2 only right if the sector size is 512
+  return (((block + fosboot) % 2) ? FOSFAT_BLK : 0);
+}
 #endif
 
 /**
@@ -579,8 +594,8 @@ static void *fosfat_read_b(fosfat_t *fosfat, uint32_t block,
           if (w32disk_readsectors(fosfat->dev, buffer, blk2sector(block,
                                   fosfat->fosboot), csector))
           {
-            memcpy(blk, buffer + (((block + fosfat->fosboot) % 2) ?
-                        FOSFAT_BLK : 0), (size_t)FOSFAT_BLK);
+            memcpy(blk, buffer + sec_offset(block, fosfat->fosboot),
+                   (size_t)FOSFAT_BLK);
             free(buffer);
 #else
           if (fread((fosfat_b0_t *)blk, 1,
@@ -603,8 +618,8 @@ static void *fosfat_read_b(fosfat_t *fosfat, uint32_t block,
           if (w32disk_readsectors(fosfat->dev, buffer, blk2sector(block,
                                   fosfat->fosboot), csector))
           {
-            memcpy(blk, buffer + (((block + fosfat->fosboot) % 2) ?
-                        FOSFAT_BLK : 0), (size_t)FOSFAT_BLK);
+            memcpy(blk, buffer + sec_offset(block, fosfat->fosboot),
+                   (size_t)FOSFAT_BLK);
             free(buffer);
 #else
           if (fread((fosfat_bl_t *)blk, 1,
@@ -635,8 +650,8 @@ static void *fosfat_read_b(fosfat_t *fosfat, uint32_t block,
           if (w32disk_readsectors(fosfat->dev, buffer, blk2sector(block,
                                   fosfat->fosboot), csector))
           {
-            memcpy(blk, buffer + (((block + fosfat->fosboot) % 2) ?
-                        FOSFAT_BLK : 0), (size_t)FOSFAT_BLK);
+            memcpy(blk, buffer + sec_offset(block, fosfat->fosboot),
+                   (size_t)FOSFAT_BLK);
             free(buffer);
 #else
           if (fread((fosfat_bd_t *)blk, 1,
@@ -668,8 +683,8 @@ static void *fosfat_read_b(fosfat_t *fosfat, uint32_t block,
           if (w32disk_readsectors(fosfat->dev, buffer, blk2sector(block,
                                   fosfat->fosboot), csector))
           {
-            memcpy(blk, buffer + (((block + fosfat->fosboot) % 2) ?
-                        FOSFAT_BLK : 0), (size_t)FOSFAT_BLK);
+            memcpy(blk, buffer + sec_offset(block, fosfat->fosboot),
+                   (size_t)FOSFAT_BLK);
             free(buffer);
 #else
           if (fread((fosfat_data_t *)blk, 1,
