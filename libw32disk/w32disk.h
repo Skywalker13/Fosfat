@@ -39,14 +39,14 @@ typedef struct win32disk_s win32disk_t;
 extern "C" {
 #endif
 
-EXPORT win32disk_t *new_w32disk(unsigned int drive_index);
-EXPORT void free_w32disk(win32disk_t *disk);
+EXPORT win32disk_t *new_w32disk (unsigned int drive_index);
+EXPORT void free_w32disk (win32disk_t *disk);
 
-EXPORT size_t w32disk_sectorsize(win32disk_t *disk);
-EXPORT int w32disk_readsectors(win32disk_t *disk, void *buffer,
-                               unsigned long sector_index, size_t csectors);
-EXPORT unsigned int w32disk_getdriveindex(win32disk_t *disk);
-EXPORT int w32disk_valid(win32disk_t *disk);
+EXPORT size_t w32disk_sectorsize (win32disk_t *disk);
+EXPORT int w32disk_readsectors (win32disk_t *disk, void *buffer,
+                                unsigned long sector_index, size_t csectors);
+EXPORT unsigned int w32disk_getdriveindex (win32disk_t *disk);
+EXPORT int w32disk_valid (win32disk_t *disk);
 
 #ifdef __cplusplus
 }

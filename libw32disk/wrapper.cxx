@@ -45,11 +45,13 @@ struct win32disk_s {
  * \param driver_index to open.
  * \return the new device object.
  */
-EXPORT win32disk_t *new_w32disk(unsigned int drive_index) {
+EXPORT win32disk_t *
+new_w32disk (unsigned int drive_index)
+{
   win32disk_t *disk = NULL;
 
-  if ((disk = (win32disk_t *)malloc(sizeof(win32disk_t)))) {
-    disk->wdisk = new Disk(drive_index);
+  if ((disk = (win32disk_t *) malloc (sizeof (win32disk_t)))) {
+    disk->wdisk = new Disk (drive_index);
   }
 
   return disk;
@@ -60,7 +62,9 @@ EXPORT win32disk_t *new_w32disk(unsigned int drive_index) {
  *
  * \param disk structure for the wrapper.
  */
-EXPORT void free_w32disk(win32disk_t *disk) {
+EXPORT void
+free_w32disk (win32disk_t *disk)
+{
   Disk *wdisk;
 
   if (!disk)
@@ -71,7 +75,7 @@ EXPORT void free_w32disk(win32disk_t *disk) {
   if (wdisk)
     delete wdisk;
 
-  free(disk);
+  free (disk);
 }
 
 /**
@@ -82,7 +86,9 @@ EXPORT void free_w32disk(win32disk_t *disk) {
  * \param disk structure for the wrapper.
  * \return the size.
  */
-EXPORT size_t w32disk_sectorsize(win32disk_t *disk) {
+EXPORT size_t
+w32disk_sectorsize (win32disk_t *disk)
+{
   Disk *wdisk;
 
   if (!disk && !disk->wdisk)
@@ -90,7 +96,7 @@ EXPORT size_t w32disk_sectorsize(win32disk_t *disk) {
 
   wdisk = disk->wdisk;
 
-  return (size_t)wdisk->SectorSize();
+  return (size_t) wdisk->SectorSize ();
 }
 
 /**
@@ -104,8 +110,9 @@ EXPORT size_t w32disk_sectorsize(win32disk_t *disk) {
  * \param csectors the number of sectors (length).
  * \return 0 if error.
  */
-EXPORT int w32disk_readsectors(win32disk_t *disk, void *buffer,
-                               unsigned long sector_index, size_t csectors)
+EXPORT int
+w32disk_readsectors (win32disk_t *disk, void *buffer,
+                     unsigned long sector_index, size_t csectors)
 {
   Disk *wdisk;
 
@@ -114,7 +121,8 @@ EXPORT int w32disk_readsectors(win32disk_t *disk, void *buffer,
 
   wdisk = disk->wdisk;
 
-  return (int)wdisk->ReadSectors(buffer, sector_index, (std::size_t)csectors);
+  return (int) wdisk->ReadSectors (buffer, sector_index,
+                                   (std::size_t) csectors);
 }
 
 /**
@@ -125,7 +133,9 @@ EXPORT int w32disk_readsectors(win32disk_t *disk, void *buffer,
  * \param disk structure for the wrapper.
  * \return the index.
  */
-EXPORT unsigned int w32disk_getdriveindex(win32disk_t *disk) {
+EXPORT unsigned int
+w32disk_getdriveindex (win32disk_t *disk)
+{
   Disk *wdisk;
 
   if (!disk && !disk->wdisk)
@@ -133,7 +143,7 @@ EXPORT unsigned int w32disk_getdriveindex(win32disk_t *disk) {
 
   wdisk = disk->wdisk;
 
-  return (int)wdisk->GetDriveIndex();
+  return (int) wdisk->GetDriveIndex ();
 }
 
 /**
@@ -142,7 +152,9 @@ EXPORT unsigned int w32disk_getdriveindex(win32disk_t *disk) {
  * \param disk structure for the wrapper.
  * \return 0 if invalid.
  */
-EXPORT int w32disk_valid(win32disk_t *disk) {
+EXPORT int
+w32disk_valid (win32disk_t *disk)
+{
   Disk *wdisk;
 
   if (!disk && !disk->wdisk)
@@ -150,5 +162,5 @@ EXPORT int w32disk_valid(win32disk_t *disk) {
 
   wdisk = disk->wdisk;
 
-  return (int)wdisk->Valid();
+  return (int) wdisk->Valid ();
 }

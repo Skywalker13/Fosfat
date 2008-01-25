@@ -74,36 +74,36 @@ typedef struct fosfat_s fosfat_t;
 
 
 /* Disk */
-char *fosfat_diskname(fosfat_t *fosfat);
+char *fosfat_diskname (fosfat_t *fosfat);
 
 /* Read a folder */
-fosfat_file_t *fosfat_list_dir(fosfat_t *fosfat, const char *location);
-void fosfat_free_listdir(fosfat_file_t *var);
+fosfat_file_t *fosfat_list_dir (fosfat_t *fosfat, const char *location);
+void fosfat_free_listdir (fosfat_file_t *var);
 
 /* Test attributes and type on a file since a location */
-int fosfat_isdir(fosfat_t *fosfat, const char *location);
-int fosfat_islink(fosfat_t *fosfat, const char *location);
-int fosfat_isvisible(fosfat_t *fosfat, const char *location);
-int fosfat_isencoded(fosfat_t *fosfat, const char *location);
-int fosfat_isopenexm(fosfat_t *fosfat, const char *location);
+int fosfat_isdir (fosfat_t *fosfat, const char *location);
+int fosfat_islink (fosfat_t *fosfat, const char *location);
+int fosfat_isvisible (fosfat_t *fosfat, const char *location);
+int fosfat_isencoded (fosfat_t *fosfat, const char *location);
+int fosfat_isopenexm (fosfat_t *fosfat, const char *location);
 
 /* Get informations */
-fosfat_file_t *fosfat_get_stat(fosfat_t *fosfat, const char *location);
+fosfat_file_t *fosfat_get_stat (fosfat_t *fosfat, const char *location);
 
 /* Get a symlink's target */
-char *fosfat_symlink(fosfat_t *fosfat, const char *location);
+char *fosfat_symlink (fosfat_t *fosfat, const char *location);
 
 /* Get a file */
-int fosfat_get_file(fosfat_t *fosfat, const char *src,
-                    const char *dst, int output);
-char *fosfat_get_buffer(fosfat_t *fosfat, const char *path,
-                        int offset, int size);
+int fosfat_get_file (fosfat_t *fosfat, const char *src,
+                     const char *dst, int output);
+char *fosfat_get_buffer (fosfat_t *fosfat, const char *path,
+                         int offset, int size);
 
 /* Open and close the device */
-fosfat_t *fosfat_open(const char *dev, fosfat_disk_t disk, unsigned int flag);
-void fosfat_close(fosfat_t *fosfat);
+fosfat_t *fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag);
+void fosfat_close (fosfat_t *fosfat);
 
 /* Internal logger */
-void fosfat_logger(int state);
+void fosfat_logger (int state);
 
 #endif /* FOSFAT_H_ */

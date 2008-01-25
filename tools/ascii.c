@@ -59,11 +59,11 @@ static unsigned char smaky2iso8859_charset[] = {
  * \param newline CR or LF
  * \return the new char
  */
-static inline unsigned char char_sma2iso8859(unsigned char value,
-                                             e_newline newline)
+static inline unsigned char
+char_sma2iso8859 (unsigned char value, e_newline newline)
 {
-  return (value > 127 ? 0 :
-          (value == 13 ? newline : smaky2iso8859_charset[value]));
+  return (value > 127 ? 0
+          : (value == 13 ? newline : smaky2iso8859_charset[value]));
 }
 
 /**
@@ -74,12 +74,14 @@ static inline unsigned char char_sma2iso8859(unsigned char value,
  * \param newline CR or LF
  * \return the buffer
  */
-char *sma2iso8859(char *buffer, unsigned int size, e_newline newline) {
+char *
+sma2iso8859 (char *buffer, unsigned int size, e_newline newline)
+{
   unsigned int i = 0;
 
   if (buffer && size) {
     for (i = 0; i < size; i++)
-      *(buffer + i) = char_sma2iso8859(*(buffer + i), newline);
+      *(buffer + i) = char_sma2iso8859 (*(buffer + i), newline);
   }
   else
     return NULL;

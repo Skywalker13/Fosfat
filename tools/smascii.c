@@ -48,66 +48,72 @@
  * \param output ISO-8859-1 text file
  * \return 1 for success and 0 for error
  */
-int run_conv(const char *input, const char *output, e_newline newline) {
+int
+run_conv (const char *input, const char *output, e_newline newline)
+{
   int res = 1;
   FILE *in = NULL, *out = NULL;
   char buffer[BUFFER_SIZE];
   size_t lng;
 
-  if ((in = fopen(input, "r")) && (out = fopen(output, "w"))) {
-    while ((lng = fread((char *)buffer, 1, (size_t)BUFFER_SIZE, in)))
+  if ((in = fopen (input, "r")) && (out = fopen (output, "w"))) {
+    while ((lng = fread ((char *) buffer, 1, (size_t) BUFFER_SIZE, in)))
     {
-      if (sma2iso8859(buffer, (unsigned int)lng, newline))
-        fwrite((char *)buffer, 1, lng, out);
+      if (sma2iso8859 (buffer, (unsigned int) lng, newline))
+        fwrite ((char *) buffer, 1, lng, out);
       else {
-        printf("Conversion error!\n");
+        printf ("Conversion error!\n");
         res = 0;
       }
     }
     if (res)
-      printf("File %s successfully converted to %s!\n", input, output);
+      printf ("File %s successfully converted to %s!\n", input, output);
   }
   else {
-    printf("Reading or writing error!\n");
+    printf ("Reading or writing error!\n");
     res = 0;
   }
 
   if (in)
-    fclose(in);
+    fclose (in);
   if (out)
-    fclose(out);
+    fclose (out);
 
   return res;
 }
 
 /** Print help. */
-void print_help(void) {
-  printf(HELP_TEXT);
+void
+print_help (void)
+{
+  printf (HELP_TEXT);
 }
 
-int main(int argc, char **argv) {
+int
+main (int argc, char **argv)
+{
   int res = 0;
   char *input_file;
   char *output_file;
   e_newline newline = eCR;
 
   if (argc >= 3) {
-    input_file = strdup(argv[1]);
-    output_file = strdup(argv[2]);
+    input_file = strdup (argv[1]);
+    output_file = strdup (argv[2]);
 
-    if (argc == 4 && !strcmp(argv[3], "--unix"))
+    if (argc == 4 && !strcmp (argv[3], "--unix"))
       newline = eLF;
 
-    if (!run_conv(input_file, output_file, newline))
+    if (!run_conv (input_file, output_file, newline))
       res = -1;
 
     if (input_file)
-      free(input_file);
+      free (input_file);
     if (output_file)
-      free(output_file);
+      free (output_file);
   }
   else
-    print_help();
+    print_help ();
 
   return res;
 }
