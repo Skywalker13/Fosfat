@@ -36,7 +36,9 @@ clean:
 install: $(TARGETI)
 
 install-app: $(APPNAME)
-	$(INSTALL) -c -m 755 $(APPNAME) $(bindir)
+	$(INSTALL) -d $(bindir)
+	$(INSTALL) $(APPNAME) $(bindir)
+	$(STRIP) $(INSTALLSTRIP) $(bindir)/$(APPNAME)
 
 uninstall:
 	rm -f $(bindir)/$(APPNAME)
