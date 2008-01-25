@@ -267,7 +267,8 @@ c2l (uint8_t *value, int size)
  * \return a pointer on this string
  */
 static char *
-lc (char *data) {
+lc (char *data)
+{
   int i;
 
   if (data) {
@@ -288,7 +289,8 @@ lc (char *data) {
  * \return the new integer
  */
 static int
-h2d (int val) {
+h2d (int val)
+{
   char *conv;
   int res = 0;
 
