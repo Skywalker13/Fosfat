@@ -44,7 +44,7 @@ install: $(BUILD_RULES)
 	  $(INSTALL) -c $(SHARED_LIBNAME).${VERSION} $(libdir); \
 	  $(LN) -sf $(SHARED_LIBNAME).${VERSION} $(libdir)/$(SHARED_LIBNAME); \
 	fi
-	$(INSTALL) fosfat.h $(includedir)
+	$(INSTALL) -m 644 fosfat.h $(includedir)
 
 uninstall:
 	rm -f $(libdir)/$(STATIC_LIBNAME)
