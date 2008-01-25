@@ -1,6 +1,6 @@
 /*
  * libw32disk: C wrapper for Disk C++ Class (Window$ DLL)
- * Copyright (C) 2007 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * Copyright (C) 2007-2008 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
  *
  * This file is part of Fosfat.
  *
