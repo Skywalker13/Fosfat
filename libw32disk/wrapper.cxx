@@ -104,10 +104,10 @@ w32disk_sectorsize (win32disk_t *disk)
  *
  * The common value for csectors is 512.
  *
- * \param disk structure for the wrapper.
- * \param buffer where the data are put.
+ * \param disk         structure for the wrapper.
+ * \param buffer       where the data are put.
  * \param sector_index where the data are got.
- * \param csectors the number of sectors (length).
+ * \param csectors     the number of sectors (length).
  * \return 0 if error.
  */
 EXPORT int

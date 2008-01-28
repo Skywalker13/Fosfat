@@ -141,7 +141,7 @@ get_stat (const char *path)
  * \brief FUSE : read the target of a symlink.
  *
  * \param path (foo/bar)
- * \param dst target
+ * \param dst  target
  * \param size max length
  * \return 0 for success
  */
@@ -167,7 +167,7 @@ fos_readlink (const char *path, char *dst, size_t size)
 /**
  * \brief FUSE : get attributes of a file.
  *
- * \param path (foo/bar)
+ * \param path  (foo/bar)
  * \param stbuf attributes
  * \return 0 for success
  */
@@ -200,11 +200,11 @@ fos_getattr (const char *path, struct stat *stbuf)
 /**
  * \brief FUSE : read a directory.
  *
- * \param path (foo/bar)
- * \param buf buffer for filler
+ * \param path   (foo/bar)
+ * \param buf    buffer for filler
  * \param filler function for put each entry
  * \param offset not used
- * \param fi not used
+ * \param fi     not used
  * \return 0 for success
  */
 static int
@@ -247,7 +247,7 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
  * \brief FUSE : test if a file can be opened.
  *
  * \param path (foo/bar)
- * \param fi flags
+ * \param fi   flags
  * \return 0 for success
  */
 static int
@@ -267,11 +267,11 @@ fos_open (const char *path, struct fuse_file_info *fi)
 /**
  * \brief FUSE : read the data of a file.
  *
- * \param path (foo/bar)
- * \param buf buffer for put the data
- * \param size size in bytes
+ * \param path   (foo/bar)
+ * \param buf    buffer for put the data
+ * \param size   size in bytes
  * \param offset offset un bytes
- * \param fi not used
+ * \param fi     not used
  * \return the size
  */
 static int

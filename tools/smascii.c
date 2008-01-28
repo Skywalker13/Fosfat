@@ -44,7 +44,7 @@
 /**
  * \brief Run the text conversion.
  *
- * \param input Smaky text file
+ * \param input  Smaky text file
  * \param output ISO-8859-1 text file
  * \return 1 for success and 0 for error
  */

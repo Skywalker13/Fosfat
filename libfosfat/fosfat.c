@@ -189,7 +189,7 @@ static int g_logger = 0;
  *  The real address is the address given by the disk + the size of the
  *  FOSBOOT part.
  *
- * \param block the block's number given by the disk
+ * \param block   the block's number given by the disk
  * \param fosboot offset in the FOS address
  * \return the address of this block on the disk
  */
@@ -209,7 +209,7 @@ blk2add (uint32_t block, int fosboot)
  *  The real address is the sector given by the disk with the size of the
  *  FOSBOOT part.
  *
- * \param block the block's number given by the disk
+ * \param block   the block's number given by the disk
  * \param fosboot offset in the FOS address
  * \return the sector on the disk
  */
@@ -226,7 +226,7 @@ blk2sector (uint32_t block, int fosboot)
  *  Smaky's blocks are of 256 bytes and Win32 uses 512. This function search
  *  if an offset of 256 is necessary for get the right Smaky's block, or not.
  *
- * \param block the block's number given by the disk
+ * \param block   the block's number given by the disk
  * \param fosboot offset in the FOS address
  * \return the offset in the Win32's block
  */
@@ -244,7 +244,7 @@ sec_offset (uint32_t block, int fosboot)
  *  This convertion will swapped all bytes and returned an int value.
  *
  * \param value pointer on the char table
- * \param size size of the table (number of bytes)
+ * \param size  size of the table (number of bytes)
  * \return the integer value
  */
 static uint32_t
@@ -318,9 +318,9 @@ y2k (int y)
 /**
  * \brief Like strchr but limited to a length.
  *
- * \param s string
+ * \param s     string
  * \param count number of chars
- * \param c char searched
+ * \param c     char searched
  * \return the pointer on the char or NULL if not found
  */
 static char *
@@ -354,8 +354,8 @@ fosfat_logger (int state)
  * \brief Print function for the internal FOS logger.
  *
  * \param type of logging
- * \param msg text shown
- * \param ... variables
+ * \param msg  text shown
+ * \param ...  variables
  */
 static void
 foslog (foslog_t type, const char *msg, ...)
@@ -598,8 +598,8 @@ fosfat_in_isnotdel (fosfat_blf_t *file)
  *  directly without parsing.
  *
  * \param fosfat the main structure
- * \param block block position
- * \param type type of this block (eB0, eBL, eBD or eDATA)
+ * \param block  block position
+ * \param type   type of this block (eB0, eBL, eBD or eDATA)
  * \return a pointer on the new block or NULL if broken
  */
 static void *
@@ -758,7 +758,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
  *  are critical for read the file list.
  *
  * \param fosfat the main structure
- * \param block block position
+ * \param block  block position
  * \return the block0 or NULL if broken
  */
 static inline fosfat_b0_t *
@@ -774,7 +774,7 @@ fosfat_read_b0 (fosfat_t *fosfat, uint32_t block)
  *  This block contents only a char table of 256 bytes for the raw data.
  *
  * \param fosfat the main structure
- * \param block block position
+ * \param block  block position
  * \return the data or NULL if broken
  */
 static inline fosfat_data_t *
@@ -788,7 +788,7 @@ fosfat_read_d (fosfat_t *fosfat, uint32_t block)
  * \brief Read a Description Block (BD).
  *
  * \param fosfat the main structure
- * \param block block position
+ * \param block  block position
  * \return the BD or NULL if broken
  */
 static inline fosfat_bd_t *
@@ -802,7 +802,7 @@ fosfat_read_bd (fosfat_t *fosfat, uint32_t block)
  * \brief Read a Block List (BL).
  *
  * \param fosfat the main structure
- * \param block block position
+ * \param block  block position
  * \return the BL or NULL if broken
  */
 static inline fosfat_bl_t *
@@ -820,9 +820,9 @@ fosfat_read_bl (fosfat_t *fosfat, uint32_t block)
  *  for a DATA block or a BL for a number of consecutive blocks.
  *
  * \param fosfat the main structure
- * \param block the first block (start) for the linked list
- * \param nbs number of consecutive blocks
- * \param type type of this block (eB0, eBL, eBD or eDATA)
+ * \param block  the first block (start) for the linked list
+ * \param nbs    number of consecutive blocks
+ * \param type   type of this block (eB0, eBL, eBD or eDATA)
  * \return the first block of the linked list created
  */
 static void *
@@ -884,7 +884,7 @@ fosfat_read_data (fosfat_t *fosfat, uint32_t block,
  *  for found all DATA.
  *
  * \param fosfat the main structure
- * \param block the file BD position
+ * \param block  the file BD position
  * \return the first BD of the linked list
  */
 static fosfat_bd_t *
@@ -927,11 +927,11 @@ fosfat_read_file (fosfat_t *fosfat, uint32_t block)
  *  size and a buffer.
  *
  * \param fosfat the main structure
- * \param file file description block
- * \param dst destination on your PC
+ * \param file   file description block
+ * \param dst    destination on your PC
  * \param output TRUE for print the size
- * \param flag use the optional arguments or not
- * \param ... offset, size and buffer
+ * \param flag   use the optional arguments or not
+ * \param ...    offset, size and buffer
  * \return a boolean (true for success)
  */
 static int
@@ -1035,7 +1035,7 @@ fosfat_get(fosfat_t *fosfat, fosfat_bd_t *file,
  *  infinite loop /!\
  *
  * \param fosfat the main structure
- * \param block DIR (or SYS_LIST) BD position
+ * \param block  DIR (or SYS_LIST) BD position
  * \return the first BD of the linked list
  */
 static fosfat_bd_t *
@@ -1101,7 +1101,7 @@ fosfat_read_dir (fosfat_t *fosfat, uint32_t block)
  *  no test if it is a directory or not, but only the names. That is very
  *  useful for fosfat_search_bdlf() and fosfat_search_incache().
  *
- * \param realname the name of the file in the FOS
+ * \param realname   the name of the file in the FOS
  * \param searchname the name in the path
  * \return true if it seems to be a dir name
  */
@@ -1130,17 +1130,16 @@ fosfat_isdirname (const char *realname, const char *searchname)
 
 /**
  * \brief Search a BD or a BLF from a location.
- *
- *  DEPRECIATE (use the cache instead) !
+ * \deprecated use the cache instead!
  *
  *  A good example for use this function, is the BL of the first SYS_LIST in
  *  the disk. It will search the file BD since this BL.
  *  The location must be not bigger of MAX_SPLIT /!\
  *
- * \param fosfat the main structure
+ * \param fosfat   the main structure
  * \param location path for found the BD/BLF (foo/bar/file)
- * \param files first BL for start the search
- * \param type eSBD or eSBLF
+ * \param files    first BL for start the search
+ * \param type     eSBD or eSBLF
  * \return the BD, BLF or NULL is nothing found
  */
 static void *
@@ -1252,9 +1251,9 @@ fosfat_search_bdlf (fosfat_t *fosfat, const char *location,
  *
  *  The location must be not bigger of MAX_SPLIT /!\
  *
- * \param fosfat the main structure
+ * \param fosfat   the main structure
  * \param location path for found the BD/BLF (foo/bar/file)
- * \param type eSBD or eSBLF
+ * \param type     eSBD or eSBLF
  * \return the BD, BLF or NULL is nothing found
  */
 static void *
@@ -1388,9 +1387,9 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
  *  That uses fosfat_search_bdlf() and fosfat_search_incache().
  *  But always use the cache is recommanded!
  *
- * \param fosfat the main structure
+ * \param fosfat   the main structure
  * \param location path for found the BD (foo/bar/file)
- * \param type eSBD or eSBLF
+ * \param type     eSBD or eSBLF
  * \return the BD, BLF or NULL is nothing found
  */
 static void *
@@ -1447,7 +1446,7 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
  *
  *  This function uses a string location.
  *
- * \param fosfat the main structure
+ * \param fosfat   the main structure
  * \param location file in the path
  * \return a boolean (true for success)
  */
@@ -1478,7 +1477,7 @@ fosfat_isdir (fosfat_t *fosfat, const char *location)
  *
  *  This function uses a string location.
  *
- * \param fosfat the main structure
+ * \param fosfat   the main structure
  * \param location file in the path
  * \return a boolean (true for success)
  */
@@ -1505,7 +1504,7 @@ fosfat_islink (fosfat_t *fosfat, const char *location)
  *
  *  This function uses a string location.
  *
- * \param fosfat the main structure
+ * \param fosfat   the main structure
  * \param location file in the path
  * \return a boolean (true for success)
  */
@@ -1532,7 +1531,7 @@ fosfat_isvisible (fosfat_t *fosfat, const char *location)
  *
  *  This function uses a string location.
  *
- * \param fosfat the main structure
+ * \param fosfat   the main structure
  * \param location file in the path
  * \return a boolean (true for success)
  */
@@ -1559,7 +1558,7 @@ fosfat_isencoded (fosfat_t *fosfat, const char *location)
  *
  *  This function uses a string location.
  *
- * \param fosfat the main structure
+ * \param fosfat   the main structure
  * \param location file in the path
  * \return a boolean (true for success)
  */
@@ -1588,7 +1587,7 @@ fosfat_isopenexm (fosfat_t *fosfat, const char *location)
  *  This function read the data and extract the right path.
  *
  * \param fosfat the main structure
- * \param file BD of the symlink
+ * \param file   BD of the symlink
  * \return the target path
  */
 static char *
@@ -1625,7 +1624,7 @@ fosfat_get_link (fosfat_t *fosfat, fosfat_bd_t *file)
  *
  *  This function is high level.
  *
- * \param fosfat the main structure
+ * \param fosfat   the main structure
  * \param location file in the path
  * \return the target path
  */
@@ -1714,7 +1713,7 @@ fosfat_stat (fosfat_blf_t *file)
  *
  *  This function is high level.
  *
- * \param fosfat the main structure
+ * \param fosfat   the main structure
  * \param location file in the path
  * \return the stat
  */
@@ -1743,7 +1742,7 @@ fosfat_get_stat (fosfat_t *fosfat, const char *location)
  *
  *  This function is high level.
  *
- * \param fosfat the main structure
+ * \param fosfat   the main structure
  * \param location directory in the path
  * \return the linked list
  */
@@ -1823,8 +1822,8 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
  *  used for that the current size is printed for each PTS.
  *
  * \param fosfat the main structure
- * \param src source on the Smaky disk
- * \param dst destination on your PC
+ * \param src    source on the Smaky disk
+ * \param dst    destination on your PC
  * \param output TRUE for print the size
  * \return a boolean (true for success)
  */
@@ -1867,9 +1866,9 @@ fosfat_get_file (fosfat_t *fosfat, const char *src,
  *  The buffer can be selected with an offset in the file and with a size.
  *
  * \param fosfat the main structure
- * \param path source on the Smaky disk
+ * \param path   source on the Smaky disk
  * \param offset start address in the file
- * \param size length of the buffer
+ * \param size   length of the buffer
  * \return the buffer with the data
  */
 char *
@@ -1945,7 +1944,7 @@ fosfat_diskname (fosfat_t *fosfat)
  * \brief Put file information in the cache list structure.
  *
  * \param file BLF element in the BL
- * \param bl BL block's number
+ * \param bl   BL block's number
  * \return the cache for a file
  */
 static cachelist_t *
@@ -1984,7 +1983,7 @@ fosfat_cache_file (fosfat_blf_t *file, uint32_t bl)
  *  This function is recursive!
  *
  * \param fosfat the main structure
- * \param pt block's number of the BD
+ * \param pt     block's number of the BD
  * \return the first element of the cache list.
  */
 static cachelist_t *
@@ -2136,7 +2135,7 @@ fosfat_diskauto (fosfat_t *fosfat)
  *  But for Win32, the w32disk library is used for Win9x and WinNT low
  *  level access on the disk.
  *
- * \param dev the device name
+ * \param dev  the device name
  * \param disk disk type
  * \param flag F_UNDELETE or 0 for nothing
  * \return the device handle

@@ -145,7 +145,7 @@ print_file (fosfat_file_t *file)
  * \brief List the content of a directory.
  *
  * \param fosfat the main structure
- * \param path where in the tree
+ * \param path   where in the tree
  * \return true if it is ok
  */
 int
@@ -189,8 +189,8 @@ list_dir (fosfat_t *fosfat, const char *loc)
  * \brief Copy a file from the disk.
  *
  * \param fosfat the main structure
- * \param path where in the tree
- * \param dst where in local
+ * \param path   where in the tree
+ * \param dst    where in local
  * \return true if it is ok
  */
 int
