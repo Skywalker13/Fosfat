@@ -53,6 +53,15 @@
 
 #define FOSFAT_DEV      FILE
 
+/* FOS attributes and type */
+#define FOSFAT_ATT_OPENEX     0x1
+#define FOSFAT_ATT_MULTIPLE   0x2
+#define FOSFAT_ATT_DIR        0x1000
+#define FOSFAT_ATT_VISIBLE    0x2000
+#define FOSFAT_ATT_ENCODED    0x20000
+#define FOSFAT_ATT_LINK       0x1000000
+#define FOSFAT_TYPE_SYSTEM    0xF8
+
 /** List of all block types */
 typedef enum block_type {
   eB0,                         //!< Block 0
@@ -497,7 +506,7 @@ fosfat_free_listdir (fosfat_file_t *var)
 static inline int
 fosfat_in_isdir (fosfat_blf_t *file)
 {
-  return (file ? (c2l (file->att, sizeof (file->att)) & 0x1000) : 0);
+  return (file ? (c2l (file->att, sizeof (file->att)) & FOSFAT_ATT_DIR) : 0);
 }
 
 /**
@@ -512,7 +521,7 @@ fosfat_in_isdir (fosfat_blf_t *file)
 static inline int
 fosfat_in_islink (fosfat_blf_t *file)
 {
-  return (file ? (c2l (file->att, sizeof (file->att)) & 0x1000000) : 0);
+  return (file ? (c2l (file->att, sizeof (file->att)) & FOSFAT_ATT_LINK) : 0);
 }
 
 /**
@@ -527,7 +536,9 @@ fosfat_in_islink (fosfat_blf_t *file)
 static inline int
 fosfat_in_isvisible (fosfat_blf_t *file)
 {
-  return (file ? (c2l (file->att, sizeof (file->att)) & 0x2000) : 0);
+  return (file
+          ? (c2l (file->att, sizeof (file->att)) & FOSFAT_ATT_VISIBLE)
+          : 0);
 }
 
 /**
@@ -542,8 +553,10 @@ fosfat_in_isvisible (fosfat_blf_t *file)
 static inline int
 fosfat_in_isopenexm (fosfat_blf_t *file)
 {
-  return (file ? (((c2l (file->att, sizeof (file->att)) & 0x1))
-                  || ((c2l (file->att, sizeof (file->att)) & 0x2))) : 0);
+  return (file
+          ? (((c2l (file->att, sizeof (file->att)) & FOSFAT_ATT_OPENEX))
+             || ((c2l (file->att, sizeof (file->att)) & FOSFAT_ATT_MULTIPLE)))
+          : 0);
 }
 
 /**
@@ -558,7 +571,9 @@ fosfat_in_isopenexm (fosfat_blf_t *file)
 static inline int
 fosfat_in_isencoded (fosfat_blf_t *file)
 {
-  return (file ? (c2l (file->att, sizeof (file->att)) & 0x20000) : 0);
+  return (file
+          ? (c2l (file->att, sizeof (file->att)) & FOSFAT_ATT_ENCODED)
+          : 0);
 }
 
 /**
@@ -573,7 +588,7 @@ fosfat_in_isencoded (fosfat_blf_t *file)
 static inline int
 fosfat_in_issystem (fosfat_blf_t *file)
 {
-  return (file ? ((file->typ & 0xF8)) : 0);
+  return (file ? ((file->typ & FOSFAT_TYPE_SYSTEM)) : 0);
 }
 
 /**
