@@ -631,9 +631,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
     csector = 1;
 
   buffer = malloc (csector * ssize);
-#endif
 
-#ifdef _WIN32
   if (fosfat && fosfat->dev && buffer) {
     memset (buffer, 0, csector * ssize);
 #else
