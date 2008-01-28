@@ -777,7 +777,8 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
 static inline fosfat_b0_t *
 fosfat_read_b0 (fosfat_t *fosfat, uint32_t block)
 {
-  return (fosfat ? ((fosfat_b0_t *) fosfat_read_b (fosfat, block, eB0))
+  return (fosfat
+          ? ((fosfat_b0_t *) fosfat_read_b (fosfat, block, eB0))
           : NULL);
 }
 
@@ -793,7 +794,8 @@ fosfat_read_b0 (fosfat_t *fosfat, uint32_t block)
 static inline fosfat_data_t *
 fosfat_read_d (fosfat_t *fosfat, uint32_t block)
 {
-  return (fosfat ? ((fosfat_data_t *) fosfat_read_b (fosfat, block, eDATA))
+  return (fosfat
+          ? ((fosfat_data_t *) fosfat_read_b (fosfat, block, eDATA))
           : NULL);
 }
 
@@ -807,7 +809,8 @@ fosfat_read_d (fosfat_t *fosfat, uint32_t block)
 static inline fosfat_bd_t *
 fosfat_read_bd (fosfat_t *fosfat, uint32_t block)
 {
-  return (fosfat ? ((fosfat_bd_t *) fosfat_read_b (fosfat, block, eBD))
+  return (fosfat
+          ? ((fosfat_bd_t *) fosfat_read_b (fosfat, block, eBD))
           : NULL);
 }
 
@@ -821,7 +824,8 @@ fosfat_read_bd (fosfat_t *fosfat, uint32_t block)
 static inline fosfat_bl_t *
 fosfat_read_bl (fosfat_t *fosfat, uint32_t block)
 {
-  return (fosfat ? ((fosfat_bl_t *) fosfat_read_b (fosfat, block, eBL))
+  return (fosfat
+          ? ((fosfat_bl_t *) fosfat_read_b (fosfat, block, eBL))
           : NULL);
 }
 
