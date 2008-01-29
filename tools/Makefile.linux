@@ -10,6 +10,7 @@ APPNAME1 = fosread
 APPNAME2 = smascii
 SRCS1 = fosread.c
 SRCS2 = ascii.c smascii.c
+MANPAGES = fosread.1
 
 CFLAGS1 = $(CFLAGS) -I../libfosfat -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)\"
 LDFLAGS1 = $(LDFLAGS) -L../libfosfat -lfosfat
@@ -21,7 +22,7 @@ OBJS1 = $(SRCS1:.c=.o)
 OBJS2 = $(SRCS2:.c=.o)
 
 ifeq ($(TOOLS),yes)
-TARGETI = install-app
+TARGETI = install-app install-man
 TARGETB = depend $(APPNAME1) $(APPNAME2)
 endif
 
@@ -51,9 +52,16 @@ install-app: $(APPNAME1) $(APPNAME2)
 	$(STRIP) $(INSTALLSTRIP) $(bindir)/$(APPNAME1)
 	$(STRIP) $(INSTALLSTRIP) $(bindir)/$(APPNAME2)
 
-uninstall:
+install-man:
+	install -d $(mandir)/man1
+	install -m 644 $(MANPAGES) $(mandir)/man1
+
+uninstall: uninstall-man
 	rm -f $(bindir)/$(APPNAME1)
 	rm -f $(bindir)/$(APPNAME2)
+
+uninstall-man:
+	rm -f $(mandir)/man1/$(MANPAGES)
 
 depend:
 	$(CC) -MM $(CFLAGS1) $(OPTFLAGS) $(SRCS1) 1>.depend1
