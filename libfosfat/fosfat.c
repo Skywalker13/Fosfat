@@ -1439,38 +1439,39 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
   fosfat_bl_t *files;
   void *search = NULL;
 
-  if (fosfat && location) {
-    if (type == eSBD && (*location == '\0' || !strcmp (location, "/"))) {
-      syslist = fosfat_read_dir (fosfat, FOSFAT_SYSLIST);
-      return (fosfat_bd_t *) syslist;
-    }
-    /* Without cache, slower but better if the files change
-     * when the FOS is always mounted (normally useless) !
-     */
-    if (!fosfat->cache
-        && (syslist = fosfat_read_dir (fosfat, FOSFAT_SYSLIST)))
-    {
-      files = syslist->first_bl;
+  if (!fosfat || !location)
+    return NULL;
 
-      if ((search = fosfat_search_bdlf (fosfat, location, files, type))) {
-        fosfat_free_dir (syslist);
+  if (type == eSBD && (*location == '\0' || !strcmp (location, "/"))) {
+    syslist = fosfat_read_dir (fosfat, FOSFAT_SYSLIST);
+    return (fosfat_bd_t *) syslist;
+  }
+  /* Without cache, slower but better if the files change
+   * when the FOS is always mounted (normally useless) !
+   */
+  if (!fosfat->cache
+      && (syslist = fosfat_read_dir (fosfat, FOSFAT_SYSLIST)))
+  {
+    files = syslist->first_bl;
 
-        if (type == eSBLF)
-          return (fosfat_blf_t *) search;
-        else
-          return (fosfat_bd_t *) search;
-      }
+    if ((search = fosfat_search_bdlf (fosfat, location, files, type))) {
       fosfat_free_dir (syslist);
-    }
-    /* With cache enable, faster */
-    else if (fosfat->cache) {
-      if ((search = fosfat_search_incache (fosfat, location, type))) {
 
-        if (type == eSBLF)
-          return (fosfat_blf_t *) search;
-        else
-          return (fosfat_bd_t *) search;
-      }
+      if (type == eSBLF)
+        return (fosfat_blf_t *) search;
+      else
+        return (fosfat_bd_t *) search;
+    }
+    fosfat_free_dir (syslist);
+  }
+  /* With cache enable, faster */
+  else if (fosfat->cache) {
+    if ((search = fosfat_search_incache (fosfat, location, type))) {
+
+      if (type == eSBLF)
+        return (fosfat_blf_t *) search;
+      else
+        return (fosfat_bd_t *) search;
     }
   }
 
