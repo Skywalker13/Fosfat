@@ -1644,22 +1644,23 @@ fosfat_get_link (fosfat_t *fosfat, fosfat_bd_t *file)
 
   data = fosfat_read_data (fosfat, c2l (file->pts[0], sizeof (file->pts[0])),
                            file->nbs[0], eDATA);
-  if (data) {
-    start = (char *) data->data + 3;
+  if (!data)
+    return NULL;
 
-    while ((it = my_strnchr (start, strlen (start), ':')))
-      *it = '/';
+  start = (char *) data->data + 3;
 
-    it = strrchr (start, '/');
-    if (it)
-      *it = '\0';
+  while ((it = my_strnchr (start, strlen (start), ':')))
+    *it = '/';
 
-    path = strdup (start);
-    if (path)
-      lc (path);
+  it = strrchr (start, '/');
+  if (it)
+    *it = '\0';
 
-    fosfat_free_data (data);
-  }
+  path = strdup (start);
+  if (path)
+    lc (path);
+
+  fosfat_free_data (data);
 
   return path;
 }
