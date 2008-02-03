@@ -453,25 +453,26 @@ fosfat_free_dir (fosfat_bd_t *var)
   fosfat_bl_t *bl, *free_bl;
   fosfat_bd_t *bd, *free_bd;
 
+  if (!var)
+    return;
   bd = var;
-  if (bd) {
-    do {
-      bl = bd->first_bl;
 
-      /* Freed all BL */
-      while (bl) {
-        free_bl = bl;
-        bl = bl->next_bl;
-        free (free_bl);
-      }
+  do {
+    bl = bd->first_bl;
 
-      /* And after, freed the BD */
-      free_bd = bd;
-      bd = bd->next_bd;
-      if (free_bd)
-        free (free_bd);
-    } while (bd);
-  }
+    /* Freed all BL */
+    while (bl) {
+      free_bl = bl;
+      bl = bl->next_bl;
+      free (free_bl);
+    }
+
+    /* And after, freed the BD */
+    free_bd = bd;
+    bd = bd->next_bd;
+    if (free_bd)
+      free (free_bd);
+  } while (bd);
 }
 
 /**
