@@ -915,26 +915,30 @@ fosfat_read_file (fosfat_t *fosfat, uint32_t block)
   uint32_t next;
   fosfat_bd_t *file_desc, *first_bd;
 
-  if (fosfat && (file_desc = fosfat_read_bd (fosfat, block))) {
-    file_desc->next_bd = NULL;
-    file_desc->first_bl = NULL;     // Useless in this case
-    first_bd = file_desc;
+  if (!fosfat)
+    return NULL;
 
-    /* Go to the next BD if exists (create the linked list for BD) */
-    while (file_desc && file_desc->next
-           && (next = c2l (file_desc->next, sizeof (file_desc->next))))
-    {
-      file_desc->next_bd = fosfat_read_bd (fosfat, next);
-      file_desc = file_desc->next_bd;
-    }
+  file_desc = fosfat_read_bd (fosfat, block);
+  if (!file_desc)
+    return NULL;
 
-    /* End of the BD linked list */
-    if (file_desc)
-      file_desc->next_bd = NULL;
+  file_desc->next_bd = NULL;
+  file_desc->first_bl = NULL;     // Useless in this case
+  first_bd = file_desc;
 
-    return first_bd;
+  /* Go to the next BD if exists (create the linked list for BD) */
+  while (file_desc && file_desc->next
+         && (next = c2l (file_desc->next, sizeof (file_desc->next))))
+  {
+    file_desc->next_bd = fosfat_read_bd (fosfat, next);
+    file_desc = file_desc->next_bd;
   }
-  return NULL;
+
+  /* End of the BD linked list */
+  if (file_desc)
+    file_desc->next_bd = NULL;
+
+  return first_bd;
 }
 
 /**
