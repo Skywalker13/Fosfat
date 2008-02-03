@@ -1776,11 +1776,12 @@ fosfat_get_stat (fosfat_t *fosfat, const char *location)
   fosfat_blf_t *entry;
   fosfat_file_t *stat = NULL;
 
-  if (fosfat && location
-      && (entry = fosfat_search_insys (fosfat, location, eSBLF)))
-  {
-    stat = fosfat_stat (entry);
+  if (!fosfat || !location)
+    return NULL;
 
+  entry = fosfat_search_insys (fosfat, location, eSBLF);
+  if (entry) {
+    stat = fosfat_stat (entry);
     free (entry);
   }
 
