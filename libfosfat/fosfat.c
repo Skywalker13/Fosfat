@@ -1187,96 +1187,99 @@ fosfat_search_bdlf (fosfat_t *fosfat, const char *location,
   fosfat_bd_t *loop_bd = NULL;
   fosfat_blf_t *loop_blf = NULL;
 
-  if (fosfat && files && location) {
-    if (type == eSBLF)
-      loop_blf = malloc (sizeof (fosfat_blf_t));
+  if (!fosfat || !files || !location)
+    return NULL;
 
-    loop = files;
-    path = strdup (location);
+  if (type == eSBLF)
+    loop_blf = malloc (sizeof (fosfat_blf_t));
 
-    /* Split the path into a table */
-    if ((tmp = strtok ((char *) path, "/"))) {
-      snprintf (dir[nb], sizeof (dir[nb]), "%s", tmp);
-      while ((tmp = strtok (NULL, "/")) && nb < MAX_SPLIT - 1)
-        snprintf (dir[++nb], sizeof (dir[nb]), "%s", tmp);
-    }
-    else
-      snprintf (dir[nb], sizeof (dir[nb]), "%s", path);
-    nb++;
+  loop = files;
+  path = strdup (location);
 
-    /* Loop for all directories in the path */
-    for (i = 0; i < nb; i++) {
-      ontop = 1;
+  /* Split the path into a table */
+  if ((tmp = strtok ((char *) path, "/"))) {
+    snprintf (dir[nb], sizeof (dir[nb]), "%s", tmp);
+    while ((tmp = strtok (NULL, "/")) && nb < MAX_SPLIT - 1)
+      snprintf (dir[++nb], sizeof (dir[nb]), "%s", tmp);
+  }
+  else
+    snprintf (dir[nb], sizeof (dir[nb]), "%s", path);
+  nb++;
 
-      /* Loop for all BL */
-      do {
-        /* Loop for FOSFAT_NBL files in the BL */
-        for (j = 0; j < FOSFAT_NBL && ontop && loop; j++) {
-          if (fosfat_in_isopenexm (&loop->file[j])
-              && (fosfat->viewdel
-              || (!fosfat->viewdel && fosfat_in_isnotdel (&loop->file[j]))))
+  /* Loop for all directories in the path */
+  for (i = 0; i < nb; i++) {
+    ontop = 1;
+
+    /* Loop for all BL */
+    do {
+      /* Loop for FOSFAT_NBL files in the BL */
+      for (j = 0; j < FOSFAT_NBL && ontop && loop; j++) {
+        if (fosfat_in_isopenexm (&loop->file[j])
+            && (fosfat->viewdel
+            || (!fosfat->viewdel && fosfat_in_isnotdel (&loop->file[j]))))
+        {
+          /* Test if it is a directory */
+          if (fosfat_in_isdir (&loop->file[j])
+              && fosfat_isdirname ((char *) loop->file[j].name, dir[i]))
           {
-            /* Test if it is a directory */
-            if (fosfat_in_isdir (&loop->file[j])
-                && fosfat_isdirname ((char *) loop->file[j].name, dir[i]))
-            {
-              if (type == eSBLF && loop_blf)
-                memcpy (loop_blf, &loop->file[j], sizeof (*loop_blf));
+            if (type == eSBLF && loop_blf)
+              memcpy (loop_blf, &loop->file[j], sizeof (*loop_blf));
 
-              uint32_t pt = c2l (loop->file[j].pt, sizeof (loop->file[j].pt));
+            uint32_t pt = c2l (loop->file[j].pt, sizeof (loop->file[j].pt));
 
-              if (loop_bd)
-                fosfat_free_dir (loop_bd);
+            if (loop_bd)
+              fosfat_free_dir (loop_bd);
 
-              loop_bd = fosfat_read_dir (fosfat, pt);
+            loop_bd = fosfat_read_dir (fosfat, pt);
 
-              if (loop_bd)
-                loop = loop_bd->first_bl;
+            if (loop_bd)
+              loop = loop_bd->first_bl;
 
-              ontop = 0;  // dir found
-              break;
-            }
-            /* Test if it is a file or a soft-link */
-            else if (!fosfat_in_isdir(&loop->file[j])
-                     && (!strcasecmp ((char *) loop->file[j].name, dir[i])
-                         || (fosfat_in_islink (&loop->file[j])
-                             && fosfat_isdirname ((char *) loop->file[j].name,
-                                                  dir[i]))
-                        )
-                    )
-            {
-              if (type == eSBLF && loop_blf)
-                memcpy (loop_blf, &loop->file[j], sizeof (*loop_blf));
+            ontop = 0;  // dir found
+            break;
+          }
+          /* Test if it is a file or a soft-link */
+          else if (!fosfat_in_isdir(&loop->file[j])
+                   && (!strcasecmp ((char *) loop->file[j].name, dir[i])
+                       || (fosfat_in_islink (&loop->file[j])
+                           && fosfat_isdirname ((char *) loop->file[j].name,
+                                                dir[i]))
+                      )
+                  )
+          {
+            if (type == eSBLF && loop_blf)
+              memcpy (loop_blf, &loop->file[j], sizeof (*loop_blf));
 
-              uint32_t pt = c2l (loop->file[j].pt, sizeof (loop->file[j].pt));
+            uint32_t pt = c2l (loop->file[j].pt, sizeof (loop->file[j].pt));
 
-              if (loop_bd)
-                fosfat_free_dir (loop_bd);
+            if (loop_bd)
+              fosfat_free_dir (loop_bd);
 
-              loop_bd = fosfat_read_file (fosfat, pt);
-              loop = NULL;
-              ontop = 0;  // file (or soft-link) found
-              break;
-            }
-            else
-              ontop = 1;
+            loop_bd = fosfat_read_file (fosfat, pt);
+            loop = NULL;
+            ontop = 0;  // file (or soft-link) found
+            break;
           }
           else
             ontop = 1;
         }
-      } while (ontop && loop && (loop = loop->next_bl));
-    }
-
-    free (path);
-    if (!ontop) {
-      if (type == eSBLF) {
-        fosfat_free_dir (loop_bd);
-        return (fosfat_blf_t *) loop_blf;
+        else
+          ontop = 1;
       }
-      else
-        return (fosfat_bd_t *) loop_bd;
-    }
+    } while (ontop && loop && (loop = loop->next_bl));
   }
+
+  free (path);
+
+  if (!ontop) {
+    if (type == eSBLF) {
+      fosfat_free_dir (loop_bd);
+      return (fosfat_blf_t *) loop_blf;
+    }
+    else
+      return (fosfat_bd_t *) loop_bd;
+  }
+
   return NULL;
 }
 
