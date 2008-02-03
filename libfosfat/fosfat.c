@@ -1680,9 +1680,11 @@ fosfat_symlink (fosfat_t *fosfat, const char *location)
   fosfat_bd_t *entry;
   char *link = NULL;
 
-  if (fosfat && location
-      && (entry = fosfat_search_insys (fosfat, location, eSBD)))
-  {
+  if (!fosfat || !location)
+    return NULL;
+
+  entry = fosfat_search_insys (fosfat, location, eSBD);
+  if (entry) {
     link = fosfat_get_link (fosfat, entry);
     free (entry);
   }
