@@ -1077,52 +1077,55 @@ fosfat_read_dir (fosfat_t *fosfat, uint32_t block)
   fosfat_bd_t *dir_desc, *first_bd;
   fosfat_bl_t *dir_list;
 
-  if (fosfat && (dir_desc = fosfat_read_bd (fosfat, block))) {
-    dir_desc->next_bd = NULL;
-    dir_desc->first_bl = NULL;
-    first_bd = dir_desc;
+  if (!fosfat)
+    return NULL;
 
-    do {
-      /* Get the first pointer */
-      dir_desc->first_bl = fosfat_read_data (fosfat, c2l(dir_desc->pts[0],
-                           sizeof (dir_desc->pts[0])), dir_desc->nbs[0], eBL);
-      dir_list = dir_desc->first_bl;
+  dir_desc = fosfat_read_bd (fosfat, block);
+  if (!dir_desc) {
+    if (g_logger)
+      foslog (eERROR, "directory to block %i cannot be read", block);
+    return NULL;
+  }
+
+  dir_desc->next_bd = NULL;
+  dir_desc->first_bl = NULL;
+  first_bd = dir_desc;
+
+  do {
+    /* Get the first pointer */
+    dir_desc->first_bl = fosfat_read_data (fosfat, c2l(dir_desc->pts[0],
+                         sizeof (dir_desc->pts[0])), dir_desc->nbs[0], eBL);
+    dir_list = dir_desc->first_bl;
+
+    /* Go to the last BL */
+    while (dir_list && dir_list->next_bl)
+      dir_list = dir_list->next_bl;
+
+    /* Loop all others pointers */
+    for (i = 1; dir_list && i < c2l (dir_desc->npt,
+                                     sizeof (dir_desc->npt)); i++)
+    {
+      dir_list->next_bl = fosfat_read_data (fosfat, c2l (dir_desc->pts[i],
+                          sizeof (dir_desc->pts[i])), dir_desc->nbs[i], eBL);
+      dir_list = dir_list->next_bl;
 
       /* Go to the last BL */
       while (dir_list && dir_list->next_bl)
         dir_list = dir_list->next_bl;
+    }
 
-      /* Loop all others pointers */
-      for (i = 1; dir_list && i < c2l (dir_desc->npt,
-                                       sizeof (dir_desc->npt)); i++)
-      {
-        dir_list->next_bl = fosfat_read_data (fosfat, c2l (dir_desc->pts[i],
-                            sizeof (dir_desc->pts[i])), dir_desc->nbs[i], eBL);
-        dir_list = dir_list->next_bl;
+    /* End of the BL linked list */
+    if (dir_list)
+      dir_list->next_bl = NULL;
+  /* Go to the next BD if exists (create the linked list for BD) */
+  } while ((next = c2l (dir_desc->next, sizeof (dir_desc->next)))
+           && (dir_desc->next_bd = fosfat_read_bd (fosfat, next))
+           && (dir_desc = dir_desc->next_bd));
 
-        /* Go to the last BL */
-        while (dir_list && dir_list->next_bl)
-          dir_list = dir_list->next_bl;
-      }
+  /* End of the BD linked list */
+  dir_desc->next_bd = NULL;
 
-      /* End of the BL linked list */
-      if (dir_list)
-        dir_list->next_bl = NULL;
-    /* Go to the next BD if exists (create the linked list for BD) */
-    } while ((next = c2l (dir_desc->next, sizeof (dir_desc->next)))
-             && (dir_desc->next_bd = fosfat_read_bd (fosfat, next))
-             && (dir_desc = dir_desc->next_bd));
-
-    /* End of the BD linked list */
-    dir_desc->next_bd = NULL;
-
-    return first_bd;
-  }
-
-  if (g_logger)
-    foslog (eERROR, "directory to block %i cannot be read", block);
-
-  return NULL;
+  return first_bd;
 }
 
 /**
