@@ -1811,9 +1811,11 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
   fosfat_file_t *firstfile = NULL;
   fosfat_file_t *res = NULL;
 
-  if (fosfat && location
-      && (dir = fosfat_search_insys (fosfat, location, eSBD)))
-  {
+  if (!fosfat || !location)
+    return NULL;
+
+  dir = fosfat_search_insys (fosfat, location, eSBD);
+  if (dir) {
     /* Test if it is a directory */
     if (fosfat_isdir (fosfat, location)) {
       files = dir->first_bl;
