@@ -1708,50 +1708,55 @@ fosfat_stat (fosfat_blf_t *file)
 {
   fosfat_file_t *stat = NULL;
 
-  if (file && (stat = malloc (sizeof (fosfat_file_t)))) {
-    /* Size (bytes) */
-    stat->size = c2l (file->lgf, sizeof (file->lgf));
+  if (!file)
+    return NULL;
 
-    /* Attributes (field bits) */
-    stat->att.isdir     = fosfat_in_isdir (file)     ? 1 : 0;
-    stat->att.isvisible = fosfat_in_isvisible (file) ? 1 : 0;
-    stat->att.isencoded = fosfat_in_isencoded (file) ? 1 : 0;
-    stat->att.islink    = fosfat_in_islink (file)    ? 1 : 0;
-    stat->att.isdel     = fosfat_in_isnotdel (file)  ? 0 : 1;
+  stat = malloc (sizeof (fosfat_file_t));
+  if (!stat)
+    return NULL;
 
-    /* Creation date */
-    stat->time_c.year   = y2k (h2d (file->cd[2]));
-    stat->time_c.month  = h2d (file->cd[1]);
-    stat->time_c.day    = h2d (file->cd[0]);
-    stat->time_c.hour   = h2d (file->ch[0]);
-    stat->time_c.minute = h2d (file->ch[1]);
-    stat->time_c.second = h2d (file->ch[2]);
-    /* Writing date */
-    stat->time_w.year   = y2k (h2d (file->wd[2]));
-    stat->time_w.month  = h2d (file->wd[1]);
-    stat->time_w.day    = h2d (file->wd[0]);
-    stat->time_w.hour   = h2d (file->wh[0]);
-    stat->time_w.minute = h2d (file->wh[1]);
-    stat->time_w.second = h2d (file->wh[2]);
-    /* Use date */
-    stat->time_r.year   = y2k (h2d (file->rd[2]));
-    stat->time_r.month  = h2d (file->rd[1]);
-    stat->time_r.day    = h2d (file->rd[0]);
-    stat->time_r.hour   = h2d (file->rh[0]);
-    stat->time_r.minute = h2d (file->rh[1]);
-    stat->time_r.second = h2d (file->rh[2]);
+  /* Size (bytes) */
+  stat->size = c2l (file->lgf, sizeof (file->lgf));
 
-    /* Name */
-    if (stat->att.isdel) {
-      strncpy (stat->name, (char *) file->name + 1, sizeof (stat->name));
-      stat->name[15] = '\0';
-    }
-    else
-      strncpy (stat->name, (char *) file->name, sizeof (stat->name));
-    lc (stat->name);
+  /* Attributes (field bits) */
+  stat->att.isdir     = fosfat_in_isdir (file)     ? 1 : 0;
+  stat->att.isvisible = fosfat_in_isvisible (file) ? 1 : 0;
+  stat->att.isencoded = fosfat_in_isencoded (file) ? 1 : 0;
+  stat->att.islink    = fosfat_in_islink (file)    ? 1 : 0;
+  stat->att.isdel     = fosfat_in_isnotdel (file)  ? 0 : 1;
 
-    stat->next_file = NULL;
+  /* Creation date */
+  stat->time_c.year   = y2k (h2d (file->cd[2]));
+  stat->time_c.month  = h2d (file->cd[1]);
+  stat->time_c.day    = h2d (file->cd[0]);
+  stat->time_c.hour   = h2d (file->ch[0]);
+  stat->time_c.minute = h2d (file->ch[1]);
+  stat->time_c.second = h2d (file->ch[2]);
+  /* Writing date */
+  stat->time_w.year   = y2k (h2d (file->wd[2]));
+  stat->time_w.month  = h2d (file->wd[1]);
+  stat->time_w.day    = h2d (file->wd[0]);
+  stat->time_w.hour   = h2d (file->wh[0]);
+  stat->time_w.minute = h2d (file->wh[1]);
+  stat->time_w.second = h2d (file->wh[2]);
+  /* Use date */
+  stat->time_r.year   = y2k (h2d (file->rd[2]));
+  stat->time_r.month  = h2d (file->rd[1]);
+  stat->time_r.day    = h2d (file->rd[0]);
+  stat->time_r.hour   = h2d (file->rh[0]);
+  stat->time_r.minute = h2d (file->rh[1]);
+  stat->time_r.second = h2d (file->rh[2]);
+
+  /* Name */
+  if (stat->att.isdel) {
+    strncpy (stat->name, (char *) file->name + 1, sizeof (stat->name));
+    stat->name[15] = '\0';
   }
+  else
+    strncpy (stat->name, (char *) file->name, sizeof (stat->name));
+  lc (stat->name);
+
+  stat->next_file = NULL;
 
   return stat;
 }
