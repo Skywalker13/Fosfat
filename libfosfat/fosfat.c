@@ -847,51 +847,55 @@ static void *
 fosfat_read_data (fosfat_t *fosfat, uint32_t block,
                   uint8_t nbs, fosfat_type_t type)
 {
-  if (fosfat) {
-    switch (type) {
-    case eBL: {
-      int i;
-      fosfat_bl_t *block_list, *first_bl;
+  if (!fosfat)
+    return NULL;
 
-      if ((first_bl = fosfat_read_bl (fosfat, block))) {
-        block_list = first_bl;
-        block_list->pt = block;
+  switch (type) {
+  case eBL: {
+    int i;
+    fosfat_bl_t *block_list, *first_bl;
 
-        for (i = 1; block_list && i < nbs; i++) {
-          block_list->next_bl = fosfat_read_bl (fosfat, block + (uint32_t) i);
-          block_list = block_list->next_bl;
-
-          if (block_list)
-            block_list->pt = block + (uint32_t) i;
-        }
-        return (fosfat_bl_t *) first_bl;
-      }
+    first_bl = fosfat_read_bl (fosfat, block);
+    if (!first_bl)
       break;
+
+    block_list = first_bl;
+    block_list->pt = block;
+
+    for (i = 1; block_list && i < nbs; i++) {
+      block_list->next_bl = fosfat_read_bl (fosfat, block + (uint32_t) i);
+      block_list = block_list->next_bl;
+
+      if (block_list)
+        block_list->pt = block + (uint32_t) i;
     }
-
-    case eDATA: {
-      int i;
-      fosfat_data_t *block_data, *first_data;
-
-      if ((first_data = fosfat_read_d (fosfat, block))) {
-        block_data = first_data;
-
-        for (i = 1; block_data && i < nbs; i++) {
-          block_data->next_data = fosfat_read_d (fosfat, block + (uint32_t) i);
-          block_data = block_data->next_data;
-        }
-        return (fosfat_data_t *) first_data;
-      }
-      break;
-    }
-
-    /* Only for no compilation warning because
-     * all types are not in the switch
-     */
-    default:
-      break;
-    }
+    return (fosfat_bl_t *) first_bl;
   }
+
+  case eDATA: {
+    int i;
+    fosfat_data_t *block_data, *first_data;
+
+    first_data = fosfat_read_d (fosfat, block);
+    if (!first_data)
+      break;
+
+    block_data = first_data;
+
+    for (i = 1; block_data && i < nbs; i++) {
+      block_data->next_data = fosfat_read_d (fosfat, block + (uint32_t) i);
+      block_data = block_data->next_data;
+    }
+    return (fosfat_data_t *) first_data;
+  }
+
+  /* Only for no compilation warning because
+   * all types are not in the switch
+   */
+  default:
+    break;
+  }
+
   return NULL;
 }
 
