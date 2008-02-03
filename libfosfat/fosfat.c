@@ -1584,13 +1584,14 @@ fosfat_isencoded (fosfat_t *fosfat, const char *location)
   int res = 0;
   fosfat_blf_t *entry;
 
-  if (fosfat && location) {
-    if ((entry = fosfat_search_insys (fosfat, location, eSBLF))) {
-      if (fosfat_in_isencoded (entry))
-        res = 1;
+  if (!fosfat || !location)
+    return 0;
 
-      free (entry);
-    }
+  if ((entry = fosfat_search_insys (fosfat, location, eSBLF))) {
+    if (fosfat_in_isencoded (entry))
+      res = 1;
+
+    free (entry);
   }
 
   return res;
