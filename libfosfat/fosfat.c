@@ -1306,114 +1306,116 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
   fosfat_blf_t *blf_found = NULL;
   fosfat_bd_t *bd_found = NULL;
 
-  if (fosfat && location) {
-    list = fosfat->cachelist;
-    path = strdup(location);
+  if (!fosfat || !location)
+    return NULL;
 
-    /* Split the path into a table */
-    if ((tmp = strtok ((char *) path, "/"))) {
-      snprintf (dir[nb], sizeof (dir[nb]), "%s", tmp);
-      while ((tmp = strtok (NULL, "/")) && nb < MAX_SPLIT - 1)
-        snprintf (dir[++nb], sizeof (dir[nb]), "%s", tmp);
-    }
-    else
-      snprintf (dir[nb], sizeof (dir[nb]), "%s", path);
-    nb++;
+  list = fosfat->cachelist;
+  path = strdup (location);
 
-    /* Loop for all directories in the path */
-    for (i = 0; list && i < nb; i++) {
-      ontop = 1;
+  /* Split the path into a table */
+  if ((tmp = strtok ((char *) path, "/"))) {
+    snprintf (dir[nb], sizeof (dir[nb]), "%s", tmp);
+    while ((tmp = strtok (NULL, "/")) && nb < MAX_SPLIT - 1)
+      snprintf (dir[++nb], sizeof (dir[nb]), "%s", tmp);
+  }
+  else
+    snprintf (dir[nb], sizeof (dir[nb]), "%s", path);
+  nb++;
 
-      do {
-        /* test if the file is deleted or not */
-        if (fosfat->viewdel || (!fosfat->viewdel && !list->isdel)) {
-          /* Test if it is a directory */
-          if (list->isdir && fosfat_isdirname (list->name, dir[i])) {
-            bd_block = list->bd;
-            bl_block = list->bl;
+  /* Loop for all directories in the path */
+  for (i = 0; list && i < nb; i++) {
+    ontop = 1;
 
-            if (name)
-              free (name);
+    do {
+      /* test if the file is deleted or not */
+      if (fosfat->viewdel || (!fosfat->viewdel && !list->isdel)) {
+        /* Test if it is a directory */
+        if (list->isdir && fosfat_isdirname (list->name, dir[i])) {
+          bd_block = list->bd;
+          bl_block = list->bl;
 
-            name = strdup (list->name);
+          if (name)
+            free (name);
 
-            /* Go to the next level */
-            list = list->sub;
-            ontop = 0;
-            isdir = 1;
-          }
-          /* Test if it is a file or a soft-link */
-          else if (!list->isdir
-                   && (!strcasecmp (list->name, dir[i])
-                       || (list->islink
-                           && fosfat_isdirname (list->name, dir[i]))
-                      )
-                  )
-          {
-            bd_block = list->bd;
-            bl_block = list->bl;
+          name = strdup (list->name);
 
-            if (name)
-              free (name);
+          /* Go to the next level */
+          list = list->sub;
+          ontop = 0;
+          isdir = 1;
+        }
+        /* Test if it is a file or a soft-link */
+        else if (!list->isdir
+                 && (!strcasecmp (list->name, dir[i])
+                     || (list->islink
+                         && fosfat_isdirname (list->name, dir[i]))
+                    )
+                )
+        {
+          bd_block = list->bd;
+          bl_block = list->bl;
 
-            name = strdup (list->name);
-            ontop = 0;
-            isdir = 0;
-          }
-          else
-            ontop = 1;
+          if (name)
+            free (name);
+
+          name = strdup (list->name);
+          ontop = 0;
+          isdir = 0;
         }
         else
           ontop = 1;
-      } while (ontop && list && (list = list->next));
-    }
-    free(path);
+      }
+      else
+        ontop = 1;
+    } while (ontop && list && (list = list->next));
+  }
 
-    if (!ontop) {
-      switch (type) {
-      case eSBD: {
-        if (name)
+  free(path);
+
+  if (!ontop) {
+    switch (type) {
+    case eSBD: {
+      if (name)
+        free (name);
+
+      if (isdir)
+        bd_found = fosfat_read_dir (fosfat, bd_block);
+      else
+        bd_found = fosfat_read_file (fosfat, bd_block);
+
+      return (fosfat_bd_t *) bd_found;
+    }
+
+    case eSBLF: {
+      bl_found = fosfat_read_bl (fosfat, bl_block);
+
+      for (i = 0; bl_found && i < FOSFAT_NBL; i++) {
+        char name_r[FOSFAT_NAMELGT];
+        snprintf (name_r, FOSFAT_NAMELGT, "%s",
+                  (char) bl_found->file[i].name[0]
+                  ? (char *) bl_found->file[i].name
+                  : (char *) bl_found->file[i].name + 1);
+
+        if (!strcasecmp (name_r, name)) {
           free (name);
 
-        if (isdir)
-          bd_found = fosfat_read_dir (fosfat, bd_block);
-        else
-          bd_found = fosfat_read_file (fosfat, bd_block);
+          if ((blf_found = malloc (sizeof (fosfat_blf_t)))) {
+            memcpy (blf_found, &bl_found->file[i], sizeof (*blf_found));
+            free (bl_found);
 
-        return (fosfat_bd_t *) bd_found;
-      }
-
-      case eSBLF: {
-        bl_found = fosfat_read_bl (fosfat, bl_block);
-
-        for (i = 0; bl_found && i < FOSFAT_NBL; i++) {
-          char name_r[FOSFAT_NAMELGT];
-          snprintf (name_r, FOSFAT_NAMELGT, "%s",
-                    (char) bl_found->file[i].name[0]
-                    ? (char *) bl_found->file[i].name
-                    : (char *) bl_found->file[i].name + 1);
-
-          if (!strcasecmp (name_r, name)) {
-            free (name);
-
-            if ((blf_found = malloc (sizeof (fosfat_blf_t)))) {
-              memcpy (blf_found, &bl_found->file[i], sizeof (*blf_found));
-              free (bl_found);
-
-              return (fosfat_blf_t *) blf_found;
-            }
+            return (fosfat_blf_t *) blf_found;
           }
         }
+      }
 
-        if (bl_found)
-          free (bl_found);
-      }
-      }
+      if (bl_found)
+        free (bl_found);
     }
-
-    if (name)
-      free (name);
+    }
   }
+
+  if (name)
+    free (name);
 
   return NULL;
 }
