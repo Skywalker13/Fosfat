@@ -372,26 +372,28 @@ foslog (foslog_t type, const char *msg, ...)
   va_list va;
   char log[256] = "fosfat-";
 
+  if (!msg)
+    return;
+
   va_start (va, msg);
 
-  if (msg) {
-    switch (type) {
-    case eERROR:
-      strcat (log, "error");
-      break;
+  switch (type) {
+  case eERROR:
+    strcat (log, "error");
+    break;
 
-    case eWARNING:
-      strcat (log, "warning");
-      break;
+  case eWARNING:
+    strcat (log, "warning");
+    break;
 
-    case eNOTICE:
-      strcat (log, "notice");
-    }
-
-    fprintf (stderr, "%s: ", log);
-    vfprintf (stderr, msg, va);
-    fprintf (stderr, "\n");
+  case eNOTICE:
+    strcat (log, "notice");
   }
+
+  fprintf (stderr, "%s: ", log);
+  vfprintf (stderr, msg, va);
+  fprintf (stderr, "\n");
+
   va_end (va);
 }
 
