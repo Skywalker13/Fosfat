@@ -1,3 +1,9 @@
+2008-02-04  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* Improve a lot the code lisibility.
+
+	* Fix some memleaks when errors appear.
+
 2008-01-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Add manpages for fosmount and fosread.
