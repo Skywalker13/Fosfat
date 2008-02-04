@@ -2016,27 +2016,32 @@ fosfat_cache_file (fosfat_blf_t *file, uint32_t bl)
 {
   cachelist_t *cachefile = NULL;
 
-  if (file && (cachefile = malloc (sizeof (cachelist_t)))) {
-    cachefile->next = NULL;
-    cachefile->sub = NULL;
-    cachefile->isdir = fosfat_in_isdir (file) ? 1 : 0;
-    cachefile->islink = fosfat_in_islink (file) ? 1 : 0;
+  if (!file)
+    return NULL;
 
-    /* if the first char is NULL, then the file is deleted */
-    if ((char) file->name[0] == '\0') {
-      cachefile->isdel = 1;
-      cachefile->name = strdup ((char *) file->name + 1);
-      if (strlen (cachefile->name) >= 16)
-        cachefile->name[15] = '\0';
-    }
-    else {
-      cachefile->isdel = 0;
-      cachefile->name = strdup ((char *) file->name);
-    }
+  cachefile = malloc (sizeof (cachelist_t));
+  if (!cachefile)
+    return NULL;
 
-    cachefile->bl = bl;
-    cachefile->bd = c2l (file->pt, sizeof (file->pt));
+  cachefile->next = NULL;
+  cachefile->sub = NULL;
+  cachefile->isdir = fosfat_in_isdir (file) ? 1 : 0;
+  cachefile->islink = fosfat_in_islink (file) ? 1 : 0;
+
+  /* if the first char is NULL, then the file is deleted */
+  if ((char) file->name[0] == '\0') {
+    cachefile->isdel = 1;
+    cachefile->name = strdup ((char *) file->name + 1);
+    if (strlen (cachefile->name) >= 16)
+      cachefile->name[15] = '\0';
   }
+  else {
+    cachefile->isdel = 0;
+    cachefile->name = strdup ((char *) file->name);
+  }
+
+  cachefile->bl = bl;
+  cachefile->bd = c2l (file->pt, sizeof (file->pt));
 
   return cachefile;
 }
