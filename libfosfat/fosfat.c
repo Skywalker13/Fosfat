@@ -1638,12 +1638,14 @@ fosfat_isopenexm (fosfat_t *fosfat, const char *location)
   if (!fosfat || !location)
     return 0;
 
-  if ((entry = fosfat_search_insys (fosfat, location, eSBLF))) {
-    if (fosfat_in_isopenexm (entry))
-      res = 1;
+  entry = fosfat_search_insys (fosfat, location, eSBLF);
+  if (!entry)
+    return 0;
 
-    free (entry);
-  }
+  if (fosfat_in_isopenexm (entry))
+    res = 1;
+
+  free (entry);
 
   return res;
 }
