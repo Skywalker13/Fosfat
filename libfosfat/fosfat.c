@@ -2241,8 +2241,10 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
 #else
   fosfat->dev = fopen (dev, "r");
 #endif
-  if (!fosfat->dev)
+  if (!fosfat->dev) {
+    free (fosfat);
     return NULL;
+  }
 
   /* Open the device */
   if (g_logger)
