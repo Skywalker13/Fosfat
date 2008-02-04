@@ -639,11 +639,9 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
   if ((csector = (size_t) FOSFAT_BLK / ssize) == 0)
     csector = 1;
 
-  buffer = malloc (csector * ssize);
+  buffer = calloc (1, csector * ssize);
   if (!buffer)
     return NULL;
-
-  memset (buffer, 0, csector * ssize);
 #else
   /* Move the pointer on the block */
   if (fseek (fosfat->dev, blk2add (block, fosfat->fosboot), SEEK_SET))
@@ -1969,10 +1967,9 @@ fosfat_get_buffer (fosfat_t *fosfat, const char *path, int offset, int size)
 
   file = fosfat_search_insys (fosfat, path, eSBLF);
   if (file && !fosfat_in_isdir (file)) {
-    buffer = malloc (size);
+    buffer = calloc (1, size);
 
     if (buffer) {
-      memset (buffer, 0, size);
       file2 = fosfat_read_file (fosfat, c2l (file->pt, sizeof (file->pt)));
 
       if (file2)
