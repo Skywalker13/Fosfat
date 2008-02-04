@@ -1446,6 +1446,7 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
     syslist = fosfat_read_dir (fosfat, FOSFAT_SYSLIST);
     return (fosfat_bd_t *) syslist;
   }
+
   /* Without cache, slower but better if the files change
    * when the FOS is always mounted (normally useless) !
    */
