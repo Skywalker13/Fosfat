@@ -2223,83 +2223,95 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
   fosfat_disk_t fboot;
   fosfat_t *fosfat = NULL;
 
-  if (dev && (fosfat = malloc (sizeof (fosfat_t)))) {
-    fosfat->fosboot = -1;
-    fosfat->foschk = 0;
-    fosfat->cache = 1;
-    fosfat->viewdel = (flag & F_UNDELETE) == F_UNDELETE ? 1 : 0;
-    fosfat->cachelist = NULL;
+  if (!dev)
+    return NULL;
 
-    /* Open the device */
+  fosfat = malloc (sizeof (fosfat_t));
+  if (!fosfat)
+    return NULL;
+
+  fosfat->fosboot = -1;
+  fosfat->foschk = 0;
+  fosfat->cache = 1;
+  fosfat->viewdel = (flag & F_UNDELETE) == F_UNDELETE ? 1 : 0;
+  fosfat->cachelist = NULL;
+
+#ifdef _WIN32
+  fosfat->dev = new_w32disk (*dev - 'a');
+#else
+  fosfat->dev = fopen (dev, "r");
+#endif
+  if (!fosfat->dev)
+    return NULL;
+
+  /* Open the device */
+  if (g_logger)
+    foslog (eNOTICE, "device is opening ...");
+
+  if (disk == eDAUTO) {
     if (g_logger)
-      foslog (eNOTICE, "device is opening ...");
+      foslog (eNOTICE, "auto detection in progress ...");
 
-#ifdef _WIN32
-    if ((fosfat->dev = new_w32disk (*dev - 'a'))) {
-#else
-    if ((fosfat->dev = fopen (dev, "r"))) {
-#endif
-      if (disk == eDAUTO) {
-        if (g_logger)
-          foslog (eNOTICE, "auto detection in progress ...");
-
-        disk = fosfat_diskauto (fosfat);
-        fboot = disk;
-      }
-      else
-        fboot = fosfat_diskauto (fosfat);
-
-      /* Test if the auto detection and the user param are the same */
-      if (g_logger && fboot != disk)
-        foslog (eWARNING, "disk type forced seems to be false");
-
-      switch (disk) {
-      case eFD:
-        fosfat->fosboot = FOSBOOT_FD;
-        if (g_logger)
-          foslog (eNOTICE, "floppy disk selected");
-        break;
-
-      case eHD:
-        fosfat->fosboot = FOSBOOT_HD;
-        if (g_logger)
-          foslog (eNOTICE, "hard disk selected");
-        break;
-
-      case eFAILS: {
-        if (g_logger)
-          foslog (eERROR, "disk auto detection for \"%s\" has failed", dev);
-      }
-
-      default:
-#ifdef _WIN32
-        free_w32disk (fosfat->dev);
-#else
-        fclose (fosfat->dev);
-#endif
-        free (fosfat);
-        fosfat = NULL;
-      }
-
-      /* Load the cache if needed */
-      if (fosfat && fosfat->cache) {
-        if (g_logger)
-          foslog (eNOTICE, "cache file is loading ...");
-
-        if (!(fosfat->cachelist = fosfat_cache_dir (fosfat, FOSFAT_SYSLIST))) {
-#ifdef _WIN32
-          free_w32disk (fosfat->dev);
-#else
-          fclose (fosfat->dev);
-#endif
-          free (fosfat);
-          fosfat = NULL;
-        }
-        else if (g_logger)
-          foslog (eNOTICE, "fosfat is ready");
-      }
-    }
+    disk = fosfat_diskauto (fosfat);
+    fboot = disk;
   }
+  else
+    fboot = fosfat_diskauto (fosfat);
+
+  /* Test if the auto detection and the user param are the same */
+  if (g_logger && fboot != disk)
+    foslog (eWARNING, "disk type forced seems to be false");
+
+  switch (disk) {
+  case eFD:
+    fosfat->fosboot = FOSBOOT_FD;
+    if (g_logger)
+      foslog (eNOTICE, "floppy disk selected");
+    break;
+
+  case eHD:
+    fosfat->fosboot = FOSBOOT_HD;
+    if (g_logger)
+      foslog (eNOTICE, "hard disk selected");
+    break;
+
+  case eFAILS: {
+    if (g_logger)
+      foslog (eERROR, "disk auto detection for \"%s\" has failed", dev);
+  }
+
+  default:
+#ifdef _WIN32
+    free_w32disk (fosfat->dev);
+#else
+    fclose (fosfat->dev);
+#endif
+    free (fosfat);
+    fosfat = NULL;
+  }
+
+  if (!fosfat)
+    return NULL;
+
+  /* Load the cache if needed */
+  if (!fosfat->cache)
+    return fosfat;
+
+  if (g_logger)
+    foslog (eNOTICE, "cache file is loading ...");
+
+  fosfat->cachelist = fosfat_cache_dir (fosfat, FOSFAT_SYSLIST);
+  if (!fosfat->cachelist) {
+#ifdef _WIN32
+    free_w32disk (fosfat->dev);
+#else
+    fclose (fosfat->dev);
+#endif
+    free (fosfat);
+    fosfat = NULL;
+  }
+  else if (g_logger)
+    foslog (eNOTICE, "fosfat is ready");
 
   return fosfat;
 }
