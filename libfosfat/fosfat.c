@@ -1856,28 +1856,27 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
   do {
     /* Check all files in the BL */
     for (i = 0; i < FOSFAT_NBL; i++) {
-      if (fosfat_in_isopenexm (&files->file[i])
-          && (fosfat->viewdel
-              || (!fosfat->viewdel
-                  && fosfat_in_isnotdel (&files->file[i]))
-             )
-          && !fosfat_in_issystem (&files->file[i]))
-      {
-        /* Complete the linked list with all files */
-        if (listdir) {
-          listdir->next_file = fosfat_stat (&files->file[i]);
-          listdir = listdir->next_file;
-        }
-        else {
-          firstfile = fosfat_stat (&files->file[i]);
-          listdir = firstfile;
+      if (fosfat_in_issystem (&files->file[i])) {
+        if (!strcasecmp ((char *) files->file[i].name, "sys_list")) {
+          sysdir = fosfat_stat (&files->file[i]);
+          strcpy (sysdir->name, "..dir");
         }
       }
-      else if (fosfat_in_issystem (&files->file[i])
-               && !strcasecmp ((char *) files->file[i].name, "sys_list"))
-      {
-        sysdir = fosfat_stat (&files->file[i]);
-        strcpy (sysdir->name, "..dir");
+      else {
+        if (!fosfat_in_isopenexm (&files->file[i]))
+          continue;
+
+        if (fosfat->viewdel || fosfat_in_isnotdel (&files->file[i])) {
+          /* Complete the linked list with all files */
+          if (listdir) {
+            listdir->next_file = fosfat_stat (&files->file[i]);
+            listdir = listdir->next_file;
+          }
+          else {
+            firstfile = fosfat_stat (&files->file[i]);
+            listdir = firstfile;
+          }
+        }
       }
     }
   } while ((files = files->next_bl));
