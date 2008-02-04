@@ -967,8 +967,8 @@ fosfat_read_file (fosfat_t *fosfat, uint32_t block)
  * \return a boolean (true for success)
  */
 static int
-fosfat_get(fosfat_t *fosfat, fosfat_bd_t *file,
-           const char *dst, int output, int flag, ...)
+fosfat_get (fosfat_t *fosfat, fosfat_bd_t *file,
+            const char *dst, int output, int flag, ...)
 {
   /* optional arguments */
   va_list pp;
