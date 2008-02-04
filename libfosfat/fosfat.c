@@ -303,11 +303,13 @@ h2d (int val)
   char *conv;
   int res = 0;
 
-  if ((conv = malloc (sizeof (val)))) {
-    snprintf (conv, sizeof (conv), "%X", val);
-    res = atoi (conv);
-    free (conv);
-  }
+  conv = malloc (sizeof (val));
+  if (!conv)
+    return 0;
+
+  snprintf (conv, sizeof (conv), "%X", val);
+  res = atoi (conv);
+  free (conv);
 
   return res;
 }
