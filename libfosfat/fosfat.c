@@ -1380,46 +1380,50 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
 
   free(path);
 
-  if (!ontop) {
-    switch (type) {
-    case eSBD: {
-      if (name)
+  if (ontop) {
+    if (name)
+      free (name);
+    return NULL;
+  }
+
+  switch (type) {
+  case eSBD: {
+    if (name)
+      free (name);
+
+    if (isdir)
+      bd_found = fosfat_read_dir (fosfat, bd_block);
+    else
+      bd_found = fosfat_read_file (fosfat, bd_block);
+
+    return (fosfat_bd_t *) bd_found;
+  }
+
+  case eSBLF: {
+    bl_found = fosfat_read_bl (fosfat, bl_block);
+
+    for (i = 0; bl_found && i < FOSFAT_NBL; i++) {
+      char name_r[FOSFAT_NAMELGT];
+      snprintf (name_r, FOSFAT_NAMELGT, "%s",
+                (char) bl_found->file[i].name[0]
+                ? (char *) bl_found->file[i].name
+                : (char *) bl_found->file[i].name + 1);
+
+      if (!strcasecmp (name_r, name)) {
         free (name);
 
-      if (isdir)
-        bd_found = fosfat_read_dir (fosfat, bd_block);
-      else
-        bd_found = fosfat_read_file (fosfat, bd_block);
+        if ((blf_found = malloc (sizeof (fosfat_blf_t)))) {
+          memcpy (blf_found, &bl_found->file[i], sizeof (*blf_found));
+          free (bl_found);
 
-      return (fosfat_bd_t *) bd_found;
-    }
-
-    case eSBLF: {
-      bl_found = fosfat_read_bl (fosfat, bl_block);
-
-      for (i = 0; bl_found && i < FOSFAT_NBL; i++) {
-        char name_r[FOSFAT_NAMELGT];
-        snprintf (name_r, FOSFAT_NAMELGT, "%s",
-                  (char) bl_found->file[i].name[0]
-                  ? (char *) bl_found->file[i].name
-                  : (char *) bl_found->file[i].name + 1);
-
-        if (!strcasecmp (name_r, name)) {
-          free (name);
-
-          if ((blf_found = malloc (sizeof (fosfat_blf_t)))) {
-            memcpy (blf_found, &bl_found->file[i], sizeof (*blf_found));
-            free (bl_found);
-
-            return (fosfat_blf_t *) blf_found;
-          }
+          return (fosfat_blf_t *) blf_found;
         }
       }
+    }
 
-      if (bl_found)
-        free (bl_found);
-    }
-    }
+    if (bl_found)
+      free (bl_found);
+  }
   }
 
   if (name)
