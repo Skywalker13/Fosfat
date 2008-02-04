@@ -627,7 +627,12 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
 #ifdef _WIN32
   size_t ssize, csector;
   int8_t *buffer;
+#endif
 
+  if (!fosfat || !fosfat->dev)
+    return NULL;
+
+#ifdef _WIN32
   /* sector seems to be always 512 with Window$ */
   ssize = w32disk_sectorsize (fosfat->dev);
 
@@ -635,129 +640,129 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
     csector = 1;
 
   buffer = malloc (csector * ssize);
+  if (!buffer)
+    return NULL;
 
-  if (fosfat && fosfat->dev && buffer) {
-    memset (buffer, 0, csector * ssize);
+  memset (buffer, 0, csector * ssize);
 #else
   /* Move the pointer on the block */
-  if (fosfat && fosfat->dev
-      && !fseek (fosfat->dev, blk2add (block, fosfat->fosboot), SEEK_SET))
-  {
+  if (fseek (fosfat->dev, blk2add (block, fosfat->fosboot), SEEK_SET))
+    return NULL;
 #endif
-    switch (type) {
-    case eB0: {
-      fosfat_b0_t *blk;
 
-      if ((blk = malloc (sizeof (fosfat_b0_t)))) {
+  switch (type) {
+  case eB0: {
+    fosfat_b0_t *blk;
+
+    if ((blk = malloc (sizeof (fosfat_b0_t)))) {
 #ifdef _WIN32
-        if (w32disk_readsectors (fosfat->dev, buffer,
-                                 blk2sector (block, fosfat->fosboot), csector))
-        {
-          memcpy (blk, buffer + sec_offset (block, fosfat->fosboot),
-                  (size_t) FOSFAT_BLK);
-          free (buffer);
+      if (w32disk_readsectors (fosfat->dev, buffer,
+                               blk2sector (block, fosfat->fosboot), csector))
+      {
+        memcpy (blk, buffer + sec_offset (block, fosfat->fosboot),
+                (size_t) FOSFAT_BLK);
+        free (buffer);
 #else
-        if (fread ((fosfat_b0_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
-            == (size_t) FOSFAT_BLK)
-        {
+      if (fread ((fosfat_b0_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
+          == (size_t) FOSFAT_BLK)
+      {
 #endif
-          return (fosfat_b0_t *) blk;
-        }
-        else
-          free (blk);
+        return (fosfat_b0_t *) blk;
       }
-      break;
-    }
-
-    case eBL: {
-      fosfat_bl_t *blk;
-
-      if ((blk = malloc (sizeof (fosfat_bl_t)))) {
-#ifdef _WIN32
-        if (w32disk_readsectors (fosfat->dev, buffer,
-                                 blk2sector (block, fosfat->fosboot), csector))
-        {
-          memcpy (blk, buffer + sec_offset (block, fosfat->fosboot),
-                  (size_t) FOSFAT_BLK);
-          free (buffer);
-#else
-        if (fread ((fosfat_bl_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
-            == (size_t)FOSFAT_BLK)
-        {
-#endif
-          blk->next_bl = NULL;
-
-          /* Check the CHK value */
-          if (!fosfat->foschk)
-            fosfat->foschk = c2l (blk->chk, sizeof (blk->chk));
-          if (fosfat->foschk == c2l (blk->chk, sizeof (blk->chk)))
-            return (fosfat_bl_t *) blk;
-
-          if (g_logger)
-            foslog (eERROR, "bad FOSCHK for this BL (block:%li)", block);
-        }
+      else
         free (blk);
-      }
-      break;
     }
+    break;
+  }
 
-    case eBD: {
-      fosfat_bd_t *blk;
+  case eBL: {
+    fosfat_bl_t *blk;
 
-      if ((blk = malloc (sizeof (fosfat_bd_t)))) {
+    if ((blk = malloc (sizeof (fosfat_bl_t)))) {
 #ifdef _WIN32
-        if (w32disk_readsectors (fosfat->dev, buffer,
-                                 blk2sector (block, fosfat->fosboot), csector))
-        {
-          memcpy (blk, buffer + sec_offset (block, fosfat->fosboot),
-                  (size_t) FOSFAT_BLK);
-          free (buffer);
+      if (w32disk_readsectors (fosfat->dev, buffer,
+                               blk2sector (block, fosfat->fosboot), csector))
+      {
+        memcpy (blk, buffer + sec_offset (block, fosfat->fosboot),
+                (size_t) FOSFAT_BLK);
+        free (buffer);
 #else
-        if (fread ((fosfat_bd_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
-            == (size_t) FOSFAT_BLK)
-        {
+      if (fread ((fosfat_bl_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
+          == (size_t)FOSFAT_BLK)
+      {
 #endif
-          blk->next_bd = NULL;
-          blk->first_bl = NULL;
+        blk->next_bl = NULL;
 
-          /* Check the CHK value */
-          if (!fosfat->foschk)
-            fosfat->foschk = c2l (blk->chk, sizeof (blk->chk));
-          if (fosfat->foschk == c2l (blk->chk, sizeof (blk->chk)))
-            return (fosfat_bd_t *) blk;
+        /* Check the CHK value */
+        if (!fosfat->foschk)
+          fosfat->foschk = c2l (blk->chk, sizeof (blk->chk));
+        if (fosfat->foschk == c2l (blk->chk, sizeof (blk->chk)))
+          return (fosfat_bl_t *) blk;
 
-          if (g_logger)
-            foslog (eERROR, "bad FOSCHK for this BD (block:%li)", block);
-        }
+        if (g_logger)
+          foslog (eERROR, "bad FOSCHK for this BL (block:%li)", block);
+      }
+      free (blk);
+    }
+    break;
+  }
+
+  case eBD: {
+    fosfat_bd_t *blk;
+
+    if ((blk = malloc (sizeof (fosfat_bd_t)))) {
+#ifdef _WIN32
+      if (w32disk_readsectors (fosfat->dev, buffer,
+                               blk2sector (block, fosfat->fosboot), csector))
+      {
+        memcpy (blk, buffer + sec_offset (block, fosfat->fosboot),
+                (size_t) FOSFAT_BLK);
+        free (buffer);
+#else
+      if (fread ((fosfat_bd_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
+          == (size_t) FOSFAT_BLK)
+      {
+#endif
+        blk->next_bd = NULL;
+        blk->first_bl = NULL;
+
+        /* Check the CHK value */
+        if (!fosfat->foschk)
+          fosfat->foschk = c2l (blk->chk, sizeof (blk->chk));
+        if (fosfat->foschk == c2l (blk->chk, sizeof (blk->chk)))
+          return (fosfat_bd_t *) blk;
+
+        if (g_logger)
+          foslog (eERROR, "bad FOSCHK for this BD (block:%li)", block);
+      }
+      free (blk);
+    }
+    break;
+  }
+
+  case eDATA: {
+    fosfat_data_t *blk;
+
+    if ((blk = malloc (sizeof (fosfat_data_t)))) {
+#ifdef _WIN32
+      if (w32disk_readsectors (fosfat->dev, buffer,
+                               blk2sector (block, fosfat->fosboot), csector))
+      {
+        memcpy (blk, buffer + sec_offset (block, fosfat->fosboot),
+                (size_t) FOSFAT_BLK);
+        free (buffer);
+#else
+      if (fread ((fosfat_data_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
+          == (size_t) FOSFAT_BLK)
+      {
+#endif
+        blk->next_data = NULL;
+        return (fosfat_data_t *) blk;
+      }
+      else
         free (blk);
-      }
-      break;
     }
-
-    case eDATA: {
-      fosfat_data_t *blk;
-
-      if ((blk = malloc (sizeof (fosfat_data_t)))) {
-#ifdef _WIN32
-        if (w32disk_readsectors (fosfat->dev, buffer,
-                                 blk2sector (block, fosfat->fosboot), csector))
-        {
-          memcpy (blk, buffer + sec_offset (block, fosfat->fosboot),
-                  (size_t) FOSFAT_BLK);
-          free (buffer);
-#else
-        if (fread ((fosfat_data_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
-            == (size_t) FOSFAT_BLK)
-        {
-#endif
-          blk->next_data = NULL;
-          return (fosfat_data_t *) blk;
-        }
-        else
-          free (blk);
-      }
-    }
-    }
+  }
   }
 
 #ifdef _WIN32
