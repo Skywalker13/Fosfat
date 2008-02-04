@@ -1412,7 +1412,8 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
       if (!strcasecmp (name_r, name)) {
         free (name);
 
-        if ((blf_found = malloc (sizeof (fosfat_blf_t)))) {
+        blf_found = malloc (sizeof (fosfat_blf_t));
+        if (blf_found) {
           memcpy (blf_found, &bl_found->file[i], sizeof (*blf_found));
           free (bl_found);
 
