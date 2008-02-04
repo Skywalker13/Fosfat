@@ -1891,9 +1891,11 @@ fosfat_get_file (fosfat_t *fosfat, const char *src,
   fosfat_blf_t *file;
   fosfat_bd_t *file2;
 
-  if (fosfat && src && dst 
-      && (file = fosfat_search_insys (fosfat, src, eSBLF)))
-  {
+  if (!fosfat || !src || !dst)
+    return 0;
+
+  file = fosfat_search_insys (fosfat, src, eSBLF);
+  if (file) {
     if (!fosfat_in_isdir (file)) {
       file2 = fosfat_read_file (fosfat, c2l (file->pt, sizeof (file->pt)));
 
