@@ -2154,47 +2154,49 @@ fosfat_diskauto (fosfat_t *fosfat)
   fosfat_bd_t *sys_list;
   fosfat_bl_t *first_bl;
 
-  if (fosfat) {
-    fosfat->fosboot = FOSBOOT_FD;
+  if (!fosfat)
+    return eFAILS;
 
-    /* for i = 0, test with FD and when i = 1, test for HD */
-    for (i = 0; loop && i < 2; i++) {
-      sys_list = fosfat_read_bd (fosfat, FOSFAT_SYSLIST);
-      fosfat->foschk = 0;
-      first_bl = fosfat_read_bl (fosfat, FOSFAT_SYSLIST + 1);
-      fosfat->foschk = 0;
+  fosfat->fosboot = FOSBOOT_FD;
 
-      if (sys_list && first_bl
-          && !strncmp ((char *) sys_list->chk, (char *) first_bl->chk,
-                       sizeof (sys_list->chk))
-          && c2l (*sys_list->pts, sizeof (*sys_list->pts))
-          == FOSFAT_SYSLIST + 1)
-      {
-        loop = 0;
-        fboot = fosfat->fosboot;
-      }
+  /* for i = 0, test with FD and when i = 1, test for HD */
+  for (i = 0; loop && i < 2; i++) {
+    sys_list = fosfat_read_bd (fosfat, FOSFAT_SYSLIST);
+    fosfat->foschk = 0;
+    first_bl = fosfat_read_bl (fosfat, FOSFAT_SYSLIST + 1);
+    fosfat->foschk = 0;
 
-      if (sys_list)
-        free (sys_list);
-      if (first_bl)
-        free (first_bl);
-
-      if (loop && !i)
-        fosfat->fosboot = FOSBOOT_HD;
+    if (sys_list && first_bl
+        && !strncmp ((char *) sys_list->chk, (char *) first_bl->chk,
+                     sizeof (sys_list->chk))
+        && c2l (*sys_list->pts, sizeof (*sys_list->pts))
+        == FOSFAT_SYSLIST + 1)
+    {
+      loop = 0;
+      fboot = fosfat->fosboot;
     }
-    /* Select the right fosboot */
-    switch (fboot) {
-    case FOSBOOT_FD:
-      res = eFD;
-      break;
 
-    case FOSBOOT_HD:
-      res = eHD;
-      break;
+    if (sys_list)
+      free (sys_list);
+    if (first_bl)
+      free (first_bl);
 
-    default:
-      res = eFAILS;
-    }
+    if (loop && !i)
+      fosfat->fosboot = FOSBOOT_HD;
+  }
+
+  /* Select the right fosboot */
+  switch (fboot) {
+  case FOSBOOT_FD:
+    res = eFD;
+    break;
+
+  case FOSBOOT_HD:
+    res = eHD;
+    break;
+
+  default:
+    res = eFAILS;
   }
 
   /* Restore the fosboot */
