@@ -2064,39 +2064,45 @@ fosfat_cache_dir (fosfat_t *fosfat, uint32_t pt)
   cachelist_t *firstfile = NULL;
   cachelist_t *list = NULL;
 
-  if (fosfat && (dir = fosfat_read_dir (fosfat, pt))) {
-    files = dir->first_bl;
+  if (!fosfat)
+    return NULL;
 
-    if (files) {
-      do {
-        /* Check all files in the BL */
-        for (i = 0; i < FOSFAT_NBL; i++) {
-          if (fosfat_in_isopenexm (&files->file[i])
-              && (fosfat->viewdel
-                  || (!fosfat->viewdel && fosfat_in_isnotdel(&files->file[i]))
-                 )
+  dir = fosfat_read_dir (fosfat, pt);
+  if (!dir)
+    return NULL;
+
+  files = dir->first_bl;
+  if (!files)
+    return NULL;
+
+  do {
+    /* Check all files in the BL */
+    for (i = 0; i < FOSFAT_NBL; i++) {
+      if (fosfat_in_isopenexm (&files->file[i])
+          && (fosfat->viewdel
+              || (!fosfat->viewdel && fosfat_in_isnotdel(&files->file[i]))
              )
-          {
-            /* Complete the linked list with all files */
-            if (list) {
-              list->next = fosfat_cache_file (&files->file[i], files->pt);
-              list = list->next;
-            }
-            else {
-              firstfile = fosfat_cache_file (&files->file[i], files->pt);
-              list = firstfile;
-            }
-
-            /* If the file is a directory, then do a recursive cache */
-            if (list && fosfat_in_isdir (&files->file[i])
-                && !fosfat_in_issystem (&files->file[i]))
-              list->sub = fosfat_cache_dir (fosfat, list->bd);
-          }
+         )
+      {
+        /* Complete the linked list with all files */
+        if (list) {
+          list->next = fosfat_cache_file (&files->file[i], files->pt);
+          list = list->next;
         }
-      } while ((files = files->next_bl));
+        else {
+          firstfile = fosfat_cache_file (&files->file[i], files->pt);
+          list = firstfile;
+        }
+
+        /* If the file is a directory, then do a recursive cache */
+        if (list && fosfat_in_isdir (&files->file[i])
+            && !fosfat_in_issystem (&files->file[i]))
+          list->sub = fosfat_cache_dir (fosfat, list->bd);
+      }
     }
-    fosfat_free_dir (dir);
-  }
+  } while ((files = files->next_bl));
+
+  fosfat_free_dir (dir);
 
   if (g_logger && !firstfile)
     foslog (eERROR, "cache to block %i not correctly loaded", pt);
