@@ -1985,7 +1985,11 @@ fosfat_diskname (fosfat_t *fosfat)
   fosfat_b0_t *block0;
   char *name = NULL;
 
-  if (fosfat && (block0 = fosfat_read_b0 (fosfat, FOSFAT_BLOCK0))) {
+  if (!fosfat)
+    return NULL;
+
+  block0 = fosfat_read_b0 (fosfat, FOSFAT_BLOCK0);
+  if (block0) {
     name = strdup ((char *) block0->nlo);
     free (block0);
   }
