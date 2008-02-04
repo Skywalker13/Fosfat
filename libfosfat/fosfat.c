@@ -1518,12 +1518,14 @@ fosfat_isdir (fosfat_t *fosfat, const char *location)
   if (!strcmp (location, "/"))
     return 1;
 
-  if ((entry = fosfat_search_insys (fosfat, location, eSBLF))) {
-    if (fosfat_in_isdir (entry))
-      res = 1;
+  entry = fosfat_search_insys (fosfat, location, eSBLF);
+  if (!entry)
+    return 0;
 
-    free (entry);
-  }
+  if (fosfat_in_isdir (entry))
+    res = 1;
+
+  free (entry);
 
   return res;
 }
