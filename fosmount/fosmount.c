@@ -424,13 +424,13 @@ main (int argc, char **argv)
     /* FUSE */
     res = fuse_main (3 + fusedebug + foslog, arg, &fosfat_oper, NULL);
 
-    for (i = 0; i < 3 + fusedebug + foslog; i++)
-      free (*(arg + i));
-    free (arg);
-
     /* Close the device */
     fosfat_close (fosfat);
   }
+
+  for (i = 0; i < 3 + fusedebug + foslog; i++)
+    free (*(arg + i));
+  free (arg);
 
   /* Free */
   free (device);
