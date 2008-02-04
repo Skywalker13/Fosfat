@@ -1378,7 +1378,7 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
     } while (ontop && list && (list = list->next));
   }
 
-  free(path);
+  free (path);
 
   if (ontop) {
     if (name)
