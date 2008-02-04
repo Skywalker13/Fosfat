@@ -1839,45 +1839,52 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
   if (!fosfat || !location)
     return NULL;
 
-  dir = fosfat_search_insys (fosfat, location, eSBD);
-  if (dir) {
-    /* Test if it is a directory */
-    if (fosfat_isdir (fosfat, location)) {
-      files = dir->first_bl;
+  if (!fosfat_isdir (fosfat, location)) {
+    if (g_logger)
+        foslog (eWARNING, "directory \"%s\" is unknown", location);
+    return NULL;
+  }
 
-      if (files) {
-        do {
-          /* Check all files in the BL */
-          for (i = 0; i < FOSFAT_NBL; i++) {
-            if (fosfat_in_isopenexm (&files->file[i])
-                && (fosfat->viewdel
-                    || (!fosfat->viewdel
-                        && fosfat_in_isnotdel (&files->file[i]))
-                   )
-                && !fosfat_in_issystem (&files->file[i]))
-            {
-              /* Complete the linked list with all files */
-              if (listdir) {
-                listdir->next_file = fosfat_stat (&files->file[i]);
-                listdir = listdir->next_file;
-              }
-              else {
-                firstfile = fosfat_stat (&files->file[i]);
-                listdir = firstfile;
-              }
-            }
-            else if (fosfat_in_issystem (&files->file[i])
-                     && !strcasecmp ((char *) files->file[i].name, "sys_list"))
-            {
-              sysdir = fosfat_stat (&files->file[i]);
-              strcpy (sysdir->name, "..dir");
-            }
-          }
-        } while ((files = files->next_bl));
+  dir = fosfat_search_insys (fosfat, location, eSBD);
+  if (!dir)
+    return NULL;
+
+  files = dir->first_bl;
+  if (!files) {
+    fosfat_free_dir (dir);
+    return NULL;
+  }
+
+  do {
+    /* Check all files in the BL */
+    for (i = 0; i < FOSFAT_NBL; i++) {
+      if (fosfat_in_isopenexm (&files->file[i])
+          && (fosfat->viewdel
+              || (!fosfat->viewdel
+                  && fosfat_in_isnotdel (&files->file[i]))
+             )
+          && !fosfat_in_issystem (&files->file[i]))
+      {
+        /* Complete the linked list with all files */
+        if (listdir) {
+          listdir->next_file = fosfat_stat (&files->file[i]);
+          listdir = listdir->next_file;
+        }
+        else {
+          firstfile = fosfat_stat (&files->file[i]);
+          listdir = firstfile;
+        }
+      }
+      else if (fosfat_in_issystem (&files->file[i])
+               && !strcasecmp ((char *) files->file[i].name, "sys_list"))
+      {
+        sysdir = fosfat_stat (&files->file[i]);
+        strcpy (sysdir->name, "..dir");
       }
     }
-    fosfat_free_dir (dir);
-  }
+  } while ((files = files->next_bl));
+
+  fosfat_free_dir (dir);
 
   if (sysdir) {
     sysdir->next_file = firstfile;
@@ -1886,12 +1893,8 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
   else
     res = firstfile;
 
-  if (g_logger) {
-    if (!res)
-      foslog (eWARNING, "directory \"%s\" is unknown", location);
-    else
+  if (g_logger && res)
       foslog (eNOTICE, "directory \"%s\" is read successfully", location);
-  }
 
   return res;
 }
