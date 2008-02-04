@@ -1449,9 +1449,11 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
   /* Without cache, slower but better if the files change
    * when the FOS is always mounted (normally useless) !
    */
-  if (!fosfat->cache
-      && (syslist = fosfat_read_dir (fosfat, FOSFAT_SYSLIST)))
-  {
+  if (!fosfat->cache) {
+    syslist = fosfat_read_dir (fosfat, FOSFAT_SYSLIST);
+    if (!syslist)
+      return NULL;
+
     files = syslist->first_bl;
 
     if ((search = fosfat_search_bdlf (fosfat, location, files, type))) {
