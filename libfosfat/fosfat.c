@@ -2100,8 +2100,10 @@ fosfat_cache_dir (fosfat_t *fosfat, uint32_t pt)
     return NULL;
 
   files = dir->first_bl;
-  if (!files)
+  if (!files) {
+    fosfat_free_dir (dir);
     return NULL;
+  }
 
   do {
     /* Check all files in the BL */
