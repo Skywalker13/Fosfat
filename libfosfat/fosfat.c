@@ -1479,7 +1479,7 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
     fosfat_free_dir (syslist);
   }
   /* With cache enable, faster */
-  else if (fosfat->cache) {
+  else {
     if ((search = fosfat_search_incache (fosfat, location, type))) {
 
       if (type == eSBLF)
