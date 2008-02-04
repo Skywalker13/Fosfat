@@ -2105,12 +2105,10 @@ fosfat_cache_dir (fosfat_t *fosfat, uint32_t pt)
   do {
     /* Check all files in the BL */
     for (i = 0; i < FOSFAT_NBL; i++) {
-      if (fosfat_in_isopenexm (&files->file[i])
-          && (fosfat->viewdel
-              || (!fosfat->viewdel && fosfat_in_isnotdel(&files->file[i]))
-             )
-         )
-      {
+      if (!fosfat_in_isopenexm (&files->file[i]))
+        continue;
+
+      if (fosfat->viewdel || fosfat_in_isnotdel(&files->file[i])) {
         /* Complete the linked list with all files */
         if (list) {
           list->next = fosfat_cache_file (&files->file[i], files->pt);
