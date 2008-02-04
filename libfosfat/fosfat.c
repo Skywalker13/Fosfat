@@ -2327,25 +2327,26 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
 void
 fosfat_close (fosfat_t *fosfat)
 {
-  if (fosfat) {
-    /* Unload the cache if is loaded */
-    if (fosfat->cachelist) {
-      if (g_logger)
-        foslog (eNOTICE, "cache file is unloading ...");
+  if (!fosfat)
+    return;
 
-      fosfat_cache_unloader (fosfat->cachelist);
-    }
-
+  /* Unload the cache if is loaded */
+  if (fosfat->cachelist) {
     if (g_logger)
-      foslog (eNOTICE, "device is closing ...");
+      foslog (eNOTICE, "cache file is unloading ...");
 
-    if (fosfat->dev)
+    fosfat_cache_unloader (fosfat->cachelist);
+  }
+
+  if (g_logger)
+    foslog (eNOTICE, "device is closing ...");
+
+  if (fosfat->dev)
 #ifdef _WIN32
-      free_w32disk (fosfat->dev);
+    free_w32disk (fosfat->dev);
 #else
-      fclose (fosfat->dev);
+    fclose (fosfat->dev);
 #endif
 
-    free (fosfat);
-  }
+  free (fosfat);
 }
