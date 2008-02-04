@@ -1936,9 +1936,11 @@ fosfat_get_buffer (fosfat_t *fosfat, const char *path, int offset, int size)
   fosfat_blf_t *file;
   fosfat_bd_t *file2;
 
-  if (fosfat && path && (file = fosfat_search_insys (fosfat, path, eSBLF))
-      && !fosfat_in_isdir (file))
-  {
+  if (!fosfat || !path)
+    return NULL;
+
+  file = fosfat_search_insys (fosfat, path, eSBLF);
+  if (file && !fosfat_in_isdir (file)) {
     buffer = malloc (size);
 
     if (buffer) {
