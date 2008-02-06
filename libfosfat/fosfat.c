@@ -1010,45 +1010,46 @@ fosfat_get (fosfat_t *fosfat, fosfat_bd_t *file,
         break;
       }
 
-        first_d = file_d;
+      first_d = file_d;
 
-        /* Loop for all data blocks */
-        do {
-          check_last = (i == c2l (file->npt, sizeof (file->npt)) - 1
-                        && !file_d->next_data)
-                        ? (size_t) c2l (file->lst, sizeof (file->lst))
-                        : (size_t) FOSFAT_BLK;
+      /* Loop for all data blocks */
+      do {
+        check_last = (i == c2l (file->npt, sizeof (file->npt)) - 1
+                      && !file_d->next_data)
+                      ? (size_t) c2l (file->lst, sizeof (file->lst))
+                      : (size_t) FOSFAT_BLK;
 
-          /* When the result is written in a file */
-          if (!flag) {
-            /* Write the block */
-            if (fwrite ((uint8_t *) file_d->data, 1, check_last, f_dst)
-                != check_last)
-              res = 0;
-          }
-          /* When the result is written in RAM (offset and size) */
-          else if (op_inoff || ((unsigned) op_offset >= size &&
-                                (unsigned) op_offset < size + check_last))
-          {
-            int first_pts = op_offset + op_inoff - (signed) size;
-            int cp = (op_size - op_inoff > (signed) check_last - first_pts)
-                     ? ((signed) check_last - first_pts)
-                     : (op_size - op_inoff);
+        /* When the result is written in a file */
+        if (!flag) {
+          /* Write the block */
+          if (fwrite ((uint8_t *) file_d->data, 1, check_last, f_dst)
+              != check_last)
+            res = 0;
+        }
+        /* When the result is written in RAM (offset and size) */
+        else if (op_inoff || ((unsigned) op_offset >= size &&
+                              (unsigned) op_offset < size + check_last))
+        {
+          int first_pts = op_offset + op_inoff - (signed) size;
+          int cp = (op_size - op_inoff > (signed) check_last - first_pts)
+                   ? ((signed) check_last - first_pts)
+                   : (op_size - op_inoff);
 
-            /* Copy the tranche */
-            memcpy (op_buffer + op_inoff, file_d->data + first_pts, cp);
-            op_inoff += check_last - first_pts;
+          /* Copy the tranche */
+          memcpy (op_buffer + op_inoff, file_d->data + first_pts, cp);
+          op_inoff += check_last - first_pts;
 
-            if (op_size <= op_inoff)
-              res = 0;
-          }
-          size += check_last;
-        } while (res && file_d->next_data && (file_d = file_d->next_data));
+          if (op_size <= op_inoff)
+            res = 0;
+        }
+        size += check_last;
+      } while (res && file_d->next_data && (file_d = file_d->next_data));
 
-        /* Freed all data */
-        fosfat_free_data (first_d);
-        if (res && output)
-          fprintf (stdout, " %i bytes\n", (int) size);
+      /* Freed all data */
+      fosfat_free_data (first_d);
+
+      if (res && output)
+        fprintf (stdout, " %i bytes\n", (int) size);
     }
   } while (res && file->next_bd && (file = file->next_bd));
 
