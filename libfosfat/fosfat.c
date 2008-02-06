@@ -179,7 +179,6 @@ struct fosfat_s {
 #endif
   int fosboot;                 //!< FOSBOOT address
   uint32_t foschk;             //!< CHK
-  unsigned int cache;          //!< use cache system (search)
   int viewdel;                 //!< list deleted files
   cachelist_t *cachelist;      //!< cache data
 };
@@ -1169,127 +1168,6 @@ fosfat_isdirname (const char *realname, const char *searchname)
 }
 
 /**
- * \brief Search a BD or a BLF from a location.
- * \deprecated use the cache instead!
- *
- *  A good example for use this function, is the BL of the first SYS_LIST in
- *  the disk. It will search the file BD since this BL.
- *  The location must be not bigger of MAX_SPLIT /!\
- *
- * \param fosfat   the main structure
- * \param location path for found the BD/BLF (foo/bar/file)
- * \param files    first BL for start the search
- * \param type     eSBD or eSBLF
- * \return the BD, BLF or NULL is nothing found
- */
-static void *
-fosfat_search_bdlf (fosfat_t *fosfat, const char *location,
-                    fosfat_bl_t *files, fosfat_search_t type)
-{
-  int i, j, nb = 0, ontop = 1;
-  char *tmp, *path;
-  char dir[MAX_SPLIT][FOSFAT_NAMELGT];
-  fosfat_bl_t *loop;
-  fosfat_bd_t *loop_bd = NULL;
-  fosfat_blf_t *loop_blf = NULL;
-
-  if (!fosfat || !files || !location)
-    return NULL;
-
-  if (type == eSBLF)
-    loop_blf = malloc (sizeof (fosfat_blf_t));
-
-  loop = files;
-  path = strdup (location);
-
-  /* Split the path into a table */
-  if ((tmp = strtok ((char *) path, "/"))) {
-    snprintf (dir[nb], sizeof (dir[nb]), "%s", tmp);
-    while ((tmp = strtok (NULL, "/")) && nb < MAX_SPLIT - 1)
-      snprintf (dir[++nb], sizeof (dir[nb]), "%s", tmp);
-  }
-  else
-    snprintf (dir[nb], sizeof (dir[nb]), "%s", path);
-  nb++;
-
-  /* Loop for all directories in the path */
-  for (i = 0; i < nb; i++) {
-    ontop = 1;
-
-    /* Loop for all BL */
-    do {
-      /* Loop for FOSFAT_NBL files in the BL */
-      for (j = 0; j < FOSFAT_NBL && ontop && loop; j++) {
-        if (fosfat_in_isopenexm (&loop->file[j])
-            && (fosfat->viewdel
-            || (!fosfat->viewdel && fosfat_in_isnotdel (&loop->file[j]))))
-        {
-          /* Test if it is a directory */
-          if (fosfat_in_isdir (&loop->file[j])
-              && fosfat_isdirname ((char *) loop->file[j].name, dir[i]))
-          {
-            if (type == eSBLF && loop_blf)
-              memcpy (loop_blf, &loop->file[j], sizeof (*loop_blf));
-
-            uint32_t pt = c2l (loop->file[j].pt, sizeof (loop->file[j].pt));
-
-            if (loop_bd)
-              fosfat_free_dir (loop_bd);
-
-            loop_bd = fosfat_read_dir (fosfat, pt);
-
-            if (loop_bd)
-              loop = loop_bd->first_bl;
-
-            ontop = 0;  // dir found
-            break;
-          }
-          /* Test if it is a file or a soft-link */
-          else if (!fosfat_in_isdir(&loop->file[j])
-                   && (!strcasecmp ((char *) loop->file[j].name, dir[i])
-                       || (fosfat_in_islink (&loop->file[j])
-                           && fosfat_isdirname ((char *) loop->file[j].name,
-                                                dir[i]))
-                      )
-                  )
-          {
-            if (type == eSBLF && loop_blf)
-              memcpy (loop_blf, &loop->file[j], sizeof (*loop_blf));
-
-            uint32_t pt = c2l (loop->file[j].pt, sizeof (loop->file[j].pt));
-
-            if (loop_bd)
-              fosfat_free_dir (loop_bd);
-
-            loop_bd = fosfat_read_file (fosfat, pt);
-            loop = NULL;
-            ontop = 0;  // file (or soft-link) found
-            break;
-          }
-          else
-            ontop = 1;
-        }
-        else
-          ontop = 1;
-      }
-    } while (ontop && loop && (loop = loop->next_bl));
-  }
-
-  free (path);
-
-  if (!ontop) {
-    if (type == eSBLF) {
-      fosfat_free_dir (loop_bd);
-      return (fosfat_blf_t *) loop_blf;
-    }
-    else
-      return (fosfat_bd_t *) loop_bd;
-  }
-
-  return NULL;
-}
-
-/**
  * \brief Search a BD or a BLF from a location in the cache.
  *
  *  The location must be not bigger of MAX_SPLIT /!\
@@ -1447,7 +1325,6 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
                      fosfat_search_t type)
 {
   fosfat_bd_t *syslist;
-  fosfat_bl_t *files;
   void *search = NULL;
 
   if (!fosfat || !location)
@@ -1458,28 +1335,6 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
     return (fosfat_bd_t *) syslist;
   }
 
-  /* Without cache, slower but better if the files change
-   * when the FOS is always mounted (normally useless) !
-   */
-  if (!fosfat->cache) {
-    syslist = fosfat_read_dir (fosfat, FOSFAT_SYSLIST);
-    if (!syslist)
-      return NULL;
-
-    files = syslist->first_bl;
-
-    if ((search = fosfat_search_bdlf (fosfat, location, files, type))) {
-      fosfat_free_dir (syslist);
-
-      if (type == eSBLF)
-        return (fosfat_blf_t *) search;
-      else
-        return (fosfat_bd_t *) search;
-    }
-    fosfat_free_dir (syslist);
-  }
-  /* With cache enable, faster */
-  else {
     if ((search = fosfat_search_incache (fosfat, location, type))) {
 
       if (type == eSBLF)
@@ -1487,7 +1342,6 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
       else
         return (fosfat_bd_t *) search;
     }
-  }
 
   if (g_logger)
     foslog (eWARNING, "file \"%s\" not found", location);
@@ -2256,7 +2110,6 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
 
   fosfat->fosboot = -1;
   fosfat->foschk = 0;
-  fosfat->cache = 1;
   fosfat->viewdel = (flag & F_UNDELETE) == F_UNDELETE ? 1 : 0;
   fosfat->cachelist = NULL;
 
@@ -2318,10 +2171,6 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
 
   if (!fosfat)
     return NULL;
-
-  /* Load the cache if needed */
-  if (!fosfat->cache)
-    return fosfat;
 
   if (g_logger)
     foslog (eNOTICE, "cache file is loading ...");
