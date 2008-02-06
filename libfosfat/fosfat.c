@@ -1335,13 +1335,12 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
     return (fosfat_bd_t *) syslist;
   }
 
-    if ((search = fosfat_search_incache (fosfat, location, type))) {
-
-      if (type == eSBLF)
-        return (fosfat_blf_t *) search;
-      else
-        return (fosfat_bd_t *) search;
-    }
+  if ((search = fosfat_search_incache (fosfat, location, type))) {
+    if (type == eSBLF)
+      return (fosfat_blf_t *) search;
+    else
+      return (fosfat_bd_t *) search;
+  }
 
   if (g_logger)
     foslog (eWARNING, "file \"%s\" not found", location);
