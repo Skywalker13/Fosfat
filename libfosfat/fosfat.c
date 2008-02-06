@@ -1334,7 +1334,7 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
 
     do {
       /* test if the file is deleted or not */
-      if (fosfat->viewdel || (!fosfat->viewdel && !list->isdel)) {
+      if (fosfat->viewdel || !list->isdel) {
         /* Test if it is a directory */
         if (list->isdir && fosfat_isdirname (list->name, dir[i])) {
           bd_block = list->bd;
