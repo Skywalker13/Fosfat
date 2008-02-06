@@ -1138,7 +1138,7 @@ fosfat_read_dir (fosfat_t *fosfat, uint32_t block)
  *
  *  This function must be used only for particular purpose, because that will
  *  no test if it is a directory or not, but only the names. That is very
- *  useful for fosfat_search_bdlf() and fosfat_search_incache().
+ *  useful for fosfat_search_incache().
  *
  * \param realname   the name of the file in the FOS
  * \param searchname the name in the path
@@ -1312,8 +1312,7 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
 /**
  * \brief Search a BD or a BLF from a location in the first SYS_LIST.
  *
- *  That uses fosfat_search_bdlf() and fosfat_search_incache().
- *  But always use the cache is recommanded!
+ *  That uses fosfat_search_incache().
  *
  * \param fosfat   the main structure
  * \param location path for found the BD (foo/bar/file)
