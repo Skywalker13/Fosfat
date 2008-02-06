@@ -1003,9 +1003,13 @@ fosfat_get (fosfat_t *fosfat, fosfat_bd_t *file,
   do {
     /* Loop for all pointers */
     for (i = 0; res && i < c2l (file->npt, sizeof (file->npt)); i++) {
-      if ((file_d = fosfat_read_data (fosfat, c2l (file->pts[i],
-          sizeof (file->pts[i])), file->nbs[i], eDATA)))
-      {
+      file_d = fosfat_read_data (fosfat, c2l (file->pts[i],
+                                 sizeof (file->pts[i])), file->nbs[i], eDATA);
+      if (!file_d) {
+        res = 0;
+        break;
+      }
+
         first_d = file_d;
 
         /* Loop for all data blocks */
@@ -1045,9 +1049,6 @@ fosfat_get (fosfat_t *fosfat, fosfat_bd_t *file,
         fosfat_free_data (first_d);
         if (res && output)
           fprintf (stdout, " %i bytes\n", (int) size);
-      }
-      else
-        res = 0;
     }
   } while (res && file->next_bd && (file = file->next_bd));
 
