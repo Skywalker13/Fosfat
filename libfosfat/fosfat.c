@@ -54,12 +54,12 @@
 #define FOSFAT_DEV      FILE
 
 /* FOS attributes and type */
-#define FOSFAT_ATT_OPENEX     0x1
-#define FOSFAT_ATT_MULTIPLE   0x2
-#define FOSFAT_ATT_DIR        0x1000
-#define FOSFAT_ATT_VISIBLE    0x2000
-#define FOSFAT_ATT_ENCODED    0x20000
-#define FOSFAT_ATT_LINK       0x1000000
+#define FOSFAT_ATT_OPENEX     (1 <<  0)
+#define FOSFAT_ATT_MULTIPLE   (1 <<  1)
+#define FOSFAT_ATT_DIR        (1 << 12)
+#define FOSFAT_ATT_VISIBLE    (1 << 13)
+#define FOSFAT_ATT_ENCODED    (1 << 17)
+#define FOSFAT_ATT_LINK       (1 << 24)
 #define FOSFAT_TYPE_SYSTEM    0xF8
 
 /** List of all block types */
