@@ -1340,7 +1340,7 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
       return (fosfat_bd_t *) search;
   }
 
-  foslog (eWARNING, "file \"%s\" not found", location);
+  foslog (eWARNING, "file or directory \"%s\" not found", location);
 
   return NULL;
 }
