@@ -62,7 +62,7 @@ run_conv (const char *input, const char *output, e_newline newline)
       if (sma2iso8859 (buffer, (unsigned int) lng, newline))
         fwrite ((char *) buffer, 1, lng, out);
       else {
-        printf ("Conversion error!\n");
+        fprintf (stderr, "Conversion error!\n");
         res = 0;
       }
     }
@@ -70,7 +70,7 @@ run_conv (const char *input, const char *output, e_newline newline)
       printf ("File %s successfully converted to %s!\n", input, output);
   }
   else {
-    printf ("Reading or writing error!\n");
+    fprintf (stderr, "Reading or writing error!\n");
     res = 0;
   }
 

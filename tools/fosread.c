@@ -89,7 +89,7 @@ get_ginfo (fosfat_t *fosfat)
     free (name);
   }
   else {
-    printf ("ERROR: I can't read the name of this disk!\n");
+    fprintf (stderr, "ERROR: I can't read the name of this disk!\n");
     ginfo = NULL;
   }
 
@@ -176,7 +176,7 @@ list_dir (fosfat_t *fosfat, const char *loc)
   }
   else {
     free (path);
-    printf ("ERROR: I can't found this path!\n");
+    fprintf (stderr, "ERROR: I can't found this path!\n");
     return 0;
   }
 
@@ -212,10 +212,10 @@ get_file (fosfat_t *fosfat, const char *path, const char *dst)
       printf ("Okay..\n");
     }
     else
-      printf ("ERROR: I can't copy the file!\n");
+      fprintf (stderr, "ERROR: I can't copy the file!\n");
   }
   else
-    printf ("ERROR: I can't copy a directory or a link!\n");
+    fprintf (stderr, "ERROR: I can't copy a directory or a link!\n");
 
   free (new_file);
   return res;
@@ -307,7 +307,7 @@ main (int argc, char **argv)
 
   /* Open the floppy disk (or hard disk) */
   if (!(fosfat = fosfat_open (device, type, flags))) {
-    printf ("Could not open %s for reading!\n", device);
+    fprintf (stderr, "Could not open %s for reading!\n", device);
     res = -1;
   }
 
