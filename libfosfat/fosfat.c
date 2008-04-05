@@ -1797,7 +1797,7 @@ fosfat_get_file (fosfat_t *fosfat, const char *src,
  *
  * \param fosfat the main structure
  * \param path   source on the Smaky disk
- * \param offset start address in the file
+ * \param offset start byte in the file
  * \param size   length of the buffer
  * \return the buffer with the data
  */

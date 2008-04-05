@@ -270,7 +270,7 @@ fos_open (const char *path, struct fuse_file_info *fi)
  * \param path   (foo/bar)
  * \param buf    buffer for put the data
  * \param size   size in bytes
- * \param offset offset un bytes
+ * \param offset offset in bytes
  * \param fi     not used
  * \return the size
  */
