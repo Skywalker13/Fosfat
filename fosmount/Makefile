@@ -54,7 +54,7 @@ uninstall-man:
 depend:
 	$(CC) -MM $(CFLAGS) $(OPTFLAGS) $(SRCS) 1>.depend
 
-.phony: clean depend
+.phony: clean install-man uninstall-man depend
 
 #
 # include dependency files if they exist

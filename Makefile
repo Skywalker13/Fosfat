@@ -57,4 +57,4 @@ win32: win32-dev win32-common
 
 win32-zip: win32-build win32-common
 
-.phony: clean distclean
+.phony: all clean install-deb install-dev uninstall win32-dev win32-build win32-common

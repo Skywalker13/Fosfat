@@ -54,7 +54,7 @@ uninstall:
 depend:
 	$(CC) -MM $(CFLAGS) $(OPTFLAGS) $(SRCS) 1>.depend
 
-.phony: clean depend
+.phony: clean uninstall depend
 
 #
 # include dependency files if they exist
