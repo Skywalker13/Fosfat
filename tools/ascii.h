@@ -28,8 +28,8 @@
 
 /** New line */
 typedef enum newline {
-  eCR = 0x0D,            //!< Carriage Return (Old Mac)
-  eLF = 0x0A             //!< Line Feed       (Unix)
+  eCR = 0x0D,            /*!< Carriage Return (Old Mac)   */
+  eLF = 0x0A             /*!< Line Feed       (Unix)      */
 } e_newline;
 
 char *sma2iso8859 (char *buffer, unsigned int size, e_newline ret);

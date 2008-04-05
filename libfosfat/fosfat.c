@@ -64,94 +64,94 @@
 
 /** List of all block types */
 typedef enum block_type {
-  eB0,                         //!< Block 0
-  eBL,                         //!< Block List
-  eBD,                         //!< Block Description
-  eDATA                        //!< Only DATA
+  eB0,                         /*!< Block 0                               */
+  eBL,                         /*!< Block List                            */
+  eBD,                         /*!< Block Description                     */
+  eDATA                        /*!< Only DATA                             */
 } fosfat_type_t;
 
 /** Search type */
 typedef enum search_type {
-  eSBD,                        //!< Search BD
-  eSBLF                        //!< Search BL File
+  eSBD,                        /*!< Search BD                             */
+  eSBLF                        /*!< Search BL File                        */
 } fosfat_search_t;
 
 /** foslog type */
 typedef enum foslog {
-  eERROR,                      //!< Error log
-  eWARNING,                    //!< Warning log
-  eNOTICE                      //!< Notice log
+  eERROR,                      /*!< Error log                             */
+  eWARNING,                    /*!< Warning log                           */
+  eNOTICE                      /*!< Notice log                            */
 } foslog_t;
 
 /** Data Block (256 bytes) */
 typedef struct block_data_s {
-  uint8_t data[256];           //!< Data
+  uint8_t data[256];           /*!< Data                                  */
   /* Linked list */
   struct block_data_s *next_data;
 } fosfat_data_t;
 
 /** Block 0 (256 bytes) */
 typedef struct block_0_s {
-  uint8_t sys[44];             //!< SYSTEM folder
-  int8_t nlo[16];              //!< Disk name
-  uint8_t chk[4];              //!< Check control
-  uint8_t mes[172];            //!< Message
-  uint8_t change;              //!< Need of change the CHK number
-  uint8_t bonchk;              //!< New format
-  uint8_t oldchk[4];           //!< Old CHK value
-  uint8_t newchk[4];           //!< New CHK value
-  uint8_t reserve[10];         //!< Unused
+  uint8_t sys[44];             /*!< SYSTEM folder                         */
+  int8_t nlo[16];              /*!< Disk name                             */
+  uint8_t chk[4];              /*!< Check control                         */
+  uint8_t mes[172];            /*!< Message                               */
+  uint8_t change;              /*!< Need of change the CHK number         */
+  uint8_t bonchk;              /*!< New format                            */
+  uint8_t oldchk[4];           /*!< Old CHK value                         */
+  uint8_t newchk[4];           /*!< New CHK value                         */
+  uint8_t reserve[10];         /*!< Unused                                */
 } fosfat_b0_t;
 
 /** File in a Block List (60 bytes) */
 typedef struct block_listf_s {
-  int8_t name[16];             //!< Filename
-  uint8_t typ;                 //!< Filetype
-  uint8_t ope;                 //!< Open counter
-  uint8_t att[4];              //!< Attributes
-  uint8_t lg[4];               //!< Length in blocks
-  uint8_t lgb[2];              //!< Number of bytes in the last block
-  uint8_t cd[3];               //!< Date of Creation
-  uint8_t ch[3];               //!< Hour of Creation
-  uint8_t wd[3];               //!< Date of the last Write
-  uint8_t wh[3];               //!< Hour of the last Write
-  uint8_t rd[3];               //!< Date of the last Read
-  uint8_t rh[3];               //!< Hour of the last Read
-  uint8_t secid[3];            //!< Security ID
-  uint8_t clope;               //!< Open mode before CLOSE
-  uint8_t pt[4];               //!< Pointer on the BD
-  uint8_t lgf[4];              //!< File size in bytes
-  uint8_t code[2];             //!< Code control
+  int8_t name[16];             /*!< Filename                              */
+  uint8_t typ;                 /*!< Filetype                              */
+  uint8_t ope;                 /*!< Open counter                          */
+  uint8_t att[4];              /*!< Attributes                            */
+  uint8_t lg[4];               /*!< Length in blocks                      */
+  uint8_t lgb[2];              /*!< Number of bytes in the last block     */
+  uint8_t cd[3];               /*!< Date of Creation                      */
+  uint8_t ch[3];               /*!< Hour of Creation                      */
+  uint8_t wd[3];               /*!< Date of the last Write                */
+  uint8_t wh[3];               /*!< Hour of the last Write                */
+  uint8_t rd[3];               /*!< Date of the last Read                 */
+  uint8_t rh[3];               /*!< Hour of the last Read                 */
+  uint8_t secid[3];            /*!< Security ID                           */
+  uint8_t clope;               /*!< Open mode before CLOSE                */
+  uint8_t pt[4];               /*!< Pointer on the BD                     */
+  uint8_t lgf[4];              /*!< File size in bytes                    */
+  uint8_t code[2];             /*!< Code control                          */
 } fosfat_blf_t;
 
 /** Block List (256 bytes) */
 typedef struct block_list_s {
-  fosfat_blf_t file[4];        //!< 4 BL files (240 bytes)
-  uint8_t next[4];             //!< Next BL
-  uint8_t chk[4];              //!< Check control
-  uint8_t prev[4];             //!< Previous BL
-  uint8_t reserve[4];          //!< Unused
+  fosfat_blf_t file[4];        /*!< 4 BL files (240 bytes)                */
+  uint8_t next[4];             /*!< Next BL                               */
+  uint8_t chk[4];              /*!< Check control                         */
+  uint8_t prev[4];             /*!< Previous BL                           */
+  uint8_t reserve[4];          /*!< Unused                                */
   /* Not in the block */
-  uint32_t pt;                 //!< Block's number of this BL
+  uint32_t pt;                 /*!< Block's number of this BL             */
   /* Linked list */
   struct block_list_s *next_bl;
 } fosfat_bl_t;
 
 /** Block Description (256 bytes) */
 typedef struct block_desc_s {
-  uint8_t next[4];             //!< Next BD
-  uint8_t prev[4];             //!< Previous BD
-  uint8_t npt[2];              //!< Number of tranches in the BD
-  uint8_t pts[42][4];          //!< Pointers on the tranches (max 42 tranches)
-  int8_t name[16];             //!< Filename
-  uint8_t nbs[42];             //!< Length (in blocks) of each tranches
-  uint8_t reserve[4];          //!< Unused
-  uint8_t lst[2];              //!< Number of byte in the last tranche
-  uint8_t hac[2];              //!< Hashing function if LIST
-  uint8_t nbl[2];              //!< Number of BL used if LIST
-  uint8_t chk[4];              //!< Check control
-  uint8_t off[4];              //!< Offset (in blocks) of all previous BD
-  uint8_t free[2];             //!< Unused
+  uint8_t next[4];             /*!< Next BD                               */
+  uint8_t prev[4];             /*!< Previous BD                           */
+  uint8_t npt[2];              /*!< Number of tranches in the BD          */
+  uint8_t pts[42][4];          /*!< Pointers on the tranches (max 42)     */
+  int8_t name[16];             /*!< Filename                              */
+  uint8_t nbs[42];             /*!< Length (in blocks) of each tranches   */
+  uint8_t reserve[4];          /*!< Unused                                */
+  uint8_t lst[2];              /*!< Number of byte in the last tranche    */
+  uint8_t hac[2];              /*!< Hashing function if LIST              */
+  uint8_t nbl[2];              /*!< Number of BL used if LIST             */
+  uint8_t chk[4];              /*!< Check control                         */
+  uint8_t off[4];              /*!< Offset (in blocks) of all previous BD */
+  uint8_t free[2];             /*!< Unused                                */
   /* Linked list */
   struct block_desc_s *next_bd;
   struct block_list_s *first_bl;
@@ -160,11 +160,11 @@ typedef struct block_desc_s {
 /** Cache list for name, BD and BL blocks */
 typedef struct cache_list_s {
   char *name;
-  uint32_t bl;                 //!< BL Address
-  uint32_t bd;                 //!< BD Address
-  int isdir;                   //!< If is a directory
-  int islink;                  //!< If is a soft link
-  int isdel;                   //!< If is deleted
+  uint32_t bl;                 /*!< BL Address                            */
+  uint32_t bd;                 /*!< BD Address                            */
+  int isdir;                   /*!< If is a directory                     */
+  int islink;                  /*!< If is a soft link                     */
+  int isdel;                   /*!< If is deleted                         */
   /* Linked list */
   struct cache_list_s *sub;
   struct cache_list_s *next;
@@ -173,14 +173,14 @@ typedef struct cache_list_s {
 /** Main fosfat structure */
 struct fosfat_s {
 #ifdef _WIN32
-  win32disk_t *dev;            //!< device object
+  win32disk_t *dev;            /*!< device object                         */
 #else
-  FOSFAT_DEV *dev;             //!< physical device
+  FOSFAT_DEV *dev;             /*!< physical device                       */
 #endif
-  int fosboot;                 //!< FOSBOOT address
-  uint32_t foschk;             //!< CHK
-  int viewdel;                 //!< list deleted files
-  cachelist_t *cachelist;      //!< cache data
+  int fosboot;                 /*!< FOSBOOT address                       */
+  uint32_t foschk;             /*!< CHK                                   */
+  int viewdel;                 /*!< list deleted files                    */
+  cachelist_t *cachelist;      /*!< cache data                            */
 };
 
 
@@ -224,7 +224,7 @@ blk2add (uint32_t block, int fosboot)
 static inline uint32_t
 blk2sector (uint32_t block, int fosboot)
 {
-  // FIXME: div by 2 only right if the sector size is 512
+  /* FIXME: div by 2 only right if the sector size is 512 */
   return ((block + fosboot) / 2);
 }
 
@@ -241,7 +241,7 @@ blk2sector (uint32_t block, int fosboot)
 static inline uint32_t
 sec_offset (uint32_t block, int fosboot)
 {
-  // FIXME: modulo by 2 only right if the sector size is 512
+  /* FIXME: modulo by 2 only right if the sector size is 512 */
   return (((block + fosboot) % 2) ? FOSFAT_BLK : 0);
 }
 #endif
@@ -926,7 +926,7 @@ fosfat_read_file (fosfat_t *fosfat, uint32_t block)
     return NULL;
 
   file_desc->next_bd = NULL;
-  file_desc->first_bl = NULL;     // Useless in this case
+  file_desc->first_bl = NULL;     /* Useless in this case */
   first_bd = file_desc;
 
   /* Go to the next BD if exists (create the linked list for BD) */
