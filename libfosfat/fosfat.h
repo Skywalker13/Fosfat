@@ -28,7 +28,7 @@
 
 #define FOSFAT_NAMELGT  17
 
-#define F_UNDELETE  0x01
+#define F_UNDELETE      (1 << 0)
 
 /** Disk types */
 typedef enum disk_type {
