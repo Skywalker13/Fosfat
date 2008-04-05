@@ -8,9 +8,10 @@ touch config.mak
 
 CONFIGFILE="config.win32"
 
-cc="i586-mingw32msvc-gcc"
-cxx="i586-mingw32msvc-g++"
-strip="strip"
+cross="i586-mingw32msvc-"
+cc="${cross}gcc"
+cxx="${cross}g++"
+strip="${cross}strip"
 
 cflags="-Wall -Wextra -Werror -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -DVERSION=\"\\\"$VERSION.$PATCHLEVEL.$SUBLEVEL$EXTRA\\\"\""
 ldflags=
