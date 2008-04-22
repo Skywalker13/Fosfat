@@ -64,10 +64,10 @@
 
 /** List of all block types */
 typedef enum block_type {
-  B_B0,                         /*!< Block 0                               */
-  B_BL,                         /*!< Block List                            */
-  B_BD,                         /*!< Block Description                     */
-  B_DATA                        /*!< Only DATA                             */
+  B_B0,                        /*!< Block 0                               */
+  B_BL,                        /*!< Block List                            */
+  B_BD,                        /*!< Block Description                     */
+  B_DATA                       /*!< Only DATA                             */
 } fosfat_type_t;
 
 /** Search type */
