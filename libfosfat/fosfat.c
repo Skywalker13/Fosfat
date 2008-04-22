@@ -37,21 +37,21 @@
 
 #include "fosfat.h"
 
-#define MAX_SPLIT       64
+#define MAX_SPLIT             64
 
 /* Block size (256 bytes) */
-#define FOSFAT_BLK      256
+#define FOSFAT_BLK            256
 
-#define FOSFAT_NBL      4
-#define FOSFAT_Y2K      70
+#define FOSFAT_NBL            4
+#define FOSFAT_Y2K            70
 
-#define FOSFAT_BLOCK0   0x00
-#define FOSFAT_SYSLIST  0x01
+#define FOSFAT_BLOCK0         0x00
+#define FOSFAT_SYSLIST        0x01
 
-#define FOSBOOT_FD      0x10
-#define FOSBOOT_HD      0x20
+#define FOSBOOT_FD            0x10
+#define FOSBOOT_HD            0x20
 
-#define FOSFAT_DEV      FILE
+#define FOSFAT_DEV            FILE
 
 /* FOS attributes and type */
 #define FOSFAT_ATT_OPENEX     (1 <<  0)
