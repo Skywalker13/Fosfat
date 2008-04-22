@@ -78,9 +78,9 @@ typedef enum search_type {
 
 /** foslog type */
 typedef enum foslog {
-  eERROR,                      /*!< Error log                             */
-  eWARNING,                    /*!< Warning log                           */
-  eNOTICE                      /*!< Notice log                            */
+  FOSLOG_ERROR,                /*!< Error log                             */
+  FOSLOG_WARNING,              /*!< Warning log                           */
+  FOSLOG_NOTICE                /*!< Notice log                            */
 } foslog_t;
 
 /** Data Block (256 bytes) */
@@ -378,15 +378,15 @@ foslog (foslog_t type, const char *msg, ...)
   va_start (va, msg);
 
   switch (type) {
-  case eERROR:
+  case FOSLOG_ERROR:
     strcat (log, "error");
     break;
 
-  case eWARNING:
+  case FOSLOG_WARNING:
     strcat (log, "warning");
     break;
 
-  case eNOTICE:
+  case FOSLOG_NOTICE:
     strcat (log, "notice");
   }
 
@@ -696,7 +696,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
         if (fosfat->foschk == c2l (blk->chk, sizeof (blk->chk)))
           return (fosfat_bl_t *) blk;
 
-        foslog (eERROR, "bad FOSCHK for this BL (block:%li)", block);
+        foslog (FOSLOG_ERROR, "bad FOSCHK for this BL (block:%li)", block);
       }
       free (blk);
     }
@@ -728,7 +728,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
         if (fosfat->foschk == c2l (blk->chk, sizeof (blk->chk)))
           return (fosfat_bd_t *) blk;
 
-        foslog (eERROR, "bad FOSCHK for this BD (block:%li)", block);
+        foslog (FOSLOG_ERROR, "bad FOSCHK for this BD (block:%li)", block);
       }
       free (blk);
     }
@@ -1087,7 +1087,7 @@ fosfat_read_dir (fosfat_t *fosfat, uint32_t block)
 
   dir_desc = fosfat_read_bd (fosfat, block);
   if (!dir_desc) {
-    foslog (eERROR, "directory to block %i cannot be read", block);
+    foslog (FOSLOG_ERROR, "directory to block %i cannot be read", block);
     return NULL;
   }
 
@@ -1340,7 +1340,7 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
       return (fosfat_bd_t *) search;
   }
 
-  foslog (eWARNING, "file or directory \"%s\" not found", location);
+  foslog (FOSLOG_WARNING, "file or directory \"%s\" not found", location);
 
   return NULL;
 }
@@ -1563,7 +1563,7 @@ fosfat_symlink (fosfat_t *fosfat, const char *location)
   }
 
   if (!link)
-    foslog (eERROR, "target of symlink \"%s\" not found", location);
+    foslog (FOSLOG_ERROR, "target of symlink \"%s\" not found", location);
 
   return link;
 }
@@ -1659,7 +1659,7 @@ fosfat_get_stat (fosfat_t *fosfat, const char *location)
   }
 
   if (!stat)
-    foslog (eWARNING, "stat of \"%s\" not found", location);
+    foslog (FOSLOG_WARNING, "stat of \"%s\" not found", location);
 
   return stat;
 }
@@ -1688,7 +1688,7 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
     return NULL;
 
   if (!fosfat_isdir (fosfat, location)) {
-    foslog (eWARNING, "directory \"%s\" is unknown", location);
+    foslog (FOSLOG_WARNING, "directory \"%s\" is unknown", location);
     return NULL;
   }
 
@@ -1740,7 +1740,7 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
     res = firstfile;
 
   if (res)
-    foslog (eNOTICE, "directory \"%s\" is read successfully", location);
+    foslog (FOSLOG_NOTICE, "directory \"%s\" is read successfully", location);
 
   return res;
 }
@@ -1783,9 +1783,9 @@ fosfat_get_file (fosfat_t *fosfat, const char *src,
   }
 
   if (!res)
-    foslog (eWARNING, "file \"%s\" cannot be copied", src);
+    foslog (FOSLOG_WARNING, "file \"%s\" cannot be copied", src);
   else
-    foslog (eNOTICE, "get file \"%s\" and save to \"%s\"", src, dst);
+    foslog (FOSLOG_NOTICE, "get file \"%s\" and save to \"%s\"", src, dst);
 
   return res;
 }
@@ -1833,10 +1833,10 @@ fosfat_get_buffer (fosfat_t *fosfat, const char *path, int offset, int size)
   }
 
   if (!buffer)
-    foslog (eERROR, "data (offset:%i size:%i) of \"%s\" not read",
+    foslog (FOSLOG_ERROR, "data (offset:%i size:%i) of \"%s\" not read",
             offset, size, path);
   else
-    foslog (eNOTICE, "data (offset:%i size:%i) of \"%s\" correctly read",
+    foslog (FOSLOG_NOTICE, "data (offset:%i size:%i) of \"%s\" correctly read",
             offset, size, path);
 
   return buffer;
@@ -1864,9 +1864,9 @@ fosfat_diskname (fosfat_t *fosfat)
   }
 
   if (!name)
-    foslog (eERROR, "the disk name cannot be found");
+    foslog (FOSLOG_ERROR, "the disk name cannot be found");
   else
-    foslog (eNOTICE, "disk name found (%s)", name);
+    foslog (FOSLOG_NOTICE, "disk name found (%s)", name);
 
   return name;
 }
@@ -1972,7 +1972,7 @@ fosfat_cache_dir (fosfat_t *fosfat, uint32_t pt)
   fosfat_free_dir (dir);
 
   if (!firstfile)
-    foslog (eERROR, "cache to block %i not correctly loaded", pt);
+    foslog (FOSLOG_ERROR, "cache to block %i not correctly loaded", pt);
 
   return firstfile;
 }
@@ -2113,10 +2113,10 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
   }
 
   /* Open the device */
-  foslog (eNOTICE, "device is opening ...");
+  foslog (FOSLOG_NOTICE, "device is opening ...");
 
   if (disk == eDAUTO) {
-    foslog (eNOTICE, "auto detection in progress ...");
+    foslog (FOSLOG_NOTICE, "auto detection in progress ...");
 
     disk = fosfat_diskauto (fosfat);
     fboot = disk;
@@ -2126,21 +2126,21 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
 
   /* Test if the auto detection and the user param are the same */
   if (fboot != disk)
-    foslog (eWARNING, "disk type forced seems to be false");
+    foslog (FOSLOG_WARNING, "disk type forced seems to be false");
 
   switch (disk) {
   case eFD:
     fosfat->fosboot = FOSBOOT_FD;
-    foslog (eNOTICE, "floppy disk selected");
+    foslog (FOSLOG_NOTICE, "floppy disk selected");
     break;
 
   case eHD:
     fosfat->fosboot = FOSBOOT_HD;
-    foslog (eNOTICE, "hard disk selected");
+    foslog (FOSLOG_NOTICE, "hard disk selected");
     break;
 
   case eFAILS:
-    foslog (eERROR, "disk auto detection for \"%s\" has failed", dev);
+    foslog (FOSLOG_ERROR, "disk auto detection for \"%s\" has failed", dev);
 
   default:
 #ifdef _WIN32
@@ -2155,7 +2155,7 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
   if (!fosfat)
     return NULL;
 
-  foslog (eNOTICE, "cache file is loading ...");
+  foslog (FOSLOG_NOTICE, "cache file is loading ...");
 
   fosfat->cachelist = fosfat_cache_dir (fosfat, FOSFAT_SYSLIST);
   if (!fosfat->cachelist) {
@@ -2168,7 +2168,7 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
     fosfat = NULL;
   }
   else
-    foslog (eNOTICE, "fosfat is ready");
+    foslog (FOSLOG_NOTICE, "fosfat is ready");
 
   return fosfat;
 }
@@ -2189,11 +2189,11 @@ fosfat_close (fosfat_t *fosfat)
 
   /* Unload the cache if is loaded */
   if (fosfat->cachelist) {
-    foslog (eNOTICE, "cache file is unloading ...");
+    foslog (FOSLOG_NOTICE, "cache file is unloading ...");
     fosfat_cache_unloader (fosfat->cachelist);
   }
 
-  foslog (eNOTICE, "device is closing ...");
+  foslog (FOSLOG_NOTICE, "device is closing ...");
 
   if (fosfat->dev)
 #ifdef _WIN32
