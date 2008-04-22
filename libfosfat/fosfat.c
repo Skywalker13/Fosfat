@@ -64,10 +64,10 @@
 
 /** List of all block types */
 typedef enum block_type {
-  eB0,                         /*!< Block 0                               */
-  eBL,                         /*!< Block List                            */
-  eBD,                         /*!< Block Description                     */
-  eDATA                        /*!< Only DATA                             */
+  B_B0,                         /*!< Block 0                               */
+  B_BL,                         /*!< Block List                            */
+  B_BD,                         /*!< Block Description                     */
+  B_DATA                        /*!< Only DATA                             */
 } fosfat_type_t;
 
 /** Search type */
@@ -617,7 +617,7 @@ fosfat_in_isnotdel (fosfat_blf_t *file)
  *
  * \param fosfat the main structure
  * \param block  block position
- * \param type   type of this block (eB0, eBL, eBD or eDATA)
+ * \param type   type of this block (B_B0, B_BL, B_BD or B_DATA)
  * \return a pointer on the new block or NULL if broken
  */
 static void *
@@ -648,7 +648,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
 #endif
 
   switch (type) {
-  case eB0: {
+  case B_B0: {
     fosfat_b0_t *blk;
 
     if ((blk = malloc (sizeof (fosfat_b0_t)))) {
@@ -672,7 +672,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
     break;
   }
 
-  case eBL: {
+  case B_BL: {
     fosfat_bl_t *blk;
 
     if ((blk = malloc (sizeof (fosfat_bl_t)))) {
@@ -703,7 +703,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
     break;
   }
 
-  case eBD: {
+  case B_BD: {
     fosfat_bd_t *blk;
 
     if ((blk = malloc (sizeof (fosfat_bd_t)))) {
@@ -735,7 +735,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
     break;
   }
 
-  case eDATA: {
+  case B_DATA: {
     fosfat_data_t *blk;
 
     if ((blk = malloc (sizeof (fosfat_data_t)))) {
@@ -782,7 +782,7 @@ static inline fosfat_b0_t *
 fosfat_read_b0 (fosfat_t *fosfat, uint32_t block)
 {
   return (fosfat
-          ? ((fosfat_b0_t *) fosfat_read_b (fosfat, block, eB0))
+          ? ((fosfat_b0_t *) fosfat_read_b (fosfat, block, B_B0))
           : NULL);
 }
 
@@ -799,7 +799,7 @@ static inline fosfat_data_t *
 fosfat_read_d (fosfat_t *fosfat, uint32_t block)
 {
   return (fosfat
-          ? ((fosfat_data_t *) fosfat_read_b (fosfat, block, eDATA))
+          ? ((fosfat_data_t *) fosfat_read_b (fosfat, block, B_DATA))
           : NULL);
 }
 
@@ -814,7 +814,7 @@ static inline fosfat_bd_t *
 fosfat_read_bd (fosfat_t *fosfat, uint32_t block)
 {
   return (fosfat
-          ? ((fosfat_bd_t *) fosfat_read_b (fosfat, block, eBD))
+          ? ((fosfat_bd_t *) fosfat_read_b (fosfat, block, B_BD))
           : NULL);
 }
 
@@ -829,7 +829,7 @@ static inline fosfat_bl_t *
 fosfat_read_bl (fosfat_t *fosfat, uint32_t block)
 {
   return (fosfat
-          ? ((fosfat_bl_t *) fosfat_read_b (fosfat, block, eBL))
+          ? ((fosfat_bl_t *) fosfat_read_b (fosfat, block, B_BL))
           : NULL);
 }
 
@@ -843,7 +843,7 @@ fosfat_read_bl (fosfat_t *fosfat, uint32_t block)
  * \param fosfat the main structure
  * \param block  the first block (start) for the linked list
  * \param nbs    number of consecutive blocks
- * \param type   type of this block (eB0, eBL, eBD or eDATA)
+ * \param type   type of this block (B_B0, B_BL, B_BD or B_DATA)
  * \return the first block of the linked list created
  */
 static void *
@@ -854,7 +854,7 @@ fosfat_read_data (fosfat_t *fosfat, uint32_t block,
     return NULL;
 
   switch (type) {
-  case eBL: {
+  case B_BL: {
     int i;
     fosfat_bl_t *block_list, *first_bl;
 
@@ -875,7 +875,7 @@ fosfat_read_data (fosfat_t *fosfat, uint32_t block,
     return (fosfat_bl_t *) first_bl;
   }
 
-  case eDATA: {
+  case B_DATA: {
     int i;
     fosfat_data_t *block_data, *first_data;
 
@@ -1002,7 +1002,7 @@ fosfat_get (fosfat_t *fosfat, fosfat_bd_t *file,
     /* Loop for all pointers */
     for (i = 0; res && i < c2l (file->npt, sizeof (file->npt)); i++) {
       file_d = fosfat_read_data (fosfat, c2l (file->pts[i],
-                                 sizeof (file->pts[i])), file->nbs[i], eDATA);
+                                 sizeof (file->pts[i])), file->nbs[i], B_DATA);
       if (!file_d) {
         res = 0;
         break;
@@ -1098,7 +1098,7 @@ fosfat_read_dir (fosfat_t *fosfat, uint32_t block)
   do {
     /* Get the first pointer */
     dir_desc->first_bl = fosfat_read_data (fosfat, c2l(dir_desc->pts[0],
-                         sizeof (dir_desc->pts[0])), dir_desc->nbs[0], eBL);
+                         sizeof (dir_desc->pts[0])), dir_desc->nbs[0], B_BL);
     dir_list = dir_desc->first_bl;
 
     /* Go to the last BL */
@@ -1110,7 +1110,7 @@ fosfat_read_dir (fosfat_t *fosfat, uint32_t block)
                                      sizeof (dir_desc->npt)); i++)
     {
       dir_list->next_bl = fosfat_read_data (fosfat, c2l (dir_desc->pts[i],
-                          sizeof (dir_desc->pts[i])), dir_desc->nbs[i], eBL);
+                          sizeof (dir_desc->pts[i])), dir_desc->nbs[i], B_BL);
       dir_list = dir_list->next_bl;
 
       /* Go to the last BL */
@@ -1516,7 +1516,7 @@ fosfat_get_link (fosfat_t *fosfat, fosfat_bd_t *file)
   char *start, *it;
 
   data = fosfat_read_data (fosfat, c2l (file->pts[0], sizeof (file->pts[0])),
-                           file->nbs[0], eDATA);
+                           file->nbs[0], B_DATA);
   if (!data)
     return NULL;
 
