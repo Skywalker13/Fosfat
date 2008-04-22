@@ -347,7 +347,7 @@ main (int argc, char **argv)
   int res = 0, fusedebug = 0, foslog = 0;
   char *device;
   char **arg;
-  fosfat_disk_t type = eDAUTO;
+  fosfat_disk_t type = FOSFAT_AD;
 
   const char *const short_options = "adfhlv";
 
@@ -374,10 +374,10 @@ main (int argc, char **argv)
       print_version ();
       return -1;
     case 'f':           /* -f or --floppydisk */
-      type = eFD;
+      type = FOSFAT_FD;
       break ;
     case 'a':           /* -a or --harddisk */
-      type = eHD;
+      type = FOSFAT_HD;
       break ;
     case 'd':           /* -d or --fuse-debugger */
       fusedebug = 1;

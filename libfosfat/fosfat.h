@@ -32,10 +32,10 @@
 
 /** Disk types */
 typedef enum disk_type {
-  eFD,                         /*!< Floppy Disk           */
-  eHD,                         /*!< Hard Disk             */
-  eDAUTO,                      /*!< Auto Detection        */
-  eFAILS                       /*!< Auto Detection fails  */
+  FOSFAT_FD,                   /*!< Floppy Disk           */
+  FOSFAT_HD,                   /*!< Hard Disk             */
+  FOSFAT_AD,                   /*!< Auto Detection        */
+  FOSFAT_ED                    /*!< Auto Detection fails  */
 } fosfat_disk_t;
 
 /** Time */
@@ -180,7 +180,7 @@ char *fosfat_get_buffer (fosfat_t *fosfat, const char *path,
  *           disk, etc,...
  *
  * param dev[in]        device or location
- * param disk[in]       type of disk, use eDAUTO for auto-detection
+ * param disk[in]       type of disk, use FOSFAT_AD for auto-detection
  * param flag[in]       use F_UNDELETE for load deleted files or 0 for normal
  * return NULL if error or return the disk loaded
  */

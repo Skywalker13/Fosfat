@@ -240,7 +240,7 @@ main (int argc, char **argv)
 {
   int res = 0, i, next_option, undelete = 0;
   int flags = 0;
-  fosfat_disk_t type = eDAUTO;
+  fosfat_disk_t type = FOSFAT_AD;
   char *device = NULL, *mode = NULL, *node = NULL, *path = NULL;
   fosfat_t *fosfat;
   global_info_t *ginfo = NULL;
@@ -270,10 +270,10 @@ main (int argc, char **argv)
       print_version ();
       return -1;
     case 'a':           /* -a or --harddisk */
-      type = eHD;
+      type = FOSFAT_HD;
       break ;
     case 'f':           /* -f or --floppydisk */
-      type = eFD;
+      type = FOSFAT_FD;
       break ;
     case 'l':           /* -l or --fos-logger */
       fosfat_logger (1);

@@ -2010,19 +2010,19 @@ fosfat_cache_unloader (cachelist_t *cache)
  *  pointer in the BD is right.
  *
  * \param fosfat the main structure
- * \return the type of disk or eFAILS
+ * \return the type of disk or FOSFAT_ED
  */
 static fosfat_disk_t
 fosfat_diskauto (fosfat_t *fosfat)
 {
   int i, loop = 1;
   int fboot = -1;
-  fosfat_disk_t res = eFAILS;
+  fosfat_disk_t res = FOSFAT_ED;
   fosfat_bd_t *sys_list;
   fosfat_bl_t *first_bl;
 
   if (!fosfat)
-    return eFAILS;
+    return FOSFAT_ED;
 
   fosfat->fosboot = FOSBOOT_FD;
 
@@ -2055,15 +2055,15 @@ fosfat_diskauto (fosfat_t *fosfat)
   /* Select the right fosboot */
   switch (fboot) {
   case FOSBOOT_FD:
-    res = eFD;
+    res = FOSFAT_FD;
     break;
 
   case FOSBOOT_HD:
-    res = eHD;
+    res = FOSFAT_HD;
     break;
 
   default:
-    res = eFAILS;
+    res = FOSFAT_ED;
   }
 
   /* Restore the fosboot */
@@ -2115,7 +2115,7 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
   /* Open the device */
   foslog (FOSLOG_NOTICE, "device is opening ...");
 
-  if (disk == eDAUTO) {
+  if (disk == FOSFAT_AD) {
     foslog (FOSLOG_NOTICE, "auto detection in progress ...");
 
     disk = fosfat_diskauto (fosfat);
@@ -2129,17 +2129,17 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
     foslog (FOSLOG_WARNING, "disk type forced seems to be false");
 
   switch (disk) {
-  case eFD:
+  case FOSFAT_FD:
     fosfat->fosboot = FOSBOOT_FD;
     foslog (FOSLOG_NOTICE, "floppy disk selected");
     break;
 
-  case eHD:
+  case FOSFAT_HD:
     fosfat->fosboot = FOSBOOT_HD;
     foslog (FOSLOG_NOTICE, "hard disk selected");
     break;
 
-  case eFAILS:
+  case FOSFAT_ED:
     foslog (FOSLOG_ERROR, "disk auto detection for \"%s\" has failed", dev);
 
   default:
