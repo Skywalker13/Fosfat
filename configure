@@ -648,7 +648,7 @@ if test "$fosmount" = "yes"; then
     check_cflags -I$libfusedir
     check_ldflags -L$libfusedir
   fi
-  check_lib fuse.h fuse_main `pkg-config fuse --cflags --libs` || die "Error, can't find libfuse !"
+  check_lib fuse.h fuse_main -lfuse || die "Error, can't find libfuse !"
   add_cflags -DFUSE_USE_VERSION=26
 fi
 
