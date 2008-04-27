@@ -95,14 +95,14 @@ main (int argc, char **argv)
   int res = 0;
   char *input_file;
   char *output_file;
-  e_newline newline = eCR;
+  e_newline newline = ASCII_CR;
 
   if (argc >= 3) {
     input_file = strdup (argv[1]);
     output_file = strdup (argv[2]);
 
     if (argc == 4 && !strcmp (argv[3], "--unix"))
-      newline = eLF;
+      newline = ASCII_LF;
 
     if (!run_conv (input_file, output_file, newline))
       res = -1;
