@@ -43,5 +43,5 @@ find "$DIR" \( -name .svn -or -name '*~' \) -exec rm -rf '{}' \; 2>/dev/null
 cd "$DIR"
 debuild -us -uc
 
-cd ..
+cd -
 rm -rf "$DIR"
