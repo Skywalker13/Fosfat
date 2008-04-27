@@ -25,7 +25,7 @@ all: depend $(APPNAME1) $(APPNAME2)
 	$(CC) -c $(CFLAGS1) $(OPTFLAGS) -o $@ $<
 
 $(APPNAME1): $(OBJS1)
-	$(CC) $(OBJS1) $(LDFLAGS1) $(EXTRALIBS) -o $(APPNAME1).exe
+	$(CC) $(OBJS1) $(LDFLAGS1) -o $(APPNAME1).exe
 	$(STRIP) $(APPNAME1).exe
 
 $(APPNAME2): $(OBJS2)

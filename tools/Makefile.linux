@@ -34,7 +34,7 @@ all: $(TARGETB)
 	$(CC) -c $(CFLAGS1) $(OPTFLAGS) -o $@ $<
 
 $(APPNAME1): $(OBJS1)
-	$(CC) $(OBJS1) $(LDFLAGS1) $(EXTRALIBS) -o $(APPNAME1)
+	$(CC) $(OBJS1) $(LDFLAGS1) -o $(APPNAME1)
 
 $(APPNAME2): $(OBJS2)
 	$(CC) $(OBJS2) $(LDFLAGS2) -o $(APPNAME2)

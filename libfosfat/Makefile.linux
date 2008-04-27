@@ -32,7 +32,7 @@ lib_static: $(OBJS)
 
 lib_shared: $(OBJS)
 	$(CC) -shared -Wl,-soname,$(SHARED_LIBNAME).${VERSION} \
-	$(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(SHARED_LIBNAME).${VERSION}
+	$(OBJS) $(LDFLAGS) -o $(SHARED_LIBNAME).${VERSION}
 
 clean:
 	rm -f *.o *.a *.dll *.so*
