@@ -25,6 +25,6 @@ echo "# Automatically generated - do not modify!" > $CONFIGFILE
 
 append_config "CC=$cc"
 append_config "CXX=$cxx"
-append_config "STRIP=$strip"
+append_config "STRIP=$strip -s"
 append_config "CFLAGS=$cflags"
 append_config "LDFLAGS=$ldflags"
