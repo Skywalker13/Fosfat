@@ -278,7 +278,7 @@ main (int argc, char **argv)
     case 'l':           /* -l or --fos-logger */
       fosfat_logger (1);
       break ;
-    case 'u':           /* -l or --fos-logger */
+    case 'u':           /* -u or --undelete */
       undelete = 1;
       break ;
     case -1:            /* end */
