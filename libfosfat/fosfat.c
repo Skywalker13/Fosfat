@@ -370,7 +370,7 @@ static void
 foslog (foslog_t type, const char *msg, ...)
 {
   va_list va;
-  char log[256] = "fosfat-";
+  char log[256] = "[fosfat] ";
 
   if (!g_logger || !msg)
     return;
