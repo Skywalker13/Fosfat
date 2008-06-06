@@ -75,6 +75,38 @@ typedef struct fosfat_s fosfat_t;
 
 
 /*
+ * Load a device compatible Smaky FOS. The device can be a file or a device.
+ * But with Window$ currently only device are supported. fosfat_close() must
+ * always be called for freeing the memory and close the device.
+ *
+ * Linux   : specify the location on /dev/... or on a file
+ * Window$ : specify the device with 'a' for diskette, 'c' for the first hard
+ *           disk, etc,...
+ *
+ * param dev[in]        device or location
+ * param disk[in]       type of disk, use FOSFAT_AD for auto-detection
+ * param flag[in]       use F_UNDELETE for load deleted files or 0 for normal
+ * return NULL if error or return the disk loaded
+ */
+fosfat_t *fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag);
+
+/*
+ * Free the memory and close the device properly.
+ *
+ * param fosfat[in]     disk loaded
+ */
+void fosfat_close (fosfat_t *fosfat);
+
+/*
+ * By default, the internal logger is disabled. Use this function for enable
+ * or disable the verbosity. The logger is enabled or disabled for all
+ * devices loaded.
+ *
+ * param state[in]      boolean, 0 for disable the logger
+ */
+void fosfat_logger (int state);
+
+/*
  * Get the diskname of a specific disk. The pointer must be freed when
  * no longer used.
  *
@@ -169,37 +201,5 @@ int fosfat_get_file (fosfat_t *fosfat, const char *src,
  */
 char *fosfat_get_buffer (fosfat_t *fosfat, const char *path,
                          int offset, int size);
-
-/*
- * Load a device compatible Smaky FOS. The device can be a file or a device.
- * But with Window$ currently only device are supported. fosfat_close() must
- * always be called for freeing the memory and close the device.
- *
- * Linux   : specify the location on /dev/... or on a file
- * Window$ : specify the device with 'a' for diskette, 'c' for the first hard
- *           disk, etc,...
- *
- * param dev[in]        device or location
- * param disk[in]       type of disk, use FOSFAT_AD for auto-detection
- * param flag[in]       use F_UNDELETE for load deleted files or 0 for normal
- * return NULL if error or return the disk loaded
- */
-fosfat_t *fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag);
-
-/*
- * Free the memory and close the device properly.
- *
- * param fosfat[in]     disk loaded
- */
-void fosfat_close (fosfat_t *fosfat);
-
-/*
- * By default, the internal logger is disabled. Use this function for enable
- * or disable the verbosity. The logger is enabled or disabled for all
- * devices loaded.
- *
- * param state[in]      boolean, 0 for disable the logger
- */
-void fosfat_logger (int state);
 
 #endif /* FOSFAT_H_ */
