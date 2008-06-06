@@ -77,7 +77,7 @@ typedef struct fosfat_s fosfat_t;
 /*
  * Load a device compatible Smaky FOS. The device can be a file or a device.
  * But with Window$ currently only device are supported. fosfat_close() must
- * always be called for freeing the memory and close the device.
+ * always be called to freeing the memory and close the device.
  *
  * Linux   : specify the location on /dev/... or on a file
  * Window$ : specify the device with 'a' for diskette, 'c' for the first hard
@@ -98,7 +98,7 @@ fosfat_t *fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag);
 void fosfat_close (fosfat_t *fosfat);
 
 /*
- * By default, the internal logger is disabled. Use this function for enable
+ * By default, the internal logger is disabled. Use this function to enable
  * or disable the verbosity. The logger is enabled or disabled for all
  * devices loaded.
  *
@@ -117,7 +117,7 @@ char *fosfat_diskname (fosfat_t *fosfat);
 
 /*
  * Get file/dir list of a directory in a linked list. When the list is no
- * longer used, fosfat_free_listdir() must always be called for freeing
+ * longer used, fosfat_free_listdir() must always be called to freeing
  * the memory.
  *
  * param fosfat[in]     disk loaded
