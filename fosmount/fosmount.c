@@ -358,7 +358,7 @@ main (int argc, char **argv)
     { "help",          no_argument, NULL, 'h' },
     { "fos-logger",    no_argument, NULL, 'l' },
     { "version",       no_argument, NULL, 'v' },
-    { NULL,            0, NULL,  0  }
+    { NULL,            0,           NULL,  0  }
   };
 
   /* check options */

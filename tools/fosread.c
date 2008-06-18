@@ -254,7 +254,7 @@ main (int argc, char **argv)
     { "fos-logger",   no_argument, NULL, 'l' },
     { "undelete",     no_argument, NULL, 'u' },
     { "version",      no_argument, NULL, 'v' },
-    { NULL,           0, NULL,  0  }
+    { NULL,           0,           NULL,  0  }
   };
 
   /* check options */
