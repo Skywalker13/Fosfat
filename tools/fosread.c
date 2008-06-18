@@ -248,12 +248,12 @@ main (int argc, char **argv)
   const char *const short_options = "afhluv";
 
   const struct option long_options[] = {
-    { "harddisk",     0, NULL, 'a' },
-    { "floppydisk",   0, NULL, 'f' },
-    { "help",         0, NULL, 'h' },
-    { "fos-logger",   0, NULL, 'l' },
-    { "undelete",     0, NULL, 'u' },
-    { "version",      0, NULL, 'v' },
+    { "harddisk",     no_argument, NULL, 'a' },
+    { "floppydisk",   no_argument, NULL, 'f' },
+    { "help",         no_argument, NULL, 'h' },
+    { "fos-logger",   no_argument, NULL, 'l' },
+    { "undelete",     no_argument, NULL, 'u' },
+    { "version",      no_argument, NULL, 'v' },
     { NULL,           0, NULL,  0  }
   };
 

@@ -352,12 +352,12 @@ main (int argc, char **argv)
   const char *const short_options = "adfhlv";
 
   const struct option long_options[] = {
-    { "harddisk",      0, NULL, 'a' },
-    { "fuse-debugger", 0, NULL, 'd' },
-    { "floppydisk",    0, NULL, 'f' },
-    { "help",          0, NULL, 'h' },
-    { "fos-logger",    0, NULL, 'l' },
-    { "version",       0, NULL, 'v' },
+    { "harddisk",      no_argument, NULL, 'a' },
+    { "fuse-debugger", no_argument, NULL, 'd' },
+    { "floppydisk",    no_argument, NULL, 'f' },
+    { "help",          no_argument, NULL, 'h' },
+    { "fos-logger",    no_argument, NULL, 'l' },
+    { "version",       no_argument, NULL, 'v' },
     { NULL,            0, NULL,  0  }
   };
 
