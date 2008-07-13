@@ -8,10 +8,8 @@ TARGETI =
 TARGETB =
 APPNAME1 = fosread
 APPNAME2 = smascii
-APPNAME3 = fosrec
 SRCS1 = fosread.c
 SRCS2 = ascii.c smascii.c
-SRCS3 = fosrec.c
 MANPAGES = fosread.1
 
 CFLAGS1 = $(CFLAGS) -I../libfosfat -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)\"
@@ -20,16 +18,12 @@ LDFLAGS1 = $(LDFLAGS) -L../libfosfat -lfosfat
 CFLAGS2 = $(CFLAGS)
 LDFLAGS2 = $(LDFLAGS)
 
-CFLAGS3 = $(CFLAGS1)
-LDFLAGS3 = $(LDFLAGS1)
-
 OBJS1 = $(SRCS1:.c=.o)
 OBJS2 = $(SRCS2:.c=.o)
-OBJS3 = $(SRCS3:.c=.o)
 
 ifeq ($(TOOLS),yes)
 TARGETI = install-app install-man
-TARGETB = depend $(APPNAME1) $(APPNAME2) $(APPNAME3)
+TARGETB = depend $(APPNAME1) $(APPNAME2)
 endif
 
 .SUFFIXES: .c .o
@@ -45,23 +39,18 @@ $(APPNAME1): $(OBJS1)
 $(APPNAME2): $(OBJS2)
 	$(CC) $(OBJS2) $(LDFLAGS2) -o $(APPNAME2)
 
-$(APPNAME3): $(OBJS3)
-	$(CC) $(OBJS3) $(LDFLAGS3) -o $(APPNAME3)
-
 clean:
-	rm -f *.o $(APPNAME1) $(APPNAME2) $(APPNAME3) $(APPNAME1).exe $(APPNAME2).exe $(APPNAME3).exe
+	rm -f *.o $(APPNAME1) $(APPNAME2) $(APPNAME1).exe $(APPNAME2).exe
 	rm -f .depend*
 
 install: $(TARGETI)
 
-install-app: $(APPNAME1) $(APPNAME2) $(APPNAME3)
+install-app: $(APPNAME1) $(APPNAME2)
 	$(INSTALL) -d $(bindir)
 	$(INSTALL) $(APPNAME1) $(bindir)
 	$(INSTALL) $(APPNAME2) $(bindir)
-	$(INSTALL) $(APPNAME3) $(bindir)
 	$(STRIP) $(INSTALLSTRIP) $(bindir)/$(APPNAME1)
 	$(STRIP) $(INSTALLSTRIP) $(bindir)/$(APPNAME2)
-	$(STRIP) $(INSTALLSTRIP) $(bindir)/$(APPNAME3)
 
 install-man:
 	install -d $(mandir)/man1
@@ -70,7 +59,6 @@ install-man:
 uninstall: uninstall-man
 	rm -f $(bindir)/$(APPNAME1)
 	rm -f $(bindir)/$(APPNAME2)
-	rm -f $(bindir)/$(APPNAME3)
 
 uninstall-man:
 	rm -f $(mandir)/man1/$(MANPAGES)
@@ -78,15 +66,13 @@ uninstall-man:
 depend:
 	$(CC) -MM $(CFLAGS1) $(OPTFLAGS) $(SRCS1) 1>.depend1
 	$(CC) -MM $(CFLAGS2) $(OPTFLAGS) $(SRCS2) 1>.depend2
-	$(CC) -MM $(CFLAGS3) $(OPTFLAGS) $(SRCS3) 1>.depend3
 
 .phony: clean install-man uninstall-man depend
 
 #
 # include dependency files if they exist
 #
-ifneq ($(wildcard .depend1 .depend2 .depend3),)
+ifneq ($(wildcard .depend1 .depend2),)
 include .depend1
 include .depend2
-include .depend3
 endif
