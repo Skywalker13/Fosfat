@@ -75,15 +75,18 @@ in_stat (fosfat_file_t *file)
   memset (&time, 0, sizeof (time));
 
   /* Directory, symlink or file */
-  if (file->att.isdir) {
+  if (file->att.isdir)
+  {
     st->st_mode = S_IFDIR | FOS_DIR;
     st->st_nlink = 2;
   }
-  else if (file->att.islink) {
+  else if (file->att.islink)
+  {
     st->st_mode = S_IFLNK | FOS_DIR;
     st->st_nlink = 2;
   }
-  else {
+  else
+  {
     st->st_mode = S_IFREG | FOS_FILE;
     st->st_nlink = 1;
   }
@@ -129,7 +132,8 @@ get_stat (const char *path)
   struct stat *st = NULL;
   fosfat_file_t *file;
 
-  if ((file = fosfat_get_stat (fosfat, path))) {
+  if ((file = fosfat_get_stat (fosfat, path)))
+  {
     st = in_stat (file);
     free (file);
   }
@@ -153,7 +157,8 @@ fos_readlink (const char *path, char *dst, size_t size)
 
   link = fosfat_symlink (fosfat, path);
 
-  if (strlen(link) < size) {
+  if (strlen(link) < size)
+  {
     memcpy (dst, link, strlen (link) + 1);
     res = 0;
   }
@@ -184,7 +189,8 @@ fos_getattr (const char *path, struct stat *stbuf)
     location = (char *) path;
 
   /* Get file stats */
-  if ((st = get_stat (location))) {
+  if ((st = get_stat (location)))
+  {
     memcpy (stbuf, st, sizeof (*stbuf));
     free (st);
   }
@@ -220,10 +226,12 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
   filler (buf, "..", NULL, 0);
 
   /* Files and directories */
-  if ((files = fosfat_list_dir (fosfat, path))) {
+  if ((files = fosfat_list_dir (fosfat, path)))
+  {
     first_file = files;
 
-    do {
+    do
+    {
       struct stat *st = in_stat (files);
       char *name = strdup (files->name);
 
@@ -285,11 +293,14 @@ fos_read (const char *path, char *buf, size_t size,
   (void) fi;
 
   /* Get the stats and test if it is a file */
-  if ((file = fosfat_get_stat (fosfat, path))) {
-    if (!file->att.isdir) {
+  if ((file = fosfat_get_stat (fosfat, path)))
+  {
+    if (!file->att.isdir)
+    {
       length = file->size;
 
-      if (offset < length) {
+      if (offset < length)
+      {
         /* Fix the size in function of the offset */
         if (offset + (signed) size > length)
           size = length - offset;
@@ -298,7 +309,8 @@ fos_read (const char *path, char *buf, size_t size,
         buf_tmp = fosfat_get_buffer (fosfat, path, offset, size);
 
         /* Copy the data for FUSE */
-        if (buf_tmp) {
+        if (buf_tmp)
+        {
           memcpy (buf, buf_tmp, size);
           free (buf_tmp);
         }
@@ -362,9 +374,11 @@ main (int argc, char **argv)
   };
 
   /* check options */
-  do {
+  do
+  {
     next_option = getopt_long (argc, argv, short_options, long_options, NULL);
-    switch (next_option) {
+    switch (next_option)
+    {
     default :           /* unknown */
     case '?':           /* invalid option */
     case 'h':           /* -h or --help */
@@ -391,14 +405,16 @@ main (int argc, char **argv)
     }
   } while (next_option != -1);
 
-  if (argc < optind + 2) {
+  if (argc < optind + 2)
+  {
     print_info ();
     return -1;
   }
 
   /* table for fuse */
   arg = malloc (sizeof (char *) * (3 + fusedebug + foslog));
-  if (arg) {
+  if (arg)
+  {
     arg[0] = strdup (argv[0]);
 
     if (fusedebug)
@@ -416,11 +432,13 @@ main (int argc, char **argv)
     return -1;
 
   /* Open the floppy disk (or hard disk) */
-  if (!(fosfat = fosfat_open (device, type, 0))) {
+  if (!(fosfat = fosfat_open (device, type, 0)))
+  {
     fprintf (stderr, "Could not open %s for mounting!\n", device);
     res = -1;
   }
-  else {
+  else
+  {
     /* FUSE */
     res = fuse_main (3 + fusedebug + foslog, arg, &fosfat_oper, NULL);
 
