@@ -79,7 +79,8 @@ sma2iso8859 (char *buffer, unsigned int size, e_newline newline)
 {
   unsigned int i = 0;
 
-  if (buffer && size) {
+  if (buffer && size)
+  {
     for (i = 0; i < size; i++)
       *(buffer + i) = char_sma2iso8859 (*(buffer + i), newline);
   }

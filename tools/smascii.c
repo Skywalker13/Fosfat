@@ -56,12 +56,14 @@ run_conv (const char *input, const char *output, e_newline newline)
   char buffer[BUFFER_SIZE];
   size_t lng;
 
-  if ((in = fopen (input, "r")) && (out = fopen (output, "w"))) {
+  if ((in = fopen (input, "r")) && (out = fopen (output, "w")))
+  {
     while ((lng = fread ((char *) buffer, 1, (size_t) BUFFER_SIZE, in)))
     {
       if (sma2iso8859 (buffer, (unsigned int) lng, newline))
         fwrite ((char *) buffer, 1, lng, out);
-      else {
+      else
+      {
         fprintf (stderr, "Conversion error!\n");
         res = 0;
       }
@@ -69,7 +71,8 @@ run_conv (const char *input, const char *output, e_newline newline)
     if (res)
       printf ("File %s successfully converted to %s!\n", input, output);
   }
-  else {
+  else
+  {
     fprintf (stderr, "Reading or writing error!\n");
     res = 0;
   }
@@ -97,7 +100,8 @@ main (int argc, char **argv)
   char *output_file;
   e_newline newline = ASCII_CR;
 
-  if (argc >= 3) {
+  if (argc >= 3)
+  {
     input_file = strdup (argv[1]);
     output_file = strdup (argv[2]);
 

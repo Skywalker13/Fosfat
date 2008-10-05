@@ -82,13 +82,15 @@ get_ginfo (fosfat_t *fosfat)
   global_info_t *ginfo;
   char *name;
 
-  if ((name = fosfat_diskname (fosfat))) {
+  if ((name = fosfat_diskname (fosfat)))
+  {
     ginfo = malloc (sizeof (global_info_t));
     strncpy (ginfo->name, name, FOSFAT_NAMELGT - 1);
     ginfo->name[FOSFAT_NAMELGT - 1] = '\0';
     free (name);
   }
-  else {
+  else
+  {
     fprintf (stderr, "ERROR: I can't read the name of this disk!\n");
     ginfo = NULL;
   }
@@ -159,7 +161,8 @@ list_dir (fosfat_t *fosfat, const char *loc)
   else
     path = strdup (loc);
 
-  if ((files = fosfat_list_dir (fosfat, path))) {
+  if ((files = fosfat_list_dir (fosfat, path)))
+  {
     first_file = files;
     printf ("path: %s\n\n", path);
     printf ("        size creation         last change");
@@ -167,14 +170,16 @@ list_dir (fosfat_t *fosfat, const char *loc)
     printf ("        ---- --------         -----------");
     printf ("      ---------        --------\n");
 
-    do {
+    do
+    {
       print_file (files);
     } while ((files = files->next_file));
 
     printf ("\nd:directory  l:link  h:hidden  e:encoded    (X):undelete\n");
     fosfat_free_listdir (first_file);
   }
-  else {
+  else
+  {
     free (path);
     fprintf (stderr, "ERROR: I can't found this path!\n");
     return 0;
@@ -204,10 +209,12 @@ get_file (fosfat_t *fosfat, const char *path, const char *dst)
   else
     new_file = strdup (dst);
 
-  if (!fosfat_islink (fosfat, path) && !fosfat_isdir (fosfat, path)) {
+  if (!fosfat_islink (fosfat, path) && !fosfat_isdir (fosfat, path))
+  {
     printf ("File \"%s\" is copying ...\n", path);
 
-    if (fosfat_get_file (fosfat, path, new_file, 1)) {
+    if (fosfat_get_file (fosfat, path, new_file, 1))
+    {
       res = 1;
       printf ("Okay..\n");
     }
@@ -258,9 +265,11 @@ main (int argc, char **argv)
   };
 
   /* check options */
-  do {
+  do
+  {
     next_option = getopt_long (argc, argv, short_options, long_options, NULL);
-    switch (next_option) {
+    switch (next_option)
+    {
     default :           /* unknown */
     case '?':           /* invalid option */
     case 'h':           /* -h or --help */
@@ -286,12 +295,14 @@ main (int argc, char **argv)
     }
   } while (next_option != -1);
 
-  if (argc < optind + 2) {
+  if (argc < optind + 2)
+  {
     print_info ();
     return -1;
   }
 
-  for (i = optind; i < argc; i++) {
+  for (i = optind; i < argc; i++)
+  {
     if (i == optind)
       device = strdup (argv[optind]);
     else if (i == optind + 1)
@@ -306,22 +317,27 @@ main (int argc, char **argv)
     flags = F_UNDELETE;
 
   /* Open the floppy disk (or hard disk) */
-  if (!(fosfat = fosfat_open (device, type, flags))) {
+  if (!(fosfat = fosfat_open (device, type, flags)))
+  {
     fprintf (stderr, "Could not open %s for reading!\n", device);
     res = -1;
   }
 
   /* Get globals informations on the disk */
-  if (!res && (ginfo = get_ginfo (fosfat))) {
+  if (!res && (ginfo = get_ginfo (fosfat)))
+  {
     printf ("Smaky disk %s\n", ginfo->name);
 
     /* Show the list of a directory */
-    if (!strcasecmp (mode, "list")) {
-      if (!node) {
+    if (!strcasecmp (mode, "list"))
+    {
+      if (!node)
+      {
         if (!list_dir (fosfat, "/"))
           res = -1;
       }
-      else if (node) {
+      else if (node)
+      {
         if (!list_dir (fosfat, node))
           res = -1;
         free (node);
@@ -329,7 +345,8 @@ main (int argc, char **argv)
     }
 
     /* Get a file from the disk */
-    else if (!strcmp (mode, "get") && node) {
+    else if (!strcmp (mode, "get") && node)
+    {
       get_file (fosfat, node, path ? path : "./");
       free (node);
       free (path);
