@@ -15,7 +15,7 @@ FOSFAT
 Fosfat is a library for a read-only access on Smaky FOS
 (File Operating System). Floppy disk and hard disk are supported.
 
-Some tools are available for work with a Smaky FOS formatted disk. The first
+Some tools are available to work with a Smaky FOS formatted disk. The first
 tool 'fosread' can work directly with your device but it is limited for an
 console utilisation.
 The tool 'fosmount' uses FUSE for mount in _read-only_ your device in your

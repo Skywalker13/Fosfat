@@ -12,29 +12,29 @@
 
 	* New major beta released 0.3.0
 
-	* Add Window$ support, and use MinGW32 for compile
+	* Add Window$ support, and use MinGW32 to compile
 	DLL libraries, fosread and smascii. A script
-	package-win32.sh can be used for create a zip package.
+	package-win32.sh can be used to create a zip package.
 
 	* libfosfat: add support for Window$ through
 	libw32disk.
 
-	* libw32disk: add C wrapper for use original Disk.cxx
+	* libw32disk: add C wrapper to use original Disk.cxx
 	class with libfosfat.
 
 	* fosread: fix symlink support, now that is possible
-	for read like a directory.
-	Add support for list and restore deleted files.
+	to read like a directory.
+	Add support to list and restore deleted files.
 
 2007-12-13  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: first implementation of an undelete tool
 	just disabled by default. The next step is added some
-	options for list and restore files.
+	options to list and restore files.
 
 2007-12-12  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
-	* libfosfat: add support for multiple device. A new
+	* libfosfat: add support for multiple devices. A new
 	main structure is used instead of global variables.
 	Only the logger is always global.
 
@@ -48,7 +48,7 @@
 
 	* Change license GPLv2 to GPLv3.
 
-	* Fix a lot of memory leak.
+	* Fix a lot of memory leaks.
 
 2007-07-07  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
@@ -66,7 +66,7 @@
 	* Add auto detection for the disk type. The type can
 	be forced with fosmount and fosread if necessary.
 
-	* libfosfat: an internal logger can be enabled for
+	* libfosfat: an internal logger can be enabled to
 	know what the FOS is doing. A new option is available
 	in fosread and fosmount.
 
@@ -83,13 +83,13 @@
 2007-06-20  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: a new system of caching is implemented
-	for improve the speed. Now that will be very fast for
+	to improve the speed. Now that will be very fast for
 	looking in a directory. The system must be fixed for
 	that the memory is released.
 
 	* fosmount: a bug is fixed for that FUSE is always
 	loaded as single-thread. If not there is a really a
-	big problem when datas are loaded with libfosfat.
+	big problem when data are loaded with libfosfat.
 
 2007-05-10  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
@@ -102,7 +102,7 @@
 
 2007-03-25  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
-	* smascii: add an option for convert Carriage Return
+	* smascii: add an option to convert Carriage Return
 	to Unix newline (Line Feed).
 
 	* Fix Ubuntu package builder with CDBS.
@@ -111,7 +111,7 @@
 
 	* Some fixes in all the project.
 
-	* smascii: new tool for convert Smaky's text files to
+	* smascii: new tool to convert Smaky's text files to
 	Extended ASCII (ISO-8859-1) files.
 
 2007-03-22  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
@@ -128,8 +128,8 @@
 	If this value changes, then NULL is returned and not
 	the block.
 	A lot of possible segfaults are fixed and now that
-	is possible for list the smaky's system directory
-	without to kill Fuse.
+	is possible to list the smaky's system directory
+	without killing Fuse.
 	The smaky's soft-link are now listed like a simple
 	file. In the futur, that will be translated to an
 	symbolic unix link.
@@ -143,7 +143,7 @@
 
 2007-03-17  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
-	* libfosfat: some bugfixes and malloc are now verified.
+	* libfosfat: some bugfixes and malloc are now checked.
 	All variables as input of each function are tested
 	for not to be NULL.
 
@@ -159,12 +159,12 @@
 
 2006-12-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
-	* Add configure script with some options for compile
+	* Add configure script with some options to compile
 	only fosmount, fosread or both.
 
 2006-12-28  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
-	* libfosfat: add high level functions for work with
+	* libfosfat: add high level functions to work with
 	the FOS's files. Now the processing with the blocks
 	is not available in public. The fosread tool have been
 	adapted in this way.
