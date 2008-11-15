@@ -298,12 +298,8 @@ lc (char *data)
 static int
 h2d (int val)
 {
-  char *conv;
+  char conv[16];
   int res = 0;
-
-  conv = malloc (sizeof (val));
-  if (!conv)
-    return 0;
 
   snprintf (conv, sizeof (conv), "%X", val);
   res = atoi (conv);
