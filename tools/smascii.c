@@ -60,8 +60,16 @@ run_conv (const char *input, const char *output, e_newline newline)
   {
     while ((lng = fread ((char *) buffer, 1, (size_t) BUFFER_SIZE, in)))
     {
+      size_t size;
       if (sma2iso8859 (buffer, (unsigned int) lng, newline))
-        fwrite ((char *) buffer, 1, lng, out);
+      {
+        size = fwrite ((char *) buffer, 1, lng, out);
+        if (size != lng)
+        {
+          fprintf (stderr, "Conversion error, bad size!\n");
+          res = 0;
+        }
+      }
       else
       {
         fprintf (stderr, "Conversion error!\n");
