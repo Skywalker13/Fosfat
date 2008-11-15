@@ -303,7 +303,6 @@ h2d (int val)
 
   snprintf (conv, sizeof (conv), "%X", val);
   res = atoi (conv);
-  free (conv);
 
   return res;
 }
