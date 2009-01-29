@@ -910,9 +910,6 @@ fosfat_read_data (fosfat_t *fosfat, uint32_t block,
     return first_data;
   }
 
-  /* Only for no compilation warning because
-   * all types are not in the switch
-   */
   default:
     break;
   }
