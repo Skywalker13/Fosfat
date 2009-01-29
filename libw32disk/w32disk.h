@@ -32,7 +32,6 @@
 
 #include <stdlib.h>
 
-struct win32disk_s;
 typedef struct win32disk_s win32disk_t;
 
 #ifdef __cplusplus
