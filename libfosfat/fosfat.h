@@ -70,7 +70,6 @@ typedef struct file_info_s {
 } fosfat_file_t;
 
 /* fosfat opaque data types */
-struct fosfat_s;
 typedef struct fosfat_s fosfat_t;
 
 
