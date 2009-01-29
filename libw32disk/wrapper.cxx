@@ -27,14 +27,14 @@
 #include "w32disk.h"
 
 
-/** Structure for the C */
+/* Structure for the C */
 struct win32disk_s {
   Disk *wdisk;
 };
 
 
-/**
- * \brief Create a new device object.
+/*
+ * Create a new device object.
  *
  * The devices are numbers like:
  *  0 for a:\
@@ -42,8 +42,8 @@ struct win32disk_s {
  *  2 for c:\
  *  etc,..
  *
- * \param driver_index to open.
- * \return the new device object.
+ * driver_index to open.
+ * return the new device object.
  */
 EXPORT win32disk_t *
 new_w32disk (unsigned int drive_index)
@@ -57,10 +57,10 @@ new_w32disk (unsigned int drive_index)
   return disk;
 }
 
-/**
- * \brief Free the device object.
+/*
+ * Free the device object.
  *
- * \param disk structure for the wrapper.
+ * disk         structure for the wrapper.
  */
 EXPORT void
 free_w32disk (win32disk_t *disk)
@@ -78,13 +78,13 @@ free_w32disk (win32disk_t *disk)
   free (disk);
 }
 
-/**
- * \brief Get the sector's size.
+/*
+ * Get the sector's size.
  *
  * The common value is 512 bytes.
  *
- * \param disk structure for the wrapper.
- * \return the size.
+ * disk         structure for the wrapper.
+ * return the size.
  */
 EXPORT size_t
 w32disk_sectorsize (win32disk_t *disk)
@@ -99,16 +99,16 @@ w32disk_sectorsize (win32disk_t *disk)
   return (size_t) wdisk->SectorSize ();
 }
 
-/**
- * \brief Read some sectors on the drive.
+/*
+ * Read some sectors on the drive.
  *
  * The common value for csectors is 512.
  *
- * \param disk         structure for the wrapper.
- * \param buffer       where the data are put.
- * \param sector_index where the data are got.
- * \param csectors     the number of sectors (length).
- * \return 0 if error.
+ * disk         structure for the wrapper.
+ * buffer       where the data are put.
+ * sector_index where the data are got.
+ * csectors     the number of sectors (length).
+ * return 0 if error.
  */
 EXPORT int
 w32disk_readsectors (win32disk_t *disk, void *buffer,
@@ -125,13 +125,13 @@ w32disk_readsectors (win32disk_t *disk, void *buffer,
                                    (std::size_t) csectors);
 }
 
-/**
- * \brief Get the drive index number.
+/*
+ * Get the drive index number.
  *
  * The number must be the same as for create the object with new_w32disk().
  *
- * \param disk structure for the wrapper.
- * \return the index.
+ * disk         structure for the wrapper.
+ * return the index.
  */
 EXPORT unsigned int
 w32disk_getdriveindex (win32disk_t *disk)
@@ -146,11 +146,11 @@ w32disk_getdriveindex (win32disk_t *disk)
   return (int) wdisk->GetDriveIndex ();
 }
 
-/**
- * \brief Test if the device is valid.
+/*
+ * Test if the device is valid.
  *
- * \param disk structure for the wrapper.
- * \return 0 if invalid.
+ * disk         structure for the wrapper.
+ * return 0 if invalid.
  */
 EXPORT int
 w32disk_valid (win32disk_t *disk)
