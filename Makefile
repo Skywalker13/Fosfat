@@ -3,13 +3,25 @@ MAKE=make
 else
 include config.mak
 endif
+include VERSION
 
-all:
+DOXYGEN =
+
+ifeq ($(DOC),yes)
+  DOXYGEN = doxygen
+endif
+
+all: $(DOXYGEN)
 	cp -f libfosfat/Makefile.linux libfosfat/Makefile
 	cp -f tools/Makefile.linux tools/Makefile
 	$(MAKE) -C libfosfat
 	$(MAKE) -C tools
 	$(MAKE) -C fosmount
+
+doxygen:
+ifeq (,$(wildcard DOCS/doxygen))
+	 PROJECT_NUMBER="${VERSION}.${PATCHLEVEL}.${SUBLEVEL}" doxygen DOCS/Doxyfile
+endif
 
 clean:
 	$(MAKE) -C libw32disk clean
@@ -23,6 +35,7 @@ distclean: clean
 	rm -f config.win32
 	rm -f libfosfat/Makefile
 	rm -f tools/Makefile
+	rm -rf DOCS/doxygen
 
 install: install-deb install-dev
 
@@ -57,4 +70,5 @@ win32: win32-dev win32-common
 
 win32-zip: win32-build win32-common
 
-.phony: all clean install-deb install-dev uninstall win32-dev win32-build win32-common
+.phony: clean install-deb install-dev uninstall win32-dev win32-build win32-common
+.PHONY: doxygen

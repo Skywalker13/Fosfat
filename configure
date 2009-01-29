@@ -50,6 +50,9 @@ show_help(){
   echo "  --disable-optimize          disable compiler optimization"
   echo "  --cross-prefix=PREFIX       use PREFIX for compilation tools [$cross_prefix]"
   echo "  --cross-compile             assume a cross-compiler is used"
+  echo ""
+  echo "Miscellaneous:"
+  echo "  --enable-doc                build Doxygen documentation"
   exit 1
 }
 
@@ -310,6 +313,7 @@ cross_compile="no"
 tools="yes"
 fosmount="yes"
 INSTALL="install"
+doc="no"
 
 #################################################
 #   set cpu variable and specific cpu flags
@@ -417,6 +421,10 @@ for opt do
   --disable-fosmount) fosmount="no";
   ;;
   --with-fuse-dir=*) libfusedir="$optval";
+  ;;
+  --enable-doc) doc="yes";
+  ;;
+  --disable-doc) doc="no";
   ;;
   --help) show_help
   ;;
@@ -652,6 +660,16 @@ if test "$fosmount" = "yes"; then
 fi
 
 #################################################
+#   Miscellaneous
+#################################################
+# Doxygen
+if enabled doc; then
+  doc="no"
+  which doxygen 2>&1 > /dev/null
+  [ "$?" = 0 ] && doc="yes"
+fi
+
+#################################################
 #   logging result
 #################################################
 echolog ""
@@ -714,6 +732,7 @@ append_config "INSTALL=$INSTALL"
 append_config "DEBUG=$debug"
 append_config "TOOLS=$tools"
 append_config "FOSMOUNT=$fosmount"
+append_config "DOC=$doc"
 
 touch config.win32
 

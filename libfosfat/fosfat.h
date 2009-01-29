@@ -26,6 +26,12 @@
 #ifndef FOSFAT_H
 #define FOSFAT_H
 
+/**
+ * \file fosfat.h
+ *
+ * libfosfat public API header.
+ */
+
 #define FOSFAT_NAMELGT  17
 
 #define F_UNDELETE      (1 << 0)
