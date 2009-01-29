@@ -188,6 +188,27 @@ struct fosfat_s {
 static int g_logger = 0;
 
 
+#define FOSFAT_IS(handle, loc, att)                   \
+  {                                                   \
+    int res = 0;                                      \
+    fosfat_blf_t *entry;                              \
+                                                      \
+    entry = fosfat_search_insys (handle, loc, S_BLF); \
+    if (!entry)                                       \
+      return 0;                                       \
+                                                      \
+    if (fosfat_in_is##att (entry))                    \
+      res = 1;                                        \
+                                                      \
+    free (entry);                                     \
+    return res;                                       \
+  }
+#define FOSFAT_IS_DIR(handle, loc)     FOSFAT_IS(handle, loc, dir)
+#define FOSFAT_IS_LINK(handle, loc)    FOSFAT_IS(handle, loc, link)
+#define FOSFAT_IS_VISIBLE(handle, loc) FOSFAT_IS(handle, loc, visible)
+#define FOSFAT_IS_ENCODED(handle, loc) FOSFAT_IS(handle, loc, encoded)
+#define FOSFAT_IS_OPENEXM(handle, loc) FOSFAT_IS(handle, loc, openexm)
+
 #ifdef __linux__
 /**
  * \brief Translate a block number to an address.
@@ -1405,25 +1426,13 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
 int
 fosfat_isdir (fosfat_t *fosfat, const char *location)
 {
-  int res = 0;
-  fosfat_blf_t *entry;
-
   if (!fosfat || !location)
     return 0;
 
   if (!strcmp (location, "/"))
     return 1;
 
-  entry = fosfat_search_insys (fosfat, location, S_BLF);
-  if (!entry)
-    return 0;
-
-  if (fosfat_in_isdir (entry))
-    res = 1;
-
-  free (entry);
-
-  return res;
+  FOSFAT_IS_DIR (fosfat, location);
 }
 
 /**
@@ -1438,22 +1447,10 @@ fosfat_isdir (fosfat_t *fosfat, const char *location)
 int
 fosfat_islink (fosfat_t *fosfat, const char *location)
 {
-  int res = 0;
-  fosfat_blf_t *entry;
-
   if (!fosfat || !location)
     return 0;
 
-  entry = fosfat_search_insys (fosfat, location, S_BLF);
-  if (!entry)
-    return 0;
-
-  if (fosfat_in_islink (entry))
-    res = 1;
-
-  free (entry);
-
-  return res;
+  FOSFAT_IS_LINK (fosfat, location);
 }
 
 /**
@@ -1468,22 +1465,10 @@ fosfat_islink (fosfat_t *fosfat, const char *location)
 int
 fosfat_isvisible (fosfat_t *fosfat, const char *location)
 {
-  int res = 0;
-  fosfat_blf_t *entry;
-
   if (!fosfat || !location)
     return 0;
 
-  entry = fosfat_search_insys (fosfat, location, S_BLF);
-  if (!entry)
-    return 0;
-
-  if (fosfat_in_isvisible (entry))
-    res = 1;
-
-  free (entry);
-
-  return res;
+  FOSFAT_IS_VISIBLE (fosfat, location);
 }
 
 /**
@@ -1498,22 +1483,10 @@ fosfat_isvisible (fosfat_t *fosfat, const char *location)
 int
 fosfat_isencoded (fosfat_t *fosfat, const char *location)
 {
-  int res = 0;
-  fosfat_blf_t *entry;
-
   if (!fosfat || !location)
     return 0;
 
-  entry = fosfat_search_insys (fosfat, location, S_BLF);
-  if (!entry)
-    return 0;
-
-  if (fosfat_in_isencoded (entry))
-    res = 1;
-
-  free (entry);
-
-  return res;
+  FOSFAT_IS_ENCODED (fosfat, location);
 }
 
 /**
@@ -1528,22 +1501,10 @@ fosfat_isencoded (fosfat_t *fosfat, const char *location)
 int
 fosfat_isopenexm (fosfat_t *fosfat, const char *location)
 {
-  int res = 0;
-  fosfat_blf_t *entry;
-
   if (!fosfat || !location)
     return 0;
 
-  entry = fosfat_search_insys (fosfat, location, S_BLF);
-  if (!entry)
-    return 0;
-
-  if (fosfat_in_isopenexm (entry))
-    res = 1;
-
-  free (entry);
-
-  return res;
+  FOSFAT_IS_OPENEXM (fosfat, location);
 }
 
 /**
