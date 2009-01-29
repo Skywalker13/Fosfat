@@ -41,12 +41,12 @@
 "                       converted to Line Feed (unix)\n" \
 "\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
 
-/**
- * \brief Run the text conversion.
+/*
+ * Run the text conversion.
  *
- * \param input  Smaky text file
- * \param output ISO-8859-1 text file
- * \return 1 for success and 0 for error
+ * input        Smaky text file
+ * output       ISO-8859-1 text file
+ * return 1 for success and 0 for error
  */
 int
 run_conv (const char *input, const char *output, newline_t newline)
@@ -93,7 +93,7 @@ run_conv (const char *input, const char *output, newline_t newline)
   return res;
 }
 
-/** Print help. */
+/* Print help. */
 void
 print_help (void)
 {

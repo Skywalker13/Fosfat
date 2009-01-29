@@ -70,11 +70,11 @@ typedef struct ginfo {
 #define VERSION_TEXT "fosread-" VERSION "\n"
 
 
-/**
- * \brief Get info from the disk.
+/*
+ * Get info from the disk.
  *
- * \param fosfat the main structure
- * \return info
+ * fosfat the main structure
+ * return info
  */
 global_info_t *
 get_ginfo (fosfat_t *fosfat)
@@ -98,10 +98,10 @@ get_ginfo (fosfat_t *fosfat)
   return ginfo;
 }
 
-/**
- * \brief Print date and hour.
+/*
+ * Print date and hour.
  *
- * \param time date and hour
+ * time date and hour
  */
 void
 print_date (fosfat_time_t *time)
@@ -110,10 +110,10 @@ print_date (fosfat_time_t *time)
                                       time->day, time->hour, time->minute);
 }
 
-/**
- * \brief Print a file in the list.
+/*
+ * Print a file in the list.
  *
- * \param file description
+ * file description
  */
 void
 print_file (fosfat_file_t *file)
@@ -143,12 +143,12 @@ print_file (fosfat_file_t *file)
   printf ("\n");
 }
 
-/**
- * \brief List the content of a directory.
+/*
+ * List the content of a directory.
  *
- * \param fosfat the main structure
- * \param path   where in the tree
- * \return true if it is ok
+ * fosfat       handle
+ * path         where in the tree
+ * return true if it is ok
  */
 int
 list_dir (fosfat_t *fosfat, const char *loc)
@@ -190,13 +190,13 @@ list_dir (fosfat_t *fosfat, const char *loc)
   return 1;
 }
 
-/**
- * \brief Copy a file from the disk.
+/*
+ * Copy a file from the disk.
  *
- * \param fosfat the main structure
- * \param path   where in the tree
- * \param dst    where in local
- * \return true if it is ok
+ * fosfat       handle
+ * path         where in the tree
+ * dst          where in local
+ * return true if it is ok
  */
 int
 get_file (fosfat_t *fosfat, const char *path, const char *dst)
@@ -228,14 +228,14 @@ get_file (fosfat_t *fosfat, const char *path, const char *dst)
   return res;
 }
 
-/** Print help. */
+/* Print help. */
 void
 print_info (void)
 {
   printf (HELP_TEXT);
 }
 
-/** Print version. */
+/* Print version. */
 void
 print_version (void)
 {
