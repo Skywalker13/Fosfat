@@ -1384,7 +1384,8 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
     return syslist;
   }
 
-  if ((search = fosfat_search_incache (fosfat, location, type)))
+  search = fosfat_search_incache (fosfat, location, type);
+  if (search)
     return search;
 
   foslog (FOSLOG_WARNING, "file or directory \"%s\" not found", location);
