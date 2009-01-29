@@ -115,7 +115,7 @@ void fosfat_close (fosfat_t *fosfat);
  * or disable the verbosity. The logger is enabled or disabled for all
  * devices loaded.
  *
- * \param[in] state      boolean, 0 for disable the logger.
+ * \param[in] state      boolean, 0 to disable the logger.
  */
 void fosfat_logger (int state);
 
