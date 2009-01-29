@@ -669,7 +669,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
         == (size_t) FOSFAT_BLK)
     {
 #endif
-      return (fosfat_b0_t *) blk;
+      return blk;
     }
     else
       free (blk);
@@ -702,7 +702,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
       if (!fosfat->foschk)
         fosfat->foschk = c2l (blk->chk, sizeof (blk->chk));
       if (fosfat->foschk == c2l (blk->chk, sizeof (blk->chk)))
-        return (fosfat_bl_t *) blk;
+        return blk;
 
       foslog (FOSLOG_ERROR, "bad FOSCHK for this BL (block:%li)", block);
     }
@@ -737,7 +737,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
       if (!fosfat->foschk)
         fosfat->foschk = c2l (blk->chk, sizeof (blk->chk));
       if (fosfat->foschk == c2l (blk->chk, sizeof (blk->chk)))
-        return (fosfat_bd_t *) blk;
+        return blk;
 
       foslog (FOSLOG_ERROR, "bad FOSCHK for this BD (block:%li)", block);
     }
@@ -766,7 +766,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
     {
 #endif
       blk->next_data = NULL;
-      return (fosfat_data_t *) blk;
+      return blk;
     }
     else
       free (blk);
