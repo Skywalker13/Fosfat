@@ -1959,7 +1959,7 @@ fosfat_cache_file (fosfat_blf_t *file, uint32_t bl)
 }
 
 /**
- * \brief List all files on the disk for fill the global cache list.
+ * \brief List all files on the disk to fill the global cache list.
  *
  *  This function is recursive!
  *
