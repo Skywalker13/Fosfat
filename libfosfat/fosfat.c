@@ -250,10 +250,10 @@ blk2sector (uint32_t block, int fosboot)
 }
 
 /*
- * Return the offset in the block for get the right Smaky's block.
+ * Return the offset in the block to get the right Smaky's block.
  *
  * Smaky's blocks are of 256 bytes and Win32 uses 512. This function search
- * if an offset of 256 is necessary for get the right Smaky's block, or not.
+ * if an offset of 256 is necessary to get the right Smaky's block, or not.
  *
  * block        the block's number given by the disk
  * fosboot      offset in the FOS address
@@ -437,8 +437,8 @@ foslog (foslog_t type, const char *msg, ...)
 /*
  * Free a DATA file variable.
  *
- * It will be used only when a data is loaded for copy a file on the PC,
- * for freed each block after each write.
+ * It will be used only when a data is loaded to copy a file on the PC,
+ * to free each block after each write.
  *
  * var          pointer on the data block
  */
@@ -827,7 +827,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
  * Read the first useful block (0).
  *
  * This block contents some informations on the disk. But no information
- * are critical for read the file list.
+ * are critical to read the file list.
  *
  * fosfat       handle
  * block        block position
@@ -962,8 +962,8 @@ fosfat_read_data (fosfat_t *fosfat, uint32_t block,
 /*
  * Read a file description.
  *
- * A linked list is created for found all BD. And each BD have a linked list
- * for found all DATA.
+ * A linked list is created to found all BD. And each BD have a linked list
+ * to found all DATA.
  *
  * fosfat       handle
  * block        the file BD position
@@ -1005,8 +1005,8 @@ fosfat_read_file (fosfat_t *fosfat, uint32_t block)
  * Get a file and put this in a location on the PC or in a buffer.
  *
  * This function read all BD->DATA of a file BD, and write the data in a
- * new file on your disk. An output variable can be used for that the current
- * size is printed for each PTS. The properties like "Creation Date" are not
+ * new file on your disk. An output variable can be used to print the
+ * current size for each PTS. The properties like "Creation Date" are not
  * saved in the new file. All Linux file system are the same attributes for
  * them files. And for example, ext2/3 have no "Creation Date".
  * The data can be saved in a buffer if the flag is used with an offset,
@@ -1015,7 +1015,7 @@ fosfat_read_file (fosfat_t *fosfat, uint32_t block)
  * fosfat       handle
  * file         file description block
  * dst          destination on your PC
- * output       TRUE for print the size
+ * output       TRUE to print the size
  * flag         use the optional arguments or not
  * ...          offset, size and buffer
  * return a boolean (true for success)
@@ -1130,9 +1130,9 @@ fosfat_get (fosfat_t *fosfat, fosfat_bd_t *file,
 /*
  * Read a complete .DIR (or SYS_LIST).
  *
- * A linked list is created for found all files. The first BD is returned.
- * You can use this function for read all SYS_LIST, even in each folder. But
- * the result will be always the same (recursive). Warning for not to do an
+ * A linked list is created to found all files. The first BD is returned.
+ * You can use this function to read all SYS_LIST, even in each folder. But
+ * the result will be always the same (recursive). Warning to don't create an
  * infinite loop /!\
  *
  * fosfat       handle
@@ -1235,7 +1235,7 @@ fosfat_isdirname (const char *realname, const char *searchname)
  * The location must not be bigger than MAX_SPLIT /!\
  *
  * fosfat       handle
- * location     path for found the BD/BLF (foo/bar/file)
+ * location     path to found the BD/BLF (foo/bar/file)
  * type         S_BD or S_BLF
  * return the BD, BLF or NULL is nothing found
  */
@@ -1389,7 +1389,7 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
  * That uses fosfat_search_incache().
  *
  * fosfat       handle
- * location     path for found the BD (foo/bar/file)
+ * location     path to found the BD (foo/bar/file)
  * type         S_BD or S_BLF
  * return the BD, BLF or NULL is nothing found
  */
@@ -1776,7 +1776,7 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
  * Get a file and put this in a location on the PC.
  *
  * This function create a copy from src to dst. An output variable can be
- * used for that the current size is printed for each PTS.
+ * used to print the current size for each PTS.
  *
  * fosfat       handle
  * src          source on the Smaky disk
@@ -2047,7 +2047,7 @@ fosfat_cache_unloader (cachelist_t *cache)
  *
  * This function detects if the device is an hard disk or a floppy disk.
  * There is no explicit information for know that, then the CHK is tested
- * between the SYS_LIST and the first BL and a test for know if the BL's
+ * between the SYS_LIST and the first BL and a test to know if the BL's
  * pointer in the BD is right.
  *
  * fosfat       handle
