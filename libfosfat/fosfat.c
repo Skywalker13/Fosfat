@@ -653,8 +653,10 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
   {
     fosfat_b0_t *blk;
 
-    if ((blk = malloc (sizeof (fosfat_b0_t))))
-    {
+    blk = malloc (sizeof (fosfat_b0_t));
+    if (!blk)
+      break;
+
 #ifdef _WIN32
       if (w32disk_readsectors (fosfat->dev, buffer,
                                blk2sector (block, fosfat->fosboot), csector))
@@ -671,7 +673,6 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
       }
       else
         free (blk);
-    }
     break;
   }
 
@@ -679,8 +680,10 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
   {
     fosfat_bl_t *blk;
 
-    if ((blk = malloc (sizeof (fosfat_bl_t))))
-    {
+    blk = malloc (sizeof (fosfat_bl_t));
+    if (!blk)
+      break;
+
 #ifdef _WIN32
       if (w32disk_readsectors (fosfat->dev, buffer,
                                blk2sector (block, fosfat->fosboot), csector))
@@ -704,7 +707,6 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
         foslog (FOSLOG_ERROR, "bad FOSCHK for this BL (block:%li)", block);
       }
       free (blk);
-    }
     break;
   }
 
@@ -712,8 +714,10 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
   {
     fosfat_bd_t *blk;
 
-    if ((blk = malloc (sizeof (fosfat_bd_t))))
-    {
+    blk = malloc (sizeof (fosfat_bd_t));
+    if (!blk)
+      break;
+
 #ifdef _WIN32
       if (w32disk_readsectors (fosfat->dev, buffer,
                                blk2sector (block, fosfat->fosboot), csector))
@@ -738,7 +742,6 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
         foslog (FOSLOG_ERROR, "bad FOSCHK for this BD (block:%li)", block);
       }
       free (blk);
-    }
     break;
   }
 
@@ -746,8 +749,10 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
   {
     fosfat_data_t *blk;
 
-    if ((blk = malloc (sizeof (fosfat_data_t))))
-    {
+    blk = malloc (sizeof (fosfat_data_t));
+    if (!blk)
+      break;
+
 #ifdef _WIN32
       if (w32disk_readsectors (fosfat->dev, buffer,
                                blk2sector (block, fosfat->fosboot), csector))
@@ -765,7 +770,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
       }
       else
         free (blk);
-    }
+    break;
   }
   }
 
