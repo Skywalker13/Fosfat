@@ -1,6 +1,6 @@
 /*
  * FOS smascii: Smaky's ASCII to Extended ASCII (ISO-8859-1) converter
- * Copyright (C) 2007-2008 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * Copyright (C) 2007-2009 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
  *
  * Thanks to Pierre Arnaud <pierre.arnaud@opac.ch>
  *           for its help and the documentation
