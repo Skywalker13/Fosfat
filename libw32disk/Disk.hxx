@@ -1,7 +1,7 @@
 /* No license specified, original author unknown */
 
-#ifndef DISK_HXX_
-#define DISK_HXX_
+#ifndef DISK_HXX
+#define DISK_HXX
 
 #include <windows.h>
 #include <cstddef>
@@ -69,4 +69,4 @@ class Disk {
     std::size_t sectorSize;
 };
 
-#endif /* DISK_HXX_ */
+#endif /* DISK_HXX */

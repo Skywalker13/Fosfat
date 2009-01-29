@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef W32DISK_H_
-#define W32DISK_H_
+#ifndef W32DISK_H
+#define W32DISK_H
 
 #ifdef BUILD_DLL
 /* dll exports */
@@ -52,4 +52,4 @@ EXPORT int w32disk_valid (win32disk_t *disk);
 }
 #endif
 
-#endif /* W32DISK_H_ */
+#endif /* W32DISK_H */
