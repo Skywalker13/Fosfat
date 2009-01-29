@@ -49,7 +49,7 @@
  * \return 1 for success and 0 for error
  */
 int
-run_conv (const char *input, const char *output, e_newline newline)
+run_conv (const char *input, const char *output, newline_t newline)
 {
   int res = 1;
   FILE *in = NULL, *out = NULL;
@@ -106,7 +106,7 @@ main (int argc, char **argv)
   int res = 0;
   char *input_file;
   char *output_file;
-  e_newline newline = ASCII_CR;
+  newline_t newline = ASCII_CR;
 
   if (argc >= 3)
   {
