@@ -368,7 +368,7 @@ my_strcasestr (const char *s1, const char *s2)
 
   _s1 = strdup (s1);
   _s2 = strdup (s2);
-  res = strstr (strlwr (_s1), strlwr (_s2));
+  res = strstr (lc (_s1), lc (_s2));
   free (_s1);
   free (_s2);
   return res;
