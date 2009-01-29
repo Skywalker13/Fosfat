@@ -32,7 +32,7 @@ clean:
 depend:
 	$(CXX) -MM $(CFLAGS) $(OPTFLAGS) $(SRCS) 1>.depend
 
-.phony: clean depend
+.PHONY: clean depend
 
 #
 # include dependency files if they exist

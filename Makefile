@@ -70,5 +70,5 @@ win32: win32-dev win32-common
 
 win32-zip: win32-build win32-common
 
-.phony: clean install-deb install-dev uninstall win32-dev win32-build win32-common
+.PHONY: clean install-deb install-dev uninstall win32-dev win32-build win32-common
 .PHONY: doxygen

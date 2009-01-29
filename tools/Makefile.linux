@@ -67,7 +67,7 @@ depend:
 	$(CC) -MM $(CFLAGS1) $(OPTFLAGS) $(SRCS1) 1>.depend1
 	$(CC) -MM $(CFLAGS2) $(OPTFLAGS) $(SRCS2) 1>.depend2
 
-.phony: clean install-man uninstall-man depend
+.PHONY: clean install-man uninstall-man depend
 
 #
 # include dependency files if they exist

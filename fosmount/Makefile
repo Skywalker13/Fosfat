@@ -43,4 +43,4 @@ uninstall: uninstall-man
 uninstall-man:
 	rm -f $(mandir)/man1/$(MANPAGES)
 
-.phony: clean install-man uninstall-man
+.PHONY: clean install-man uninstall-man
