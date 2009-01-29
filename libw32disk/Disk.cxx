@@ -3,7 +3,7 @@
 #include <windows.h>
 #include <winioctl.h>
 
-#include "Disk.hxx"
+#include "Disk.h"
 
 static inline void
 Multiply512 (DWORD Input, DWORD& lowResult, DWORD& highResult)

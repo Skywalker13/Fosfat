@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 /* C++ Class for drive low level access (Win9x/NT) */
-#include "Disk.hxx"
+#include "Disk.h"
 
 #include "w32disk.h"
 
