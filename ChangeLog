@@ -4,6 +4,9 @@
 	* A lot of cleaning and all doxygen documentations
 	are only in the public header file.
 
+	* Add option in configure to generate doxygen HTML
+	and PDF outputs.
+
 2008-02-04  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Improve a lot the code lisibility.
