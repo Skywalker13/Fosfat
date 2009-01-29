@@ -14,6 +14,8 @@ endif
 LIBNAME = libfosfat
 STATIC_LIBNAME = ${LIBNAME}.a
 SHARED_LIBNAME = ${LIBNAME}.so
+SHARED_LIBNAME_VERSION = ${SHARED_LIBNAME}.${VERSION}.${PATCHLEVEL}.${SUBLEVEL}
+SHARED_LIBNAME_MAJOR = $(SHARED_LIBNAME).$(VERSION)
 
 SRCS = fosfat.c
 
@@ -31,19 +33,24 @@ lib_static: $(OBJS)
 	$(RANLIB) $(STATIC_LIBNAME)
 
 lib_shared: $(OBJS)
-	$(CC) -shared -Wl,-soname,$(SHARED_LIBNAME).${VERSION} \
-	$(OBJS) $(LDFLAGS) -o $(SHARED_LIBNAME).${VERSION}
+	$(CC) -shared -Wl,-soname,$(SHARED_LIBNAME_MAJOR) \
+	  $(OBJS) $(LDFLAGS) $(EXTRALIBS) -o $(SHARED_LIBNAME_VERSION)
+	$(LN) -sf $(SHARED_LIBNAME_VERSION) $(SHARED_LIBNAME_MAJOR)
+	$(LN) -sf $(SHARED_LIBNAME_MAJOR) $(SHARED_LIBNAME)
 
 clean:
 	rm -f *.o *.a *.dll *.so*
 	rm -f .depend
 
 install: $(BUILD_RULES)
+	$(INSTALL) -d $(libdir)
 	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(STATIC_LIBNAME) $(libdir); \
 	if [ $(BUILD_SHARED) = yes ]; then \
-	  $(INSTALL) -c $(SHARED_LIBNAME).${VERSION} $(libdir); \
-	  $(LN) -sf $(SHARED_LIBNAME).${VERSION} $(libdir)/$(SHARED_LIBNAME); \
+	  $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(libdir); \
+	  $(LN) -sf $(SHARED_LIBNAME_VERSION) $(libdir)/$(SHARED_LIBNAME_MAJOR); \
+	  $(LN) -sf $(SHARED_LIBNAME_MAJOR) $(libdir)/$(SHARED_LIBNAME); \
 	fi
+	$(INSTALL) -d $(includedir)
 	$(INSTALL) -m 644 fosfat.h $(includedir)
 
 uninstall:
