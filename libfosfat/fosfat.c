@@ -339,6 +339,23 @@ my_strnchr (const char *s, size_t count, int c)
   return NULL;
 }
 
+static inline char *
+my_strcasestr (const char *s1, const char *s2)
+{
+#ifdef _WIN32
+  char *res, *_s1, *_s2;
+
+  _s1 = strdup (s1);
+  _s2 = strdup (s2);
+  res = strstr (strlwr (_s1), strlwr (_s2));
+  free (_s1);
+  free (_s2);
+  return res;
+#else
+  return strcasestr (s1, s2);
+#endif
+}
+
 /**
  * \brief Enable or disable the internal FOS logger.
  *
@@ -1173,11 +1190,7 @@ fosfat_isdirname (const char *realname, const char *searchname)
 {
       /* Test with a name as foobar.dir */
   if ((
-#ifdef _WIN32
-        (strstr (realname, ".dir") || strstr (realname, ".DIR"))
-#else
-        strcasestr (realname, ".dir")
-#endif
+        my_strcasestr (realname, ".dir")
         && !strncasecmp (realname, searchname, strlen (realname) - 4)
         && strlen (searchname) == strlen (realname) - 4
       ) ||
