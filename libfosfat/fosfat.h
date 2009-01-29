@@ -141,7 +141,7 @@ void fosfat_free_listdir (fosfat_file_t *var);
  * islink    : test if the location is a soft-link
  * isvisible : test if the location is not hidden
  * isencoded : test if the location is encoded
- * isopenexm : test if the location is 'open excusif' and 'multiple'
+ * isopenexm : test if the location is 'open exclusif' and 'multiple'
  *
  * param fosfat[in]     disk loaded
  * param location[in]   file or directory to test
