@@ -672,7 +672,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
 #endif
       return blk;
     }
-      free (blk);
+    free (blk);
     break;
   }
 
@@ -768,7 +768,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
       blk->next_data = NULL;
       return blk;
     }
-      free (blk);
+    free (blk);
     break;
   }
   }
