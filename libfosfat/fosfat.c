@@ -1381,15 +1381,15 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
   if (type == S_BD && (*location == '\0' || !strcmp (location, "/")))
   {
     syslist = fosfat_read_dir (fosfat, FOSFAT_SYSLIST);
-    return (fosfat_bd_t *) syslist;
+    return syslist;
   }
 
   if ((search = fosfat_search_incache (fosfat, location, type)))
   {
     if (type == S_BLF)
-      return (fosfat_blf_t *) search;
+      return search;
     else
-      return (fosfat_bd_t *) search;
+      return search;
   }
 
   foslog (FOSLOG_WARNING, "file or directory \"%s\" not found", location);
