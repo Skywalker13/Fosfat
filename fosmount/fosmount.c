@@ -157,7 +157,7 @@ fos_readlink (const char *path, char *dst, size_t size)
 
   link = fosfat_symlink (fosfat, path);
 
-  if (strlen(link) < size)
+  if (strlen (link) < size)
   {
     memcpy (dst, link, strlen (link) + 1);
     res = 0;
@@ -236,7 +236,7 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
       char *name = strdup (files->name);
 
       if (strstr (name, ".dir"))
-        *(name + strlen(name) - 4) = '\0';
+        *(name + strlen (name) - 4) = '\0';
 
       /* Add entry in the file list */
       filler (buf, name, st, 0);
