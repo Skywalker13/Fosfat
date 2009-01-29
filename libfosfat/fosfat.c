@@ -635,7 +635,8 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
   /* sector seems to be always 512 with Window$ */
   ssize = w32disk_sectorsize (fosfat->dev);
 
-  if ((csector = (size_t) FOSFAT_BLK / ssize) == 0)
+  csector = (size_t) FOSFAT_BLK / ssize;
+  if (!csector)
     csector = 1;
 
   buffer = calloc (1, csector * ssize);
