@@ -1317,7 +1317,7 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
     else
       bd_found = fosfat_read_file (fosfat, bd_block);
 
-    return (fosfat_bd_t *) bd_found;
+    return bd_found;
   }
 
   case S_BLF:
@@ -1342,7 +1342,7 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
           memcpy (blf_found, &bl_found->file[i], sizeof (*blf_found));
           free (bl_found);
 
-          return (fosfat_blf_t *) blf_found;
+          return blf_found;
         }
       }
     }
