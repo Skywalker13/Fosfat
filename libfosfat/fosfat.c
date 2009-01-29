@@ -1243,7 +1243,7 @@ fosfat_isdirname (const char *realname, const char *searchname)
 /**
  * \brief Search a BD or a BLF from a location in the cache.
  *
- *  The location must be not bigger of MAX_SPLIT /!\
+ *  The location must not be bigger than MAX_SPLIT /!\
  *
  * \param fosfat   the main structure
  * \param location path for found the BD/BLF (foo/bar/file)
