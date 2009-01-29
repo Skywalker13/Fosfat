@@ -1,3 +1,9 @@
+
+2009-01-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* A lot of cleaning and all doxygen documentations
+	are only in the public header file.
+
 2008-02-04  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Improve a lot the code lisibility.
