@@ -58,11 +58,8 @@
 static fosfat_t *fosfat;
 
 
-/**
- * \brief Convert 'fosfat_file_t' to 'struct stat'.
- *
- * \param file file description
- * \return the stat
+/*
+ * Convert 'fosfat_file_t' to 'struct stat'.
  */
 static struct stat *
 in_stat (fosfat_file_t *file)
@@ -120,11 +117,8 @@ in_stat (fosfat_file_t *file)
   return st;
 }
 
-/**
- * \brief Get the file stat from a path an return as struct stat.
- *
- * \param path (/foo/bar)
- * \return the stat
+/*
+ * Get the file stat from a path an return as struct stat.
  */
 static struct stat *
 get_stat (const char *path)
@@ -141,13 +135,13 @@ get_stat (const char *path)
   return st;
 }
 
-/**
- * \brief FUSE : read the target of a symlink.
+/*
+ * FUSE : read the target of a symlink.
  *
- * \param path (foo/bar)
- * \param dst  target
- * \param size max length
- * \return 0 for success
+ * path         (foo/bar)
+ * dst          target
+ * size         max length
+ * return 0 for success
  */
 static int
 fos_readlink (const char *path, char *dst, size_t size)
@@ -169,12 +163,12 @@ fos_readlink (const char *path, char *dst, size_t size)
   return res;
 }
 
-/**
- * \brief FUSE : get attributes of a file.
+/*
+ * FUSE : get attributes of a file.
  *
- * \param path  (foo/bar)
- * \param stbuf attributes
- * \return 0 for success
+ * path         (foo/bar)
+ * stbuf        attributes
+ * return 0 for success
  */
 static int
 fos_getattr (const char *path, struct stat *stbuf)
@@ -203,15 +197,15 @@ fos_getattr (const char *path, struct stat *stbuf)
   return 0;
 }
 
-/**
- * \brief FUSE : read a directory.
+/*
+ * FUSE : read a directory.
  *
- * \param path   (foo/bar)
- * \param buf    buffer for filler
- * \param filler function for put each entry
- * \param offset not used
- * \param fi     not used
- * \return 0 for success
+ * path         (foo/bar)
+ * buf          buffer for filler
+ * filler       function for put each entry
+ * offset       not used
+ * fi           not used
+ * return 0 for success
  */
 static int
 fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
@@ -251,12 +245,12 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
   return 0;
 }
 
-/**
- * \brief FUSE : test if a file can be opened.
+/*
+ * FUSE : test if a file can be opened.
  *
- * \param path (foo/bar)
- * \param fi   flags
- * \return 0 for success
+ * path         (foo/bar)
+ * fi           flags
+ * return 0 for success
  */
 static int
 fos_open (const char *path, struct fuse_file_info *fi)
@@ -272,15 +266,15 @@ fos_open (const char *path, struct fuse_file_info *fi)
   return 0;
 }
 
-/**
- * \brief FUSE : read the data of a file.
+/*
+ * FUSE : read the data of a file.
  *
- * \param path   (foo/bar)
- * \param buf    buffer for put the data
- * \param size   size in bytes
- * \param offset offset in bytes
- * \param fi     not used
- * \return the size
+ * path         (foo/bar)
+ * buf          buffer for put the data
+ * size         size in bytes
+ * offset       offset in bytes
+ * fi           not used
+ * return the size
  */
 static int
 fos_read (const char *path, char *buf, size_t size,
@@ -328,21 +322,21 @@ fos_read (const char *path, char *buf, size_t size,
   return size;
 }
 
-/** Print help. */
+/* Print help. */
 void
 print_info (void)
 {
   printf (HELP_TEXT);
 }
 
-/** Print version. */
+/* Print version. */
 void
 print_version (void)
 {
   printf (VERSION_TEXT);
 }
 
-/** FUSE implemented functions */
+/* FUSE implemented functions */
 static struct fuse_operations fosfat_oper = {
   .getattr  = fos_getattr,
   .readdir  = fos_readdir,
