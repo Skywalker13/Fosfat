@@ -13,7 +13,7 @@ cc="${cross}gcc"
 cxx="${cross}g++"
 strip="${cross}strip"
 
-cflags="-Wall -Wextra -Werror -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -DVERSION=\"\\\"$VERSION.$PATCHLEVEL.$SUBLEVEL$EXTRA\\\"\""
+cflags="-Wall -Wextra -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -DVERSION=\"\\\"$VERSION.$PATCHLEVEL.$SUBLEVEL$EXTRA\\\"\""
 ldflags=
 
 append_config(){
