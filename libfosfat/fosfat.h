@@ -32,6 +32,10 @@
  * libfosfat public API header.
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 #define FOSFAT_NAMELGT  17
 
 #define F_UNDELETE      (1 << 0)
@@ -255,5 +259,9 @@ int fosfat_get_file (fosfat_t *fosfat,
  */
 char *fosfat_get_buffer (fosfat_t *fosfat,
                          const char *path, int offset, int size);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* FOSFAT_H */
