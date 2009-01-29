@@ -74,9 +74,9 @@ typedef struct fosfat_s fosfat_t;
 
 
 /**
- * Load a device compatible Smaky FOS. The device can be a file or a device.
+ * Load a device compatible Smaky FOS. The device can be a file or a disk.
  * But with Window$ currently only device are supported. fosfat_close() must
- * always be called to freeing the memory and close the device.
+ * always be called to free the memory and close the device.
  *
  * Linux   : specify the location on /dev/... or on a file
  * Window$ : specify the device with 'a' for diskette, 'c' for the first hard
@@ -84,7 +84,7 @@ typedef struct fosfat_s fosfat_t;
  *
  * \param[in] dev        device or location.
  * \param[in] disk       type of disk, use FOSFAT_AD for auto-detection.
- * \param[in] flag       use F_UNDELETE for load deleted files or 0 for normal.
+ * \param[in] flag       use F_UNDELETE to load deleted files or 0 for normal.
  * \return NULL if error or return the disk handle.
  */
 fosfat_t *fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag);
@@ -106,7 +106,7 @@ void fosfat_close (fosfat_t *fosfat);
 void fosfat_logger (int state);
 
 /**
- * Get the diskname of a specific disk. The pointer must be freed when
+ * Get the disk's name of a specific device. The pointer must be freed when
  * no longer used.
  *
  * \param[in] fosfat     disk handle.
@@ -116,7 +116,7 @@ char *fosfat_diskname (fosfat_t *fosfat);
 
 /**
  * Get file/dir list of a directory in a linked list. When the list is no
- * longer used, fosfat_free_listdir() must always be called to freeing
+ * longer used, fosfat_free_listdir() must always be called to free
  * the memory.
  *
  * \param[in] fosfat     disk handle.
@@ -216,12 +216,12 @@ char *fosfat_symlink (fosfat_t *fosfat, const char *location);
 /**
  * Get a file from a location and put this on the user hard drive. You can't
  * get a directory with this function, you must recursively list directory
- * with fosfat_list_dir() and use fosfat_get_file with each file entry.
+ * with fosfat_list_dir() and use fosfat_get_file() with each file entry.
  *
  * \param[in] fosfat     disk handle.
  * \param[in] src        source location on the FOS disk.
  * \param[in] dst        destination location on the user hard drive.
- * \param[in] output     boolean for print copy progression in the console.
+ * \param[in] output     boolean to print copy progression in the terminal.
  * \return a boolean, 0 for error.
  */
 int fosfat_get_file (fosfat_t *fosfat,
