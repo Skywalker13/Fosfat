@@ -74,9 +74,11 @@ typedef struct fosfat_s fosfat_t;
 
 
 /**
- * Load a device compatible Smaky FOS. The device can be a file or a disk.
- * But with Window$ currently only device are supported. fosfat_close() must
- * always be called to free the memory and close the device.
+ * \brief Load a device compatible Smaky FOS.
+ *
+ * The device can be a file or a disk. But with Window$ currently only device
+ * are supported. fosfat_close() must always be called to free the memory and
+ * close the device.
  *
  * Linux   : specify the location on /dev/... or on a file
  * Window$ : specify the device with 'a' for diskette, 'c' for the first hard
@@ -90,13 +92,15 @@ typedef struct fosfat_s fosfat_t;
 fosfat_t *fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag);
 
 /**
- * Free the memory and close the device properly.
+ * \brief Free the memory and close the device properly.
  *
  * \param[in] fosfat     disk handle.
  */
 void fosfat_close (fosfat_t *fosfat);
 
 /**
+ * \brief Change log level (verbosity).
+ *
  * By default, the internal logger is disabled. Use this function to enable
  * or disable the verbosity. The logger is enabled or disabled for all
  * devices loaded.
@@ -106,8 +110,9 @@ void fosfat_close (fosfat_t *fosfat);
 void fosfat_logger (int state);
 
 /**
- * Get the disk's name of a specific device. The pointer must be freed when
- * no longer used.
+ * \brief Get the disk's name of a specific device.
+ *
+ * The pointer must be freed when no longer used.
  *
  * \param[in] fosfat     disk handle.
  * \return NULL if error/null-string or return the name.
@@ -115,9 +120,10 @@ void fosfat_logger (int state);
 char *fosfat_diskname (fosfat_t *fosfat);
 
 /**
- * Get file/dir list of a directory in a linked list. When the list is no
- * longer used, fosfat_free_listdir() must always be called to free
- * the memory.
+ * \brief Get file/dir list of a directory in a linked list.
+ *
+ * When the list is no longer used, fosfat_free_listdir() must always be
+ * called to free the memory.
  *
  * \param[in] fosfat     disk handle.
  * \param[in] location   directory to list.
@@ -126,15 +132,14 @@ char *fosfat_diskname (fosfat_t *fosfat);
 fosfat_file_t *fosfat_list_dir (fosfat_t *fosfat, const char *location);
 
 /**
- * Free the memory for an linked list created by fosfat_list_dir().
+ * \brief Free the memory for an linked list created by fosfat_list_dir().
  *
  * \param[in] var        first file of the linked list.
  */
 void fosfat_free_listdir (fosfat_file_t *var);
 
 /**
- * Get boolean information on a specific file or folder spedified with
- * a location.
+ * \brief Get boolean information on a specific file or folder.
  *
  * Test if the location is a directory.
  *
@@ -145,8 +150,7 @@ void fosfat_free_listdir (fosfat_file_t *var);
 int fosfat_isdir (fosfat_t *fosfat, const char *location);
 
 /**
- * Get boolean information on a specific file or folder spedified with
- * a location.
+ * \brief Get boolean information on a specific file or folder.
  *
  * Test if the location is a soft-link.
  *
@@ -157,8 +161,7 @@ int fosfat_isdir (fosfat_t *fosfat, const char *location);
 int fosfat_islink (fosfat_t *fosfat, const char *location);
 
 /**
- * Get boolean information on a specific file or folder spedified with
- * a location.
+ * \brief Get boolean information on a specific file or folder.
  *
  * Test if the location is not hidden.
  *
@@ -169,8 +172,7 @@ int fosfat_islink (fosfat_t *fosfat, const char *location);
 int fosfat_isvisible (fosfat_t *fosfat, const char *location);
 
 /**
- * Get boolean information on a specific file or folder spedified with
- * a location.
+ * \brief Get boolean information on a specific file or folder.
  *
  * Test if the location is encoded.
  *
@@ -181,8 +183,7 @@ int fosfat_isvisible (fosfat_t *fosfat, const char *location);
 int fosfat_isencoded (fosfat_t *fosfat, const char *location);
 
 /**
- * Get boolean information on a specific file or folder spedified with
- * a location.
+ * \brief Get boolean information on a specific file or folder.
  *
  * Test if the location is 'open exclusif' and 'multiple'.
  *
@@ -193,9 +194,11 @@ int fosfat_isencoded (fosfat_t *fosfat, const char *location);
 int fosfat_isopenexm (fosfat_t *fosfat, const char *location);
 
 /**
- * Get some informations on a file or a directory. File size, attributes,
- * creation date, writing date and use date. Look fosfat_file_t structure
- * for more informations. The pointer must be freed when no longer used.
+ * \brief Get some informations on a file or a directory.
+ *
+ * File size, attributes, creation date, writing date and use date. Look
+ * fosfat_file_t structure for more informations. The pointer must be freed
+ * when no longer used.
  *
  * \param[in] fosfat     disk handle.
  * \param[in] location   file or directory where get informations.
@@ -204,6 +207,8 @@ int fosfat_isopenexm (fosfat_t *fosfat, const char *location);
 fosfat_file_t *fosfat_get_stat (fosfat_t *fosfat, const char *location);
 
 /**
+ * \brief Get the target of a soft-link.
+ *
  * If the location is a soft-link, then this function will return the
  * location of the target. The pointer must be freed when no longer used.
  *
@@ -214,9 +219,11 @@ fosfat_file_t *fosfat_get_stat (fosfat_t *fosfat, const char *location);
 char *fosfat_symlink (fosfat_t *fosfat, const char *location);
 
 /**
- * Get a file from a location and put this on the user hard drive. You can't
- * get a directory with this function, you must recursively list directory
- * with fosfat_list_dir() and use fosfat_get_file() with each file entry.
+ * \brief Get a file from a location and put this on the user hard drive.
+ *
+ * You can't get a directory with this function, you must recursively list
+ * the directory with fosfat_list_dir() and use fosfat_get_file() with each
+ * file entry.
  *
  * \param[in] fosfat     disk handle.
  * \param[in] src        source location on the FOS disk.
@@ -228,9 +235,11 @@ int fosfat_get_file (fosfat_t *fosfat,
                      const char *src, const char *dst, int output);
 
 /**
- * Get a buffer of a file. Usefull for get only a part of a file without
- * save anything on the user hard drive. You can get all the data if you
- * prefer. The pointer must be freed when no longer used.
+ * \brief Get a buffer of a file.
+ *
+ * Useful to get only a part of a file without save anything on the user
+ * hard drive. You can get all the data if you prefer. The pointer must be
+ * freed when no longer used.
  *
  * \param[in] fosfat     disk handle.
  * \param[in] path       file where get data.
