@@ -377,6 +377,21 @@ my_strcasestr (const char *s1, const char *s2)
 #endif
 }
 
+static inline char *
+my_strndup (const char *src, size_t n)
+{
+#ifdef _WIN32
+  char *dst;
+
+  dst = malloc (n + 1);
+  memcpy (dst, src, n);
+  dst[n] = '\0';
+  return dst;
+#else
+  return strndup (src, n);
+#endif
+}
+
 /**
  * \brief Enable or disable the internal FOS logger.
  *
@@ -1928,9 +1943,8 @@ fosfat_cache_file (fosfat_blf_t *file, uint32_t bl)
   if ((char) file->name[0] == '\0')
   {
     cachefile->isdel = 1;
-    cachefile->name = strdup ((char *) file->name + 1);
-    if (strlen (cachefile->name) >= 16)
-      cachefile->name[15] = '\0';
+    cachefile->name =
+      my_strndup ((char *) file->name + 1, sizeof (file->name - 1));
   }
   else
   {
