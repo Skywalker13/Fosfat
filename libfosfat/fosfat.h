@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef FOSFAT_H_
-#define FOSFAT_H_
+#ifndef FOSFAT_H
+#define FOSFAT_H
 
 #define FOSFAT_NAMELGT  17
 
@@ -202,4 +202,4 @@ int fosfat_get_file (fosfat_t *fosfat, const char *src,
 char *fosfat_get_buffer (fosfat_t *fosfat, const char *path,
                          int offset, int size);
 
-#endif /* FOSFAT_H_ */
+#endif /* FOSFAT_H */
