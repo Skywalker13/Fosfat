@@ -888,7 +888,7 @@ fosfat_read_data (fosfat_t *fosfat, uint32_t block,
       if (block_list)
         block_list->pt = block + (uint32_t) i;
     }
-    return (fosfat_bl_t *) first_bl;
+    return first_bl;
   }
 
   case B_DATA:
@@ -907,7 +907,7 @@ fosfat_read_data (fosfat_t *fosfat, uint32_t block,
       block_data->next_data = fosfat_read_d (fosfat, block + (uint32_t) i);
       block_data = block_data->next_data;
     }
-    return (fosfat_data_t *) first_data;
+    return first_data;
   }
 
   /* Only for no compilation warning because
