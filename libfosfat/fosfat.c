@@ -2150,10 +2150,7 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
   fosfat->dev = fopen (dev, "r");
 #endif
   if (!fosfat->dev)
-  {
-    free (fosfat);
-    return NULL;
-  }
+    goto err_dev;
 
   /* Open the device */
   foslog (FOSLOG_NOTICE, "device is opening ...");
@@ -2188,35 +2185,28 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
     foslog (FOSLOG_ERROR, "disk auto detection for \"%s\" has failed", dev);
 
   default:
-#ifdef _WIN32
-    free_w32disk (fosfat->dev);
-#else
-    fclose (fosfat->dev);
-#endif
-    free (fosfat);
-    fosfat = NULL;
+    goto err;
   }
-
-  if (!fosfat)
-    return NULL;
 
   foslog (FOSLOG_NOTICE, "cache file is loading ...");
 
   fosfat->cachelist = fosfat_cache_dir (fosfat, FOSFAT_SYSLIST);
   if (!fosfat->cachelist)
-  {
-#ifdef _WIN32
-    free_w32disk (fosfat->dev);
-#else
-    fclose (fosfat->dev);
-#endif
-    free (fosfat);
-    fosfat = NULL;
-  }
-  else
+    goto err;
+
     foslog (FOSLOG_NOTICE, "fosfat is ready");
 
   return fosfat;
+
+ err:
+#ifdef _WIN32
+  free_w32disk (fosfat->dev);
+#else
+  fclose (fosfat->dev);
+#endif
+ err_dev:
+  free (fosfat);
+  return NULL;
 }
 
 /*
