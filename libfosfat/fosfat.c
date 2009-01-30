@@ -2194,7 +2194,7 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
   if (!fosfat->cachelist)
     goto err;
 
-    foslog (FOSLOG_NOTICE, "fosfat is ready");
+  foslog (FOSLOG_NOTICE, "fosfat is ready");
 
   return fosfat;
 
