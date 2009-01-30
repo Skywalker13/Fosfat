@@ -1732,9 +1732,9 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
           sysdir = fosfat_stat (&files->file[i]);
           strcpy (sysdir->name, "..dir");
         }
+        continue;
       }
-      else
-      {
+
         if (!fosfat_in_isopenexm (&files->file[i]))
           continue;
 
@@ -1752,7 +1752,6 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
             listdir = firstfile;
           }
         }
-      }
     }
   } while ((files = files->next_bl));
 
