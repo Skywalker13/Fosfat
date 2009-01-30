@@ -1735,23 +1735,23 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
         continue;
       }
 
-        if (!fosfat_in_isopenexm (&files->file[i]))
-          continue;
+      if (!fosfat_in_isopenexm (&files->file[i]))
+        continue;
 
-        if (fosfat->viewdel || fosfat_in_isnotdel (&files->file[i]))
+      if (fosfat->viewdel || fosfat_in_isnotdel (&files->file[i]))
+      {
+        /* Complete the linked list with all files */
+        if (listdir)
         {
-          /* Complete the linked list with all files */
-          if (listdir)
-          {
-            listdir->next_file = fosfat_stat (&files->file[i]);
-            listdir = listdir->next_file;
-          }
-          else
-          {
-            firstfile = fosfat_stat (&files->file[i]);
-            listdir = firstfile;
-          }
+          listdir->next_file = fosfat_stat (&files->file[i]);
+          listdir = listdir->next_file;
         }
+        else
+        {
+          firstfile = fosfat_stat (&files->file[i]);
+          listdir = firstfile;
+        }
+      }
     }
   } while ((files = files->next_bl));
 
