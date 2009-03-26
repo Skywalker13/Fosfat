@@ -1436,7 +1436,7 @@ fosfat_isdir (fosfat_t *fosfat, const char *location)
   if (!strcmp (location, "/"))
     return 1;
 
-  FOSFAT_IS_DIR (fosfat, location);
+  FOSFAT_IS_DIR (fosfat, location)
 }
 
 /*
@@ -1454,7 +1454,7 @@ fosfat_islink (fosfat_t *fosfat, const char *location)
   if (!fosfat || !location)
     return 0;
 
-  FOSFAT_IS_LINK (fosfat, location);
+  FOSFAT_IS_LINK (fosfat, location)
 }
 
 /*
@@ -1472,7 +1472,7 @@ fosfat_isvisible (fosfat_t *fosfat, const char *location)
   if (!fosfat || !location)
     return 0;
 
-  FOSFAT_IS_VISIBLE (fosfat, location);
+  FOSFAT_IS_VISIBLE (fosfat, location)
 }
 
 /*
@@ -1490,7 +1490,7 @@ fosfat_isencoded (fosfat_t *fosfat, const char *location)
   if (!fosfat || !location)
     return 0;
 
-  FOSFAT_IS_ENCODED (fosfat, location);
+  FOSFAT_IS_ENCODED (fosfat, location)
 }
 
 /*
@@ -1508,7 +1508,7 @@ fosfat_isopenexm (fosfat_t *fosfat, const char *location)
   if (!fosfat || !location)
     return 0;
 
-  FOSFAT_IS_OPENEXM (fosfat, location);
+  FOSFAT_IS_OPENEXM (fosfat, location)
 }
 
 /*
