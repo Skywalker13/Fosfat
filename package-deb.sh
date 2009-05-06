@@ -30,6 +30,7 @@ find "$PACKAGE/$DIR" \( -name .svn -or \
                         -name '*~' \
                      \) -exec rm -rf '{}' \; 2>/dev/null
 find "$PACKAGE/$DIR" \( -name 'fosread' -or \
+                        -name 'fosrec' -or \
                         -name 'smascii' -or \
                         -name 'fosmount' \
                      \) -exec rm -f '{}' \; 2>/dev/null
