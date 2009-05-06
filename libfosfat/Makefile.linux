@@ -42,7 +42,7 @@ clean:
 	rm -f *.o *.a *.dll *.so*
 	rm -f .depend
 
-install: $(BUILD_RULES)
+install-lib: $(BUILD_RULES)
 	$(INSTALL) -d $(libdir)
 	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(STATIC_LIBNAME) $(libdir); \
 	if [ $(BUILD_SHARED) = yes ]; then \
@@ -50,8 +50,12 @@ install: $(BUILD_RULES)
 	  $(LN) -sf $(SHARED_LIBNAME_VERSION) $(libdir)/$(SHARED_LIBNAME_MAJOR); \
 	  $(LN) -sf $(SHARED_LIBNAME_MAJOR) $(libdir)/$(SHARED_LIBNAME); \
 	fi
+
+install-header:
 	$(INSTALL) -d $(includedir)
 	$(INSTALL) -m 644 fosfat.h $(includedir)
+
+install: install-lib install-header
 
 uninstall:
 	rm -f $(libdir)/$(STATIC_LIBNAME)
