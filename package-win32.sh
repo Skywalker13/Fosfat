@@ -18,6 +18,7 @@ cp -pP README \
        libw32disk/w32disk.dll \
        tools/fosread.exe \
        tools/smascii.exe \
+       tools/fosrec.exe \
        "$PACKAGE/$DIR"
 
 cd "$PACKAGE"
