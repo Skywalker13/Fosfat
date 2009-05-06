@@ -1,4 +1,10 @@
 
+2009-05-06  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* fosrec: Add a new tool to easily recovery files.
+
+	* Fix Debian/Ubuntu packaging.
+
 2009-01-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* A lot of cleaning and all doxygen documentations
