@@ -43,6 +43,9 @@ install-deb:
 	$(MAKE) -C tools install
 	$(MAKE) -C fosmount install
 
+install-lib:
+	$(MAKE) -C libfosfat install-lib
+
 install-dev:
 	$(MAKE) -C libfosfat install
 
