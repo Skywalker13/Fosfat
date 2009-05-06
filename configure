@@ -735,6 +735,8 @@ append_config "FOSMOUNT=$fosmount"
 append_config "DOC=$doc"
 
 touch config.win32
+cp -f libfosfat/Makefile.linux libfosfat/Makefile
+cp -f tools/Makefile.linux tools/Makefile
 
 clean
 exit 0

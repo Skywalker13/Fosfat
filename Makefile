@@ -12,8 +12,6 @@ ifeq ($(DOC),yes)
 endif
 
 all: $(DOXYGEN)
-	cp -f libfosfat/Makefile.linux libfosfat/Makefile
-	cp -f tools/Makefile.linux tools/Makefile
 	$(MAKE) -C libfosfat
 	$(MAKE) -C tools
 	$(MAKE) -C fosmount
