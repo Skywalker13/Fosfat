@@ -1,11 +1,11 @@
 This package was debianized by Mathieu Schroeter <mathieu.schroeter@gamesover.ch> on
-Sun, 16 Dec 2007 16:00:00 +0100.
+Sun, 04 Jul 2009 14:00:00 +0100.
 
 It was downloaded from http://download.gna.org/fosfat/
 
 Upstream Author: Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
-Copyright: 2006-2007, Mathieu Schroeter
+Copyright: 2006-2009, Mathieu Schroeter
 
 License:
 
@@ -23,5 +23,5 @@ License:
    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-The Debian packaging is (C) 2006-2007, Mathieu Schroeter mathieu.schroeter@gamesover.ch and
+The Debian packaging is (C) 2006-2009, Mathieu Schroeter mathieu.schroeter@gamesover.ch and
 is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
