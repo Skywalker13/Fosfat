@@ -1,0 +1,43 @@
+.\" 
+.TH "FOSREC" "1" "July 2009" "fosrec 0.3.0" "User Commands"
+.SH "NAME"
+fosrec \- FOS recovery
+.SH "SYNOPSIS"
+.B fosrec
+[\fIoptions\fR] \fIdevice \fIdestination
+.SH "DESCRIPTION"
+Tool to recovery files on a Smaky FOS disk.
+.TP 
+\fB\-h\fR \fB\-\-help\fR
+Display help message.
+.TP 
+\fB\-v\fR \fB\-\-version\fR
+Show version.
+.TP 
+\fB\-a\fR \fB\-\-harddisk\fR
+Force an hard disk instead of the autodetection.
+.TP 
+\fB\-f\fR \fB\-\-floppydisk\fR
+Force a floppy disk instead of the autodetection.
+.TP 
+\fB\-l\fR \fB\-\-fos\-logger\fR
+Turn ON the FOS logger, fosrec will not be detached of the terminal.
+.TP 
+\fBdevice\fR
+/dev/fd0 for floppy disk
+.br 
+/dev/sda for hard disk, etc, ...
+.TP 
+\fBdestination\fR
+The destination to save the files.
+.SH "AUTHOR"
+Written by Mathieu Schroeter <mathieu.schroeter@gamesover.ch>.
+.SH "REPORTING BUGS"
+Report bugs to <\fIfosfat\-devel@gamesover.ch\fP>.
+.SH "COPYRIGHT"
+Copyright \(co 2006\-2009 Mathieu Schroeter
+
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH "SEE ALSO"
+fosrec(1)
