@@ -12,7 +12,8 @@ APPNAME3 = fosrec
 SRCS1 = fosread.c
 SRCS2 = ascii.c smascii.c
 SRCS3 = fosrec.c
-MANPAGES = fosread.1
+MANPAGES1 = fosread.1
+MANPAGES2 = fosrec.1
 
 CFLAGS1 = $(CFLAGS) -I../libfosfat -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)\"
 LDFLAGS1 = $(LDFLAGS) -L../libfosfat -lfosfat
@@ -65,7 +66,8 @@ install-app: $(APPNAME1) $(APPNAME2) $(APPNAME3)
 
 install-man:
 	install -d $(mandir)/man1
-	install -m 644 $(MANPAGES) $(mandir)/man1
+	install -m 644 $(MANPAGES1) $(mandir)/man1
+	install -m 644 $(MANPAGES2) $(mandir)/man1
 
 uninstall: uninstall-man
 	rm -f $(bindir)/$(APPNAME1)
@@ -73,7 +75,8 @@ uninstall: uninstall-man
 	rm -f $(bindir)/$(APPNAME3)
 
 uninstall-man:
-	rm -f $(mandir)/man1/$(MANPAGES)
+	rm -f $(mandir)/man1/$(MANPAGES1)
+	rm -f $(mandir)/man1/$(MANPAGES2)
 
 depend:
 	$(CC) -MM $(CFLAGS1) $(OPTFLAGS) $(SRCS1) 1>.depend1
