@@ -302,7 +302,7 @@ lc (char *data)
 
   if (data)
     for (i = 0; data[i] != '\0'; i++)
-      data[i] = tolower (data[i]);
+      data[i] = (char) tolower ((int) (unsigned char) data[i]);
 
   return data;
 }
