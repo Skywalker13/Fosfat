@@ -260,7 +260,7 @@ int fosfat_get_file (fosfat_t *fosfat,
  * \return NULL if error or return the buffer.
  */
 uint8_t *fosfat_get_buffer (fosfat_t *fosfat,
-                         const char *path, int offset, int size);
+                            const char *path, int offset, int size);
 
 #ifdef __cplusplus
 }

@@ -168,8 +168,7 @@ fosfat_get_header (fosfat_t *fosfat, const char *path, fosgra_image_h_t *header)
     jump = FOSGRA_IMAGE_HEADER_LENGTH_BIN;
   free (buffer);
 
-  buffer = fosfat_get_buffer (fosfat, path,
-                                          jump, FOSGRA_IMAGE_HEADER_LENGTH);
+  buffer = fosfat_get_buffer (fosfat, path, jump, FOSGRA_IMAGE_HEADER_LENGTH);
   if (!buffer)
     return -1;
 
