@@ -36,6 +36,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#include <inttypes.h>
+
 #define FOSFAT_NAMELGT  17
 
 #define F_UNDELETE      (1 << 0)
@@ -257,7 +259,7 @@ int fosfat_get_file (fosfat_t *fosfat,
  * \param[in] size       how many bytes.
  * \return NULL if error or return the buffer.
  */
-char *fosfat_get_buffer (fosfat_t *fosfat,
+uint8_t *fosfat_get_buffer (fosfat_t *fosfat,
                          const char *path, int offset, int size);
 
 #ifdef __cplusplus

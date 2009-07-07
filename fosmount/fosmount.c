@@ -111,7 +111,7 @@ get_filesize (fosfat_file_t *file, const char *path)
   return file->size;
 }
 
-static char *
+static uint8_t *
 get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
 {
   char *it;
@@ -156,7 +156,7 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
               buf, size - (strlen (head) - offset));
       free (buf);
     }
-    return (char *) dec;
+    return dec;
   }
 
  out:
@@ -424,7 +424,7 @@ fos_read (const char *path, char *buf, size_t size,
 {
   int length;
   char *location;
-  char *buf_tmp;
+  uint8_t *buf_tmp;
   fosfat_file_t *file;
 
   (void) fi;
