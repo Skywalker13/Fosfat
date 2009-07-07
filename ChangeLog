@@ -1,3 +1,13 @@
+2009-07-07  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+
+	* libfosgra: new library to support .IMAGE decoding.
+
+	* fosmount: some improvements to convert on the fly
+	the images [.IMAGE] to PBM (portable bitmap format)
+	with libfosgra.
+
+	* Fix doxygen, packaging and Makefiles.
+
 2009-07-04  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* New beta released 0.3.1
