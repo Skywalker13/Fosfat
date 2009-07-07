@@ -69,11 +69,9 @@ win32-build:
 
 win32-common:
 	cp -f libfosfat/Makefile.win32 libfosfat/Makefile
-	cp -f libfosgra/Makefile.win32 libfosgra/Makefile
 	cp -f tools/Makefile.win32 tools/Makefile
 	$(MAKE) -C libw32disk
 	$(MAKE) -C libfosfat
-	$(MAKE) -C libfosgra
 	$(MAKE) -C tools
 
 win32: win32-dev win32-common
