@@ -87,13 +87,13 @@ typedef enum foslog {
 typedef struct block_data_s {
   uint8_t data[256];           /* Data                                  */
   /* Linked list */
-  struct block_data_s *next_data;
+  struct  block_data_s *next_data;
 } fosfat_data_t;
 
 /* Block 0 (256 bytes) */
 typedef struct block_0_s {
   uint8_t sys[44];             /* SYSTEM folder                         */
-  int8_t nlo[16];              /* Disk name                             */
+  int8_t  nlo[16];            /* Disk name                             */
   uint8_t chk[4];              /* Check control                         */
   uint8_t mes[172];            /* Message                               */
   uint8_t change;              /* Need of change the CHK number         */
@@ -105,7 +105,7 @@ typedef struct block_0_s {
 
 /* File in a Block List (60 bytes) */
 typedef struct block_listf_s {
-  int8_t name[16];             /* Filename                              */
+  int8_t  name[16];            /* Filename                              */
   uint8_t typ;                 /* Filetype                              */
   uint8_t ope;                 /* Open counter                          */
   uint8_t att[4];              /* Attributes                            */
@@ -127,14 +127,14 @@ typedef struct block_listf_s {
 /* Block List (256 bytes) */
 typedef struct block_list_s {
   fosfat_blf_t file[4];        /* 4 BL files (240 bytes)                */
-  uint8_t next[4];             /* Next BL                               */
-  uint8_t chk[4];              /* Check control                         */
-  uint8_t prev[4];             /* Previous BL                           */
-  uint8_t reserve[4];          /* Unused                                */
+  uint8_t      next[4];        /* Next BL                               */
+  uint8_t      chk[4];         /* Check control                         */
+  uint8_t      prev[4];        /* Previous BL                           */
+  uint8_t      reserve[4];     /* Unused                                */
   /* Not in the block */
-  uint32_t pt;                 /* Block's number of this BL             */
+  uint32_t     pt;             /* Block's number of this BL             */
   /* Linked list */
-  struct block_list_s *next_bl;
+  struct       block_list_s *next_bl;
 } fosfat_bl_t;
 
 /* Block Description (256 bytes) */
@@ -143,7 +143,7 @@ typedef struct block_desc_s {
   uint8_t prev[4];             /* Previous BD                           */
   uint8_t npt[2];              /* Number of tranches in the BD          */
   uint8_t pts[42][4];          /* Pointers on the tranches (max 42)     */
-  int8_t name[16];             /* Filename                              */
+  int8_t  name[16];            /* Filename                              */
   uint8_t nbs[42];             /* Length (in blocks) of each tranches   */
   uint8_t reserve[4];          /* Unused                                */
   uint8_t lst[2];              /* Number of byte in the last tranche    */
@@ -153,21 +153,21 @@ typedef struct block_desc_s {
   uint8_t off[4];              /* Offset (in blocks) of all previous BD */
   uint8_t free[2];             /* Unused                                */
   /* Linked list */
-  struct block_desc_s *next_bd;
-  struct block_list_s *first_bl;
+  struct  block_desc_s *next_bd;
+  struct  block_list_s *first_bl;
 } fosfat_bd_t;
 
 /* Cache list for name, BD and BL blocks */
 typedef struct cache_list_s {
-  char *name;
+  char    *name;
   uint32_t bl;                 /* BL Address                            */
   uint32_t bd;                 /* BD Address                            */
-  int isdir;                   /* If is a directory                     */
-  int islink;                  /* If is a soft link                     */
-  int isdel;                   /* If is deleted                         */
+  int      isdir;              /* If is a directory                     */
+  int      islink;             /* If is a soft link                     */
+  int      isdel;              /* If is deleted                         */
   /* Linked list */
-  struct cache_list_s *sub;
-  struct cache_list_s *next;
+  struct   cache_list_s *sub;
+  struct   cache_list_s *next;
 } cachelist_t;
 
 /* Main fosfat structure */
@@ -175,11 +175,11 @@ struct fosfat_s {
 #ifdef _WIN32
   win32disk_t *dev;            /* device object                         */
 #else
-  FOSFAT_DEV *dev;             /* physical device                       */
+  FOSFAT_DEV  *dev;            /* physical device                       */
 #endif
-  int fosboot;                 /* FOSBOOT address                       */
-  uint32_t foschk;             /* CHK                                   */
-  int viewdel;                 /* list deleted files                    */
+  int          fosboot;        /* FOSBOOT address                       */
+  uint32_t     foschk;         /* CHK                                   */
+  int          viewdel;        /* list deleted files                    */
   cachelist_t *cachelist;      /* cache data                            */
 };
 
