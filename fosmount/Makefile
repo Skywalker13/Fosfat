@@ -43,7 +43,10 @@ install-app: $(APPNAME)
 
 install-man:
 	install -d $(mandir)/man1
+	cp -f $(MANPAGES).man $(MANPAGES)
+	sed -i "s/#VERSION#/$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)/" $(MANPAGES)
 	install -m 644 $(MANPAGES) $(mandir)/man1
+	rm -f $(MANPAGES)
 
 uninstall: uninstall-man
 	rm -f $(bindir)/$(APPNAME)

@@ -1,5 +1,5 @@
 .\" 
-.TH "FOSREAD" "1" "July 2009" "fosread 0.3.1" "User Commands"
+.TH "FOSREAD" "1" "July 2009" "fosread #VERSION#" "User Commands"
 .SH "NAME"
 fosread \- FOS reader
 .SH "SYNOPSIS"

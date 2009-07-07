@@ -66,8 +66,14 @@ install-app: $(APPNAME1) $(APPNAME2) $(APPNAME3)
 
 install-man:
 	install -d $(mandir)/man1
+	cp -f $(MANPAGES1).man $(MANPAGES1)
+	sed -i "s/#VERSION#/$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)/" $(MANPAGES1)
 	install -m 644 $(MANPAGES1) $(mandir)/man1
+	rm -f $(MANPAGES1)
+	cp -f $(MANPAGES2).man $(MANPAGES2)
+	sed -i "s/#VERSION#/$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)/" $(MANPAGES2)
 	install -m 644 $(MANPAGES2) $(mandir)/man1
+	rm -f $(MANPAGES2)
 
 uninstall: uninstall-man
 	rm -f $(bindir)/$(APPNAME1)
