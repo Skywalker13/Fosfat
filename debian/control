@@ -3,7 +3,7 @@ Section: misc
 Priority: optional
 Maintainer: Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 Build-Depends: cdbs, debhelper (>= 5), pkg-config (>= 0.20), libfuse-dev (>= 2.6)
-Standards-Version: 3.7.3
+Standards-Version: 3.8.0
 
 Package: fosfat
 Architecture: any

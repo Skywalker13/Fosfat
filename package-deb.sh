@@ -19,6 +19,7 @@ cp -pPR Makefile \
         fosmount \
         tools \
         libfosfat \
+        libfosgra \
         libw32disk \
         "$PACKAGE/$DIR"
 find "$PACKAGE/$DIR" \( -name .svn -or \
