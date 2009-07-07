@@ -543,7 +543,7 @@ main (int argc, char **argv)
       foslog = 1;
       fosfat_logger (1);
       break;
-    case 'i':
+    case 'i':           /* -i or --image-pbm */
       g_pbm = 1;
       break ;
     case -1:            /* end */
