@@ -154,7 +154,7 @@ fosgra_header_open (uint8_t *buffer, fosgra_image_h_t *header)
 }
 
 static int
-fosfat_get_header (fosfat_t *fosfat, const char *path, fosgra_image_h_t *header)
+fosgra_get_header (fosfat_t *fosfat, const char *path, fosgra_image_h_t *header)
 {
   uint8_t *buffer;
   int res, jump = 0;
@@ -190,7 +190,7 @@ fosgra_get_buffer (fosfat_t *fosfat,
   if (!fosfat || !path)
     return NULL;
 
-  res = fosfat_get_header (fosfat, path, &header);
+  res = fosgra_get_header (fosfat, path, &header);
   if (res)
     return NULL;
 
@@ -220,7 +220,7 @@ fosgra_get_info (fosfat_t *fosfat, const char *path, uint16_t *x, uint16_t *y)
   if (!fosfat || !path || !x || !y)
     return;
 
-  res = fosfat_get_header (fosfat, path, &header);
+  res = fosgra_get_header (fosfat, path, &header);
   if (res)
     return;
 
@@ -236,5 +236,5 @@ fosgra_is_image (fosfat_t *fosfat, const char *path)
   if (!fosfat || !path)
     return 0;
 
-  return fosfat_get_header (fosfat, path, &header) ? 0 : 1;
+  return fosgra_get_header (fosfat, path, &header) ? 0 : 1;
 }
