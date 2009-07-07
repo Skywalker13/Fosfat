@@ -23,11 +23,21 @@ ifeq (,$(wildcard DOCS/doxygen))
 endif
 
 clean:
-	$(MAKE) -C libw32disk clean
-	$(MAKE) -C libfosfat clean
-	$(MAKE) -C libfosgra clean
-	$(MAKE) -C tools clean
-	$(MAKE) -C fosmount clean
+	if [ -f config.win32 ]; then \
+	  $(MAKE) -C libw32disk clean; \
+	fi
+	if [ -f libfosfat/Makefile ]; then \
+	  $(MAKE) -C libfosfat clean; \
+	fi
+	if [ -f libfosgra/Makefile ]; then \
+	  $(MAKE) -C libfosgra clean; \
+        fi
+	if [ -f tools/Makefile ]; then \
+	  $(MAKE) -C tools clean; \
+	fi
+	if [ -f config.mak ]; then \
+	  $(MAKE) -C fosmount clean; \
+	fi
 
 distclean: clean
 	rm -f config.log
