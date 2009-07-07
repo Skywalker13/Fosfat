@@ -13,6 +13,7 @@ endif
 
 all: $(DOXYGEN)
 	$(MAKE) -C libfosfat
+	$(MAKE) -C libfosgra
 	$(MAKE) -C tools
 	$(MAKE) -C fosmount
 
@@ -24,6 +25,7 @@ endif
 clean:
 	$(MAKE) -C libw32disk clean
 	$(MAKE) -C libfosfat clean
+	$(MAKE) -C libfosgra clean
 	$(MAKE) -C tools clean
 	$(MAKE) -C fosmount clean
 
@@ -32,6 +34,7 @@ distclean: clean
 	rm -f config.mak
 	rm -f config.win32
 	rm -f libfosfat/Makefile
+	rm -f libfosgra/Makefile
 	rm -f tools/Makefile
 	rm -rf DOCS/doxygen
 
@@ -43,14 +46,18 @@ install-deb:
 
 install-lib:
 	$(MAKE) -C libfosfat install-lib
+	$(MAKE) -C libfosgra install-lib
 
 install-dev:
 	$(MAKE) -C libfosfat install
+	$(MAKE) -C libfosgra install
 
 uninstall:
 	cp -f libfosfat/Makefile.linux libfosfat/Makefile
+	cp -f libfosgra/Makefile.linux libfosgra/Makefile
 	cp -f tools/Makefile.linux tools/Makefile
 	$(MAKE) -C libfosfat uninstall
+	$(MAKE) -C libfosgra uninstall
 	$(MAKE) -C tools uninstall
 	$(MAKE) -C fosmount uninstall
 
@@ -62,9 +69,11 @@ win32-build:
 
 win32-common:
 	cp -f libfosfat/Makefile.win32 libfosfat/Makefile
+	cp -f libfosgra/Makefile.win32 libfosgra/Makefile
 	cp -f tools/Makefile.win32 tools/Makefile
 	$(MAKE) -C libw32disk
 	$(MAKE) -C libfosfat
+	$(MAKE) -C libfosgra
 	$(MAKE) -C tools
 
 win32: win32-dev win32-common

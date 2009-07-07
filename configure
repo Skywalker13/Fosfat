@@ -736,6 +736,7 @@ append_config "DOC=$doc"
 
 touch config.win32
 cp -f libfosfat/Makefile.linux libfosfat/Makefile
+cp -f libfosgra/Makefile.linux libfosgra/Makefile
 cp -f tools/Makefile.linux tools/Makefile
 
 clean
