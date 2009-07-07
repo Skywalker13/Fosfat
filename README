@@ -21,6 +21,8 @@ console utilisation.
 The tool 'fosmount' uses FUSE for mount in _read-only_ your device in your
 tree. And you can convert the smaky's text files with smascii. You can
 compile 'fosmount' with >=fuse-2.6.x.
+'fosrec' can be used to restore all deleted files. To restore only one file,
+this action must be performed by 'fosread'.
 
 Look the help with each application for the command line. Or look on the
 website.
@@ -35,11 +37,11 @@ BUILD
    make
    make install
 
-   It will install 'fosread', 'fosmount', 'smascii' and libfosfat in your
-   local directory.
+   It will install 'fosread', 'fosmount', 'fosrec', 'smascii', libfosgra
+   and libfosfat in your local directory.
    Use `./configure --help` for more informations.
 
- * For Window$ (only fosread and smascii)
+ * For Window$ (only fosread, fosrec and smascii)
 
    make win32
 
