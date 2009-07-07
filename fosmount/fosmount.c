@@ -33,6 +33,7 @@
 #include <getopt.h>
 
 #include "fosfat.h"
+#include "fosgra.h"
 
 /* Rights */
 #define FOS_DIR             0555
@@ -46,7 +47,8 @@
 " -a --harddisk         force an hard disk (default autodetect)\n" \
 " -f --floppydisk       force a floppy disk (default autodetect)\n" \
 " -l --fos-logger       that will turn on the FOS logger\n" \
-" -d --fuse-debugger    that will turn on the FUSE debugger\n\n" \
+" -d --fuse-debugger    that will turn on the FUSE debugger\n" \
+" -i --image-pbm        convert on the fly .IMAGE to .PBM (portable bitmap format)\n\n" \
 " device                /dev/fd0 : floppy disk\n" \
 "                       /dev/sda : hard disk, etc\n" \
 " mountpoint            for example, /mnt/smaky\n" \
@@ -57,12 +59,115 @@
 
 static fosfat_t *fosfat;
 
+#define FOSID_PBM "[fosgra]"
+
+static int g_pbm = 0;
+
+
+static int
+count_nb_dec (int dec)
+{
+  int size = 1;
+
+  while (dec /= 10)
+    size++;
+
+  return size;
+}
+
+static char *
+trim_fosname (const char *path)
+{
+  char *it, res[256];
+
+  snprintf (res, sizeof (res), "%s", path);
+  it = strstr (res, "." FOSID_PBM ".");
+  if (it)
+    *it = '\0';
+
+  return strdup (res);
+}
+
+static size_t
+get_filesize (fosfat_file_t *file, const char *path)
+{
+  char *it;
+
+  if (!g_pbm)
+    return file->size;
+
+  /* .IMAGE handling */
+  it = strstr (file->name, ".image\0");
+  if (it && !file->att.isdir && !file->att.islink && !file->att.isencoded
+      && fosgra_is_image (fosfat, path))
+  {
+    uint16_t x = 0, y = 0;
+
+    fosgra_get_info (fosfat, path, &x, &y);
+    /* PBM file size */
+    return x / 8 * y + count_nb_dec (x) + count_nb_dec (y) + 5;
+  }
+
+  return file->size;
+}
+
+static char *
+get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
+{
+  char *it;
+
+  if (!g_pbm)
+    goto out;
+
+  it = strstr (file->name, ".image\0");
+  if (it && !file->att.isdir && !file->att.islink && !file->att.isencoded
+      && fosgra_is_image (fosfat, path))
+  {
+    char head[256];
+    uint8_t *buf, *dec;
+    uint16_t x = 0, y = 0;
+
+    fosgra_get_info (fosfat, path, &x, &y);
+    snprintf (head, sizeof (head), "P4\n%u %u\n", x, y);
+
+    /* no header needed */
+    if (offset > (signed) strlen (head))
+    {
+      buf = fosgra_get_buffer (fosfat, path, offset - strlen (head), size);
+      if (!buf)
+        return NULL;
+
+      dec = buf;
+    }
+    /* header for PBM */
+    else
+    {
+      buf = fosgra_get_buffer (fosfat,
+                               path, 0, size - (strlen (head) - offset));
+      if (!buf)
+        return NULL;
+
+      dec = calloc (1, size);
+      if (!dec)
+        return NULL;
+
+      memcpy (dec, head + offset, strlen (head) - offset); /* copy header */
+      memcpy (dec + (strlen (head) - offset), /* copy data */
+              buf, size - (strlen (head) - offset));
+      free (buf);
+    }
+    return (char *) dec;
+  }
+
+ out:
+  return fosfat_get_buffer (fosfat, path, offset, size);
+}
 
 /*
  * Convert 'fosfat_file_t' to 'struct stat'.
  */
 static struct stat *
-in_stat (fosfat_file_t *file)
+in_stat (fosfat_file_t *file, const char *path)
 {
   struct stat *st;
   struct tm time;
@@ -89,7 +194,7 @@ in_stat (fosfat_file_t *file)
   }
 
   /* Size */
-  st->st_size = file->size;
+  st->st_size = get_filesize (file, path);
 
   /* Time */
   time.tm_year = file->time_r.year - 1900;
@@ -123,14 +228,20 @@ in_stat (fosfat_file_t *file)
 static struct stat *
 get_stat (const char *path)
 {
+  char *location;
   struct stat *st = NULL;
   fosfat_file_t *file;
 
-  if ((file = fosfat_get_stat (fosfat, path)))
+  location = trim_fosname (path);
+
+  if ((file = fosfat_get_stat (fosfat, location)))
   {
-    st = in_stat (file);
+    st = in_stat (file, location);
     free (file);
   }
+
+  if (location)
+    free (location);
 
   return st;
 }
@@ -147,9 +258,11 @@ static int
 fos_readlink (const char *path, char *dst, size_t size)
 {
   int res = -ENOENT;
-  char *link;
+  char *link, *location;
 
-  link = fosfat_symlink (fosfat, path);
+  location = trim_fosname (path);
+
+  link = fosfat_symlink (fosfat, location);
 
   if (strlen (link) < size)
   {
@@ -159,6 +272,8 @@ fos_readlink (const char *path, char *dst, size_t size)
 
   if (link)
     free (link);
+  if (location)
+    free (location);
 
   return res;
 }
@@ -173,6 +288,7 @@ fos_readlink (const char *path, char *dst, size_t size)
 static int
 fos_getattr (const char *path, struct stat *stbuf)
 {
+  int ret = 0;
   char *location;
   struct stat *st;
 
@@ -180,7 +296,7 @@ fos_getattr (const char *path, struct stat *stbuf)
   if (!strcmp (path, "/"))
     location = strdup ("/sys_list");
   else
-    location = (char *) path;
+    location = trim_fosname (path);
 
   /* Get file stats */
   if ((st = get_stat (location)))
@@ -189,12 +305,12 @@ fos_getattr (const char *path, struct stat *stbuf)
     free (st);
   }
   else
-    return -ENOENT;
+    ret = -ENOENT;
 
-  if (location != path)
+  if (location)
     free (location);
 
-  return 0;
+  return ret;
 }
 
 /*
@@ -211,23 +327,41 @@ static int
 fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
              off_t offset, struct fuse_file_info *fi)
 {
+  int ret = 0;
+  char *location;
   fosfat_file_t *files, *first_file;
 
   (void) offset;
   (void) fi;
 
+  location = trim_fosname (path);
+
   /* First entries */
   filler (buf, "..", NULL, 0);
 
   /* Files and directories */
-  if ((files = fosfat_list_dir (fosfat, path)))
+  if ((files = fosfat_list_dir (fosfat, location)))
   {
     first_file = files;
 
     do
     {
-      struct stat *st = in_stat (files);
-      char *name = strdup (files->name);
+      char _path[256];
+      struct stat *st;
+      char *name;
+
+      snprintf (_path, sizeof (_path), "%s/%s", location, files->name);
+      st = in_stat (files, _path);
+
+      /* add identification for .IMAGE translated to PBM */
+      if (g_pbm && strstr (files->name, ".image\0")
+          && fosgra_is_image (fosfat, _path))
+      {
+        name = calloc (1, strlen (files->name) + strlen (FOSID_PBM) + 6);
+        sprintf (name, "%s." FOSID_PBM ".pbm", files->name);
+      }
+      else
+        name = strdup (files->name);
 
       if (strstr (name, ".dir"))
         *(name + strlen (name) - 4) = '\0';
@@ -240,9 +374,12 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
     fosfat_free_listdir (first_file);
   }
   else
-    return -ENOENT;
+    ret = -ENOENT;
 
-  return 0;
+  if (location)
+    free (location);
+
+  return ret;
 }
 
 /*
@@ -255,15 +392,20 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
 static int
 fos_open (const char *path, struct fuse_file_info *fi)
 {
-  (void) path;
+  int ret = 0;
+  char *location;
+
+  location = trim_fosname (path);
 
   if ((fi->flags & 3) != O_RDONLY)
-    return -EACCES;
+    ret = -EACCES;
+  else if (!fosfat_isopenexm (fosfat, location))
+    ret = -ENOENT;
 
-  if (!fosfat_isopenexm (fosfat, path))
-    return -ENOENT;
+  if (location)
+    free (location);
 
-  return 0;
+  return ret;
 }
 
 /*
@@ -281,17 +423,20 @@ fos_read (const char *path, char *buf, size_t size,
           off_t offset, struct fuse_file_info *fi)
 {
   int length;
+  char *location;
   char *buf_tmp;
   fosfat_file_t *file;
 
   (void) fi;
 
+  location = trim_fosname (path);
+
   /* Get the stats and test if it is a file */
-  if ((file = fosfat_get_stat (fosfat, path)))
+  if ((file = fosfat_get_stat (fosfat, location)))
   {
     if (!file->att.isdir)
     {
-      length = file->size;
+      length = get_filesize (file, location);
 
       if (offset < length)
       {
@@ -300,7 +445,7 @@ fos_read (const char *path, char *buf, size_t size,
           size = length - offset;
 
         /* Read the data */
-        buf_tmp = fosfat_get_buffer (fosfat, path, offset, size);
+        buf_tmp = get_buffer (file, location, offset, size);
 
         /* Copy the data for FUSE */
         if (buf_tmp)
@@ -318,6 +463,9 @@ fos_read (const char *path, char *buf, size_t size,
   }
   else
     size = -ENOENT;
+
+  if (location)
+    free (location);
 
   return size;
 }
@@ -355,7 +503,7 @@ main (int argc, char **argv)
   char **arg;
   fosfat_disk_t type = FOSFAT_AD;
 
-  const char *const short_options = "adfhlv";
+  const char *const short_options = "adfhliv";
 
   const struct option long_options[] = {
     { "harddisk",      no_argument, NULL, 'a' },
@@ -363,6 +511,7 @@ main (int argc, char **argv)
     { "floppydisk",    no_argument, NULL, 'f' },
     { "help",          no_argument, NULL, 'h' },
     { "fos-logger",    no_argument, NULL, 'l' },
+    { "image-pbm",     no_argument, NULL, 'i' },
     { "version",       no_argument, NULL, 'v' },
     { NULL,            0,           NULL,  0  }
   };
@@ -393,6 +542,9 @@ main (int argc, char **argv)
     case 'l':           /* -l or --fos-debugger */
       foslog = 1;
       fosfat_logger (1);
+      break;
+    case 'i':
+      g_pbm = 1;
       break ;
     case -1:            /* end */
       break ;

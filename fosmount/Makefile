@@ -10,21 +10,29 @@ APPNAME = fosmount
 SRCS = fosmount.c
 MANPAGES = fosmount.1
 
-OPTFLAGS += -I../libfosfat -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)\"
-OPTLDFLAGS = -L../libfosfat -lfosfat
+OPTFLAGS += -I../libfosfat -I../libfosgra -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)\"
+OPTLDFLAGS = -L../libfosfat -L../libfosgra -lfosfat -lfosgra
+
+OBJS = $(SRCS:.c=.o)
 
 ifeq ($(FOSMOUNT),yes)
 TARGETI = install-app install-man
-TARGETB = $(APPNAME)
+TARGETB = depend $(APPNAME)
 endif
+
+.SUFFIXES: .c .o
 
 all: $(TARGETB)
 
-$(APPNAME):
-	$(CC) $(SRCS) $(CFLAGS) $(OPTFLAGS) $(LDFLAGS) $(OPTLDFLAGS) $(EXTRALIBS) -o $(APPNAME)
+.c.o:
+	$(CC) -c $(CFLAGS) $(OPTFLAGS) -o $@ $<
+
+$(APPNAME): $(OBJS)
+	$(CC) $(OBJS) $(LDFLAGS) $(OPTLDFLAGS) $(EXTRALIBS) -o $(APPNAME)
 
 clean:
-	rm -f $(APPNAME)
+	rm -f *.o $(APPNAME)
+	rm -f .depend
 
 install: $(TARGETI)
 
@@ -43,4 +51,14 @@ uninstall: uninstall-man
 uninstall-man:
 	rm -f $(mandir)/man1/$(MANPAGES)
 
-.PHONY: clean install-man uninstall-man
+depend:
+	$(CC) -MM $(CFLAGS) $(OPTFLAGS) $(SRCS) 1>.depend
+
+.PHONY: clean install-man uninstall-man depend
+
+#
+# include dependency files if they exist
+#
+ifneq ($(wildcard .depend),)
+include .depend
+endif
