@@ -1,0 +1,63 @@
+ifeq (,$(wildcard ../config.win32))
+$(error "../config.win32 is not present, run `make win32` !")
+endif
+include ../config.win32
+
+APPNAME1 = fosread
+APPNAME2 = smascii
+APPNAME3 = fosrec
+SRCS1 = fosread.c
+SRCS2 = ascii.c smascii.c
+SRCS3 = fosrec.c
+
+CFLAGS1 = $(CFLAGS) -I../libfosfat
+LDFLAGS1 = $(LDFLAGS) -L../libfosfat -lfosfat
+
+CFLAGS2 = $(CFLAGS)
+LDFLAGS2 = $(LDFLAGS)
+
+CFLAGS3 = $(CFLAGS1)
+LDFLAGS3 = $(LDFLAGS1)
+
+OBJS1 = $(SRCS1:.c=.o)
+OBJS2 = $(SRCS2:.c=.o)
+OBJS3 = $(SRCS3:.c=.o)
+
+.SUFFIXES: .c .o
+
+all: depend $(APPNAME1) $(APPNAME2) $(APPNAME3)
+
+.c.o:
+	$(CC) -c $(CFLAGS1) $(OPTFLAGS) -o $@ $<
+
+$(APPNAME1): $(OBJS1)
+	$(CC) $(OBJS1) $(LDFLAGS1) -o $(APPNAME1).exe
+	$(STRIP) $(APPNAME1).exe
+
+$(APPNAME2): $(OBJS2)
+	$(CC) $(OBJS2) $(LDFLAGS2) -o $(APPNAME2).exe
+	$(STRIP) $(APPNAME2).exe
+
+$(APPNAME3): $(OBJS3)
+	$(CC) $(OBJS3) $(LDFLAGS3) -o $(APPNAME3).exe
+	$(STRIP) $(APPNAME3).exe
+
+clean:
+	rm -f *.o $(APPNAME1).exe $(APPNAME2).exe $(APPNAME3).exe $(APPNAME1) $(APPNAME2) $(APPNAME3)
+	rm -f .depend*
+
+depend:
+	$(CC) -MM $(CFLAGS1) $(OPTFLAGS) $(SRCS1) 1>.depend1
+	$(CC) -MM $(CFLAGS2) $(OPTFLAGS) $(SRCS2) 1>.depend2
+	$(CC) -MM $(CFLAGS3) $(OPTFLAGS) $(SRCS3) 1>.depend3
+
+.PHONY: clean depend
+
+#
+# include dependency files if they exist
+#
+ifneq ($(wildcard .depend1 .depend2 .depend3),)
+include .depend1
+include .depend2
+include .depend3
+endif

@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+
+DEB_MAKE_CLEAN_TARGET    := distclean
+DEB_MAKE_BUILD_TARGET    := all
+DEB_MAKE_INSTALL_TARGET  := install-deb install-lib DESTDIR=$(CURDIR)/debian/fosfat
+DEB_MAKE_CHECK_TARGET    :=
+DEB_BUILD_OPTIONS        := nockeck
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/makefile.mk
+
+CFLAGS=
+CXXFLAGS=
+LDFLAGS=
+
+configure/fosfat::
+	[ -f config.mak ] || ./configure --prefix=/usr --disable-static --enable-shared
