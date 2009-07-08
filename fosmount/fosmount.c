@@ -48,7 +48,7 @@
 " -f --floppydisk       force a floppy disk (default autodetect)\n" \
 " -l --fos-logger       that will turn on the FOS logger\n" \
 " -d --fuse-debugger    that will turn on the FUSE debugger\n" \
-" -i --image-pbm        convert on the fly .IMAGE to .PBM (portable bitmap format)\n\n" \
+" -i --image-pbm        convert on the fly .IMAGE to .PBM\n\n" \
 " device                /dev/fd0 : floppy disk\n" \
 "                       /dev/sda : hard disk, etc\n" \
 " mountpoint            for example, /mnt/smaky\n" \
