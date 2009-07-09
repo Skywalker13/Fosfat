@@ -64,6 +64,47 @@ typedef struct fosgra_image_h_s {
   }                                                          \
   while (0)
 
+
+/*
+ * .IMAGE decoding
+ * ~~~~~~~~~~~~~~~
+ * The images are decoded from the bottom to the top. In order to limit
+ * the size of an image, when a pattern of pixels is repeated consecutively,
+ * this group is coded into 16 bits where the first byte is the pattern and
+ * the next byte is the value to repeat.
+ * For each eight objects, a byte describes where are the coded objects and
+ * where are the objects to read "like this" (normal).
+ * (the first is always at the bottom|right)
+ *
+ * Example : 0x11 0x3A 0xF2 0x00 0x00 0xB3 0xAA 0x50 0x00 0x02 0xBB 0x00 0x17
+ *
+ *  0x17      : index byte -> 0b00010111
+ *              '1' is coded and '0' is normal
+ *  0xBB 0x00 : first coded object where 0xBB is repeated 187 times      (1)
+ *  0x00 0x02 : coded where 0x02 is repeated 256 times                   (1)
+ *              0x00 is equal to 256
+ *  0xAA 0x00 : codec where 0x00 is repeated 170 times                   (1)
+ *  0xB3      : normal, this object is single                            (0)
+ *  0x00 0x00 : coded where 0x00 is repeated 256 times                   (1)
+ *  0xF2      : normal                                                   (0)
+ *  0x3A      : normal                                                   (0)
+ *  0x11      : normal                                                   (0)
+ *                                                                        ^
+ *                                                                        |
+ *           you can see on this column that the value is equal to 0x17 -'
+ *
+ * There is an exception for the last byte of the IMAGE. The first index is
+ * located just before the last byte. The last byte is a value corresponding
+ * to the number of bits LSB to ignore in the first index byte. After this
+ * first index, there are always eight objects between each index.
+ *
+ * For example, if the last bytes are 0xA0 0x05; there are only 3 objects.
+ *
+ *
+ * The image is decoded from the bottom to the top because an image is coded
+ * from the top to the bottom.
+ */
+
 static uint8_t *
 fosgra_image_decod (uint8_t *buf, int size, int offset, int len, int ucod_size)
 {
@@ -74,10 +115,10 @@ fosgra_image_decod (uint8_t *buf, int size, int offset, int len, int ucod_size)
   if (!dec)
     return NULL;
 
-  idx = buf[size - 2] >> buf[size - 1]; /* fix useful index */
-  cnt = 8 - buf[size - 1];
-  size -= 3; /* first item */
-  it_dec = dec + len - 1;
+  idx = buf[size - 2] >> buf[size - 1]; /* first index */
+  cnt = 8 - buf[size - 1]; /* index counter */
+  size -= 3; /* go on first item */
+  it_dec = dec + len - 1; /* decoded frame */
 
   for (; size >= 0 && len > 0; size--)
   {
@@ -129,6 +170,7 @@ fosgra_header_open (uint8_t *buffer, fosgra_image_h_t *header)
 {
   memcpy (header, buffer, FOSGRA_IMAGE_HEADER_LENGTH);
 
+  /* fix endian */
   SWAP_16 (header->dlx);
   SWAP_16 (header->dly);
   SWAP_32 (header->nbb);
