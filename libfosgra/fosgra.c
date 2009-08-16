@@ -73,7 +73,7 @@ typedef struct fosgra_image_h_s {
  * this group is coded into 16 bits where the first byte is the pattern and
  * the next byte is the value to repeat.
  * For each eight objects, a byte describes where are the coded objects and
- * where are the objects to read "like this" (normal).
+ * where are the objects to read "as is" (normal).
  * (the first is always at the bottom|right)
  *
  * Example : 0x11 0x3A 0xF2 0x00 0x00 0xB3 0xAA 0x50 0x00 0x02 0xBB 0x00 0x17
@@ -83,7 +83,7 @@ typedef struct fosgra_image_h_s {
  *  0xBB 0x00 : first coded object where 0xBB is repeated 187 times      (1)
  *  0x00 0x02 : coded where 0x02 is repeated 256 times                   (1)
  *              0x00 is equal to 256
- *  0xAA 0x00 : codec where 0x00 is repeated 170 times                   (1)
+ *  0xAA 0x00 : coded where 0x00 is repeated 170 times                   (1)
  *  0xB3      : normal, this object is single                            (0)
  *  0x00 0x00 : coded where 0x00 is repeated 256 times                   (1)
  *  0xF2      : normal                                                   (0)
