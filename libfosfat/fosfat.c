@@ -93,7 +93,7 @@ typedef struct block_data_s {
 /* Block 0 (256 bytes) */
 typedef struct block_0_s {
   uint8_t sys[44];             /* SYSTEM folder                         */
-  int8_t  nlo[16];            /* Disk name                             */
+  int8_t  nlo[16];             /* Disk name                             */
   uint8_t chk[4];              /* Check control                         */
   uint8_t mes[172];            /* Message                               */
   uint8_t change;              /* Need of change the CHK number         */
