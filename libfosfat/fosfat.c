@@ -1025,13 +1025,19 @@ static int
 fosfat_get (fosfat_t *fosfat, fosfat_bd_t *file,
             const char *dst, int output, int flag, ...)
 {
-  /* optional arguments */
   va_list pp;
-  va_start (pp, flag);
   int op_offset = 0;
   int op_size = 0;
   uint8_t *op_buffer = NULL;
   int op_inoff = 0;
+  unsigned int i;
+  int res = 1;
+  size_t check_last;
+  size_t size = 0;
+  FILE *f_dst = NULL;
+  fosfat_data_t *file_d, *first_d;
+
+  va_start (pp, flag);
   if (flag)
   {
     op_offset = va_arg (pp, int);
@@ -1039,13 +1045,6 @@ fosfat_get (fosfat_t *fosfat, fosfat_bd_t *file,
     op_buffer = va_arg (pp, uint8_t *);
   }
   va_end(pp);
-
-  unsigned int i;
-  int res = 1;
-  size_t check_last;
-  size_t size = 0;
-  FILE *f_dst = NULL;
-  fosfat_data_t *file_d, *first_d;
 
   if (!fosfat || !file)
     return 0;
