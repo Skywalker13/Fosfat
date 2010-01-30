@@ -254,7 +254,8 @@ fosgra_get_buffer (fosfat_t *fosfat,
 }
 
 void
-fosgra_get_info (fosfat_t *fosfat, const char *path, uint16_t *x, uint16_t *y)
+fosgra_get_info (fosfat_t *fosfat,
+                 const char *path, uint16_t *x, uint16_t *y, uint8_t *bpp)
 {
   fosgra_image_h_t header;
   int res;
@@ -268,6 +269,8 @@ fosgra_get_info (fosfat_t *fosfat, const char *path, uint16_t *x, uint16_t *y)
 
   *x = header.dlx;
   *y = header.dly;
+  if (bpp)
+    *bpp = header.bip;
 }
 
 int

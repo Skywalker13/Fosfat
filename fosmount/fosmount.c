@@ -103,7 +103,7 @@ get_filesize (fosfat_file_t *file, const char *path)
   {
     uint16_t x = 0, y = 0;
 
-    fosgra_get_info (fosfat, path, &x, &y);
+    fosgra_get_info (fosfat, path, &x, &y, NULL);
     /* PBM file size */
     return x / 8 * y + count_nb_dec (x) + count_nb_dec (y) + 5;
   }
@@ -127,7 +127,7 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
     uint8_t *buf, *dec;
     uint16_t x = 0, y = 0;
 
-    fosgra_get_info (fosfat, path, &x, &y);
+    fosgra_get_info (fosfat, path, &x, &y, NULL);
     snprintf (head, sizeof (head), "P4\n%u %u\n", x, y);
 
     /* no header needed */

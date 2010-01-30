@@ -60,7 +60,7 @@ uint8_t *fosgra_get_buffer (fosfat_t *fosfat,
  * \param[out] y         image height.
  */
 void fosgra_get_info (fosfat_t *fosfat,
-                      const char *path, uint16_t *x, uint16_t *y);
+                      const char *path, uint16_t *x, uint16_t *y, uint8_t *bpp);
 
 /**
  * \brief Test if the file is a .IMAGE.
