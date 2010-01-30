@@ -278,5 +278,5 @@ fosgra_is_image (fosfat_t *fosfat, const char *path)
   if (!fosfat || !path)
     return 0;
 
-  return fosgra_get_header (fosfat, path, &header) ? 0 : 1;
+  return !fosgra_get_header (fosfat, path, &header);
 }
