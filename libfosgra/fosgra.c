@@ -268,9 +268,9 @@ fosgra_get_info (fosfat_t *fosfat,
     return;
 
   if (x)
-  *x = header.dlx;
+    *x = header.dlx;
   if (y)
-  *y = header.dly;
+    *y = header.dly;
   if (bpp)
     *bpp = header.bip;
 }
