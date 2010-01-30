@@ -3,7 +3,7 @@
  * Copyright (C) 2008-2009 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
  *
  * Thanks to Pierre Arnaud <pierre.arnaud@opac.ch>
- *           for its help and the documentation
+ *           for his help and the documentation
  *    And to Epsitec SA for the Smaky computers
  *
  * This file is part of Fosfat.
