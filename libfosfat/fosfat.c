@@ -515,7 +515,8 @@ fosfat_free_dir (fosfat_bd_t *var)
     bd = bd->next_bd;
     if (free_bd)
       free (free_bd);
-  } while (bd);
+  }
+  while (bd);
 }
 
 /*
@@ -1105,7 +1106,8 @@ fosfat_get (fosfat_t *fosfat, fosfat_bd_t *file,
             res = 0;
         }
         size += check_last;
-      } while (res && file_d->next_data && (file_d = file_d->next_data));
+      }
+      while (res && file_d->next_data && (file_d = file_d->next_data));
 
       /* Freed all data */
       fosfat_free_data (first_d);
@@ -1113,7 +1115,8 @@ fosfat_get (fosfat_t *fosfat, fosfat_bd_t *file,
       if (res && output)
         fprintf (stdout, " %i bytes\n", (int) size);
     }
-  } while (res && file->next_bd && (file = file->next_bd));
+  }
+  while (res && file->next_bd && (file = file->next_bd));
 
   if (!flag)
   {
@@ -1188,10 +1191,10 @@ fosfat_read_dir (fosfat_t *fosfat, uint32_t block)
     /* End of the BL linked list */
     if (dir_list)
       dir_list->next_bl = NULL;
-  /* Go to the next BD if exists (create the linked list for BD) */
-  } while ((next = c2l (dir_desc->next, sizeof (dir_desc->next)))
-           && (dir_desc->next_bd = fosfat_read_bd (fosfat, next))
-           && (dir_desc = dir_desc->next_bd));
+  } /* Go to the next BD if exists (create the linked list for BD) */
+  while ((next = c2l (dir_desc->next, sizeof (dir_desc->next)))
+         && (dir_desc->next_bd = fosfat_read_bd (fosfat, next))
+         && (dir_desc = dir_desc->next_bd));
 
   /* End of the BD linked list */
   dir_desc->next_bd = NULL;
@@ -1279,41 +1282,42 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
       if (!fosfat->viewdel && list->isdel)
         continue;
 
-        /* Test if it is a directory */
-        if (list->isdir && fosfat_isdirname (list->name, dir[i]))
-        {
-          bd_block = list->bd;
-          bl_block = list->bl;
+      /* Test if it is a directory */
+      if (list->isdir && fosfat_isdirname (list->name, dir[i]))
+      {
+        bd_block = list->bd;
+        bl_block = list->bl;
 
-          if (name)
-            free (name);
+        if (name)
+          free (name);
 
-          name = strdup (list->name);
+        name = strdup (list->name);
 
-          /* Go to the next level */
-          list = list->sub;
-          ontop = 0;
-          isdir = 1;
-        }
-        /* Test if it is a file or a soft-link */
-        else if (!list->isdir
-                 && (!strcasecmp (list->name, dir[i])
-                     || (list->islink
-                         && fosfat_isdirname (list->name, dir[i]))
-                    )
-                )
-        {
-          bd_block = list->bd;
-          bl_block = list->bl;
+        /* Go to the next level */
+        list = list->sub;
+        ontop = 0;
+        isdir = 1;
+      }
+      /* Test if it is a file or a soft-link */
+      else if (!list->isdir
+               && (!strcasecmp (list->name, dir[i])
+                   || (list->islink
+                       && fosfat_isdirname (list->name, dir[i]))
+                  )
+              )
+      {
+        bd_block = list->bd;
+        bl_block = list->bl;
 
-          if (name)
-            free (name);
+        if (name)
+          free (name);
 
-          name = strdup (list->name);
-          ontop = 0;
-          isdir = 0;
-        }
-    } while (ontop && list && (list = list->next));
+        name = strdup (list->name);
+        ontop = 0;
+        isdir = 0;
+      }
+    }
+    while (ontop && list && (list = list->next));
 
   free (path);
 
@@ -1747,7 +1751,8 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
         }
       }
     }
-  } while ((files = files->next_bl));
+  }
+  while ((files = files->next_bl));
 
   fosfat_free_dir (dir);
 
@@ -2000,7 +2005,8 @@ fosfat_cache_dir (fosfat_t *fosfat, uint32_t pt)
           list->sub = fosfat_cache_dir (fosfat, list->bd);
       }
     }
-  } while ((files = files->next_bl));
+  }
+  while ((files = files->next_bl));
 
   fosfat_free_dir (dir);
 
