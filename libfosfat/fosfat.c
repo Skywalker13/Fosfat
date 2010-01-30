@@ -1166,8 +1166,9 @@ fosfat_read_dir (fosfat_t *fosfat, uint32_t block)
   do
   {
     /* Get the first pointer */
-    dir_desc->first_bl = fosfat_read_data (fosfat, c2l(dir_desc->pts[0],
-                         sizeof (dir_desc->pts[0])), dir_desc->nbs[0], B_BL);
+    dir_desc->first_bl =
+      fosfat_read_data (fosfat, c2l(dir_desc->pts[0],
+                        sizeof (dir_desc->pts[0])), dir_desc->nbs[0], B_BL);
     dir_list = dir_desc->first_bl;
 
     /* Go to the last BL */
@@ -1178,7 +1179,8 @@ fosfat_read_dir (fosfat_t *fosfat, uint32_t block)
     for (i = 1; dir_list && i < c2l (dir_desc->npt,
                                      sizeof (dir_desc->npt)); i++)
     {
-      dir_list->next_bl = fosfat_read_data (fosfat, c2l (dir_desc->pts[i],
+      dir_list->next_bl =
+        fosfat_read_data (fosfat, c2l (dir_desc->pts[i],
                           sizeof (dir_desc->pts[i])), dir_desc->nbs[i], B_BL);
       dir_list = dir_list->next_bl;
 
@@ -1750,8 +1752,9 @@ fosfat_list_dir (fosfat_t *fosfat, const char *location)
         }
       }
     }
+    files = files->next_bl;
   }
-  while ((files = files->next_bl));
+  while (files);
 
   fosfat_free_dir (dir);
 
@@ -2004,8 +2007,9 @@ fosfat_cache_dir (fosfat_t *fosfat, uint32_t pt)
           list->sub = fosfat_cache_dir (fosfat, list->bd);
       }
     }
+    files = files->next_bl;
   }
-  while ((files = files->next_bl));
+  while (files);
 
   fosfat_free_dir (dir);
 
