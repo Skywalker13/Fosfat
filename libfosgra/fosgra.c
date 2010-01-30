@@ -260,14 +260,16 @@ fosgra_get_info (fosfat_t *fosfat,
   fosgra_image_h_t header;
   int res;
 
-  if (!fosfat || !path || !x || !y)
+  if (!fosfat || !path)
     return;
 
   res = fosgra_get_header (fosfat, path, &header);
   if (res)
     return;
 
+  if (x)
   *x = header.dlx;
+  if (y)
   *y = header.dly;
   if (bpp)
     *bpp = header.bip;
