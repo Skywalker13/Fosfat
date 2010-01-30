@@ -1271,14 +1271,14 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
 
   /* Loop for all directories in the path */
   for (i = 0; list && i < nb; i++)
-  {
-    ontop = 1;
-
     do
     {
+      ontop = 1;
+
       /* test if the file is deleted or not */
-      if (fosfat->viewdel || !list->isdel)
-      {
+      if (!fosfat->viewdel && list->isdel)
+        continue;
+
         /* Test if it is a directory */
         if (list->isdir && fosfat_isdirname (list->name, dir[i]))
         {
@@ -1313,13 +1313,7 @@ fosfat_search_incache (fosfat_t *fosfat, const char *location,
           ontop = 0;
           isdir = 0;
         }
-        else
-          ontop = 1;
-      }
-      else
-        ontop = 1;
     } while (ontop && list && (list = list->next));
-  }
 
   free (path);
 
