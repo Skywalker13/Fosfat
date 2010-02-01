@@ -90,25 +90,6 @@ trim_fosname (const char *path)
   return strdup (res);
 }
 
-static const char color_map[] = {
-  [0]   = 'a',
-  [1]   = 'b',
-  [2]   = 'c',
-  [3]   = 'd',
-  [4]   = 'e',
-  [5]   = 'f',
-  [6]   = 'g',
-  [7]   = 'h',
-  [8]   = 'i',
-  [9]   = 'j',
-  [10]  = 'k',
-  [11]  = 'l',
-  [12]  = 'm',
-  [13]  = 'n',
-  [14]  = 'o',
-  [15]  = 'p',
-};
-
 static size_t
 get_filesize (fosfat_file_t *file, const char *path)
 {
@@ -133,7 +114,7 @@ get_filesize (fosfat_file_t *file, const char *path)
   return x / 8 * y + count_nb_dec (x) + count_nb_dec (y) + 5;
 }
 
-#define TO_8BPP(c) color_map[(c) & 0x0F]
+#define TO_8BPP(c) (((c) & 0x0F) + 0x61)   /* 'a' to 'p' */
 #define COLOR_TO_XPM(dec, size, mod, sn)                            \
   {                                                                 \
     size_t s;                                                       \
@@ -181,7 +162,7 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
     for (i = 0; i < 16; i++)
     {
       snprintf (mapping, sizeof (mapping), "%c c #%06x\n",
-                color_map[i], fosgra_color_get (fosfat, path, i));
+                TO_8BPP (i), fosgra_color_get (fosfat, path, i));
       strcat (head, mapping);
     }
   }
