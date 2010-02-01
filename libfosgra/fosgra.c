@@ -86,7 +86,7 @@ typedef struct fosgra_image_h_s {
  * |___BLUE____| _ _ _ _ _IDX_ _
  *
  * The first index is 0 and the last is 15. Each color is stores on 16
- * bits. But in all samples, only the 8 bits LSB are used.
+ * bits. But in all samples, only 8 bits are used.
  */
 typedef struct fosgra_color_map_s {
   uint8_t undef[32];
@@ -294,9 +294,9 @@ fosgra_color_get (fosfat_t *fosfat, const char *path, uint8_t idx)
     return 0;
 
   map = (fosgra_color_map_t *) buffer;
-  color =   map->map[idx].red[1]   << 16
-          | map->map[idx].green[1] << 8
-          | map->map[idx].blue[1]  << 0;
+  color =   map->map[idx].red[0]   << 16
+          | map->map[idx].green[0] << 8
+          | map->map[idx].blue[0]  << 0;
 
   free (buffer);
   return color;
