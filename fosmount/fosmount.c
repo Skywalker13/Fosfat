@@ -187,69 +187,69 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
     }
   }
 
-    /* no header needed */
-    if (offset > (signed) strlen (head))
+  /* no header needed */
+  if (offset > (signed) strlen (head))
+  {
+    off_t off_conv   = offset - strlen (head);
+    off_t off_n      = off_conv - off_conv / (x + 1);
+    size_t size_conv = size;
+
+    int start_n = off_conv % (x + 1);
+
+    if (bpp == 4)
     {
-      off_t off_conv   = offset - strlen (head);
-      off_t off_n      = off_conv - off_conv / (x + 1);
-      size_t size_conv = size;
-
-      int start_n = off_conv % (x + 1);
-
-      if (bpp == 4)
-      {
-        off_conv  = off_n / 2;
-        size_conv = (size_conv - size_conv / (x + 1)) / 2 + 1;
-      }
-
-      buf = fosgra_get_buffer (fosfat, path, off_conv, size_conv);
-      if (!buf)
-        return NULL;
-
-      if (bpp == 4)
-      {
-        dec = calloc (1, size);
-        if (!dec)
-        {
-          free (buf);
-          return NULL;
-        }
-
-        COLOR_TO_XPM (dec, size, off_n % 2, start_n)
-      }
-      else
-      dec = buf;
+      off_conv  = off_n / 2;
+      size_conv = (size_conv - size_conv / (x + 1)) / 2 + 1;
     }
-  /* header for PBM / XPM */
-    else
+
+    buf = fosgra_get_buffer (fosfat, path, off_conv, size_conv);
+    if (!buf)
+      return NULL;
+
+    if (bpp == 4)
     {
-      off_t off_conv   = 0;
-      size_t size_conv = size - (strlen (head) - offset);
-
-      int start_n = 0;
-
-      if (bpp == 4)
-        size_conv = (size_conv - size_conv / (x + 1)) / 2 + 1;
-
-      buf = fosgra_get_buffer (fosfat, path, off_conv, size_conv);
-      if (!buf)
-        return NULL;
-
       dec = calloc (1, size);
       if (!dec)
+      {
+        free (buf);
         return NULL;
+      }
 
-      memcpy (dec, head + offset, strlen (head) - offset); /* copy header */
+      COLOR_TO_XPM (dec, size, off_n % 2, start_n)
+    }
+    else
+      dec = buf;
+  }
+  /* header for PBM / XPM */
+  else
+  {
+    off_t off_conv   = 0;
+    size_t size_conv = size - (strlen (head) - offset);
 
-      if (bpp == 4)
-        COLOR_TO_XPM (dec + (strlen (head) - offset),
-                      size - (strlen (head) - offset), 0, start_n)
-      else
+    int start_n = 0;
+
+    if (bpp == 4)
+      size_conv = (size_conv - size_conv / (x + 1)) / 2 + 1;
+
+    buf = fosgra_get_buffer (fosfat, path, off_conv, size_conv);
+    if (!buf)
+      return NULL;
+
+    dec = calloc (1, size);
+    if (!dec)
+      return NULL;
+
+    memcpy (dec, head + offset, strlen (head) - offset); /* copy header */
+
+    if (bpp == 4)
+      COLOR_TO_XPM (dec + (strlen (head) - offset),
+                    size - (strlen (head) - offset), 0, start_n)
+    else
       memcpy (dec + (strlen (head) - offset), /* copy data */
               buf, size - (strlen (head) - offset));
-      free (buf);
-    }
-    return dec;
+    free (buf);
+  }
+  return dec;
 }
 
 /*
