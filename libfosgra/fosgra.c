@@ -43,17 +43,51 @@
 #define FOSGRA_COLOR_HEADER_BIT         0x04 /* 4 bit per pixel       */
 #define FOSGRA_IMAGE_HEADER_DIR         0x02 /* coord X-Y like screen */
 
+/*
+ * Header size : 32 bytes
+ *
+ * :  8  :  8  :  8  :  8  :  8  :  8  :  8  :  8  :
+ * :_____:_____:_____:_____:_____:_____:_____:_____:
+ * |_TYP_|_COD_|_BIP_|_DIR_|____DLX____|____DLY____|
+ * |__________NBB__________| _ _ _ _ _ _ _ _ _ _ _ |
+ * | _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ |
+ * |_______________________________________________|
+ *
+ * Please, note that NBB coners only the raw data and the color map with
+ * .COLOR files is not considered.
+ */
 typedef struct fosgra_image_h_s {
-  uint8_t  typ;
-  uint8_t  cod;
-  uint8_t  bip;
-  uint8_t  dir;
+  uint8_t  typ;       /* .IMAGE, .COLOR or BIN           */
+  uint8_t  cod;       /* Pixel coded or not              */
+  uint8_t  bip;       /* Bit per pixel                   */
+  uint8_t  dir;       /* Coord.                          */
   uint16_t dlx;       /* Width in pixel (multiple of 8)  */
   uint16_t dly;       /* Height in pixel                 */
   uint32_t nbb;       /* Data length                     */
   uint8_t  res[160];  /* Unused                          */
 } fosgra_image_h_t;
 
+/*
+ * Color map size : 192 bytes
+ *  this map is only available with .COLOR files
+ *
+ * :  8  :  8  :  8  :  8  :  8  :  8  :  8  :  8  :
+ * :_____:_____:_____:_____:_____:_____:_____:_____:
+ * |__a__| _ _ _ _ _ _ _ _ _ _ _ |__b__| _ _ |__c__|
+ * | _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ |
+ * | _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _  _____|
+ * |_________________________________________|__d__|
+ *
+ * The informations provided in this header are not known. Common values
+ * seem to be a:0x90, b:0xa0, c:0x10 and d:0x24|0x1a. The next 160 bytes
+ * is the color map.
+ *  _______________________________________________
+ * |__________IDX__________|____RED____|___GREEN___|
+ * |___BLUE____| _ _ _ _ _IDX_ _
+ *
+ * The first index is 0 and the last is 15. Each color is stores on 16
+ * bits. But in all samples, only the 8 bits LSB are used.
+ */
 typedef struct fosgra_color_map_s {
   uint8_t undef[32];
   struct {
@@ -260,9 +294,9 @@ fosgra_color_get (fosfat_t *fosfat, const char *path, uint8_t idx)
     return 0;
 
   map = (fosgra_color_map_t *) buffer;
-  color =   map->map[idx].red[0]   << 16
-          | map->map[idx].green[0] << 8
-          | map->map[idx].blue[0]  << 0;
+  color =   map->map[idx].red[1]   << 16
+          | map->map[idx].green[1] << 8
+          | map->map[idx].blue[1]  << 0;
 
   free (buffer);
   return color;
