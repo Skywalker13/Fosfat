@@ -645,7 +645,7 @@ fosfat_in_issystem (fosfat_blf_t *file)
 static inline int
 fosfat_in_isnotdel (fosfat_blf_t *file)
 {
-  return (file && strlen ((char *) file->name) > 0) ? 1 : 0;
+  return file && strlen ((char *) file->name) > 0;
 }
 
 /*
@@ -1604,11 +1604,11 @@ fosfat_stat (fosfat_blf_t *file)
   stat->size = c2l (file->lgf, sizeof (file->lgf));
 
   /* Attributes (field bits) */
-  stat->att.isdir     = fosfat_in_isdir (file)     ? 1 : 0;
-  stat->att.isvisible = fosfat_in_isvisible (file) ? 1 : 0;
-  stat->att.isencoded = fosfat_in_isencoded (file) ? 1 : 0;
-  stat->att.islink    = fosfat_in_islink (file)    ? 1 : 0;
-  stat->att.isdel     = fosfat_in_isnotdel (file)  ? 0 : 1;
+  stat->att.isdir     = !!fosfat_in_isdir (file);
+  stat->att.isvisible = !!fosfat_in_isvisible (file);
+  stat->att.isencoded = !!fosfat_in_isencoded (file);
+  stat->att.islink    = !!fosfat_in_islink (file);
+  stat->att.isdel     = !fosfat_in_isnotdel (file);
 
   /* Creation date */
   stat->time_c.year   = y2k (h2d (file->cd[2]));
@@ -1922,10 +1922,10 @@ fosfat_cache_file (fosfat_blf_t *file, uint32_t bl)
   if (!cachefile)
     return NULL;
 
-  cachefile->next = NULL;
-  cachefile->sub = NULL;
-  cachefile->isdir = fosfat_in_isdir (file) ? 1 : 0;
-  cachefile->islink = fosfat_in_islink (file) ? 1 : 0;
+  cachefile->next   = NULL;
+  cachefile->sub    = NULL;
+  cachefile->isdir  = !!fosfat_in_isdir (file);
+  cachefile->islink = !!fosfat_in_islink (file);
 
   /* if the first char is NULL, then the file is deleted */
   if ((char) file->name[0] == '\0')
@@ -2141,9 +2141,9 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
   if (!fosfat)
     return NULL;
 
-  fosfat->fosboot = -1;
-  fosfat->foschk = 0;
-  fosfat->viewdel = (flag & F_UNDELETE) == F_UNDELETE ? 1 : 0;
+  fosfat->fosboot   = -1;
+  fosfat->foschk    = 0;
+  fosfat->viewdel   = (flag & F_UNDELETE) == F_UNDELETE;
   fosfat->cachelist = NULL;
 
 #ifdef _WIN32
