@@ -39,6 +39,8 @@ extern "C" {
 #include <inttypes.h>
 #include <fosfat.h>
 
+uint32_t fosgra_color_get (fosfat_t *fosfat, const char *path, uint8_t idx);
+
 /**
  * \brief Get decoded .IMAGE buffer.
  *

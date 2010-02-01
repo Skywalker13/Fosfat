@@ -48,7 +48,8 @@
 " -f --floppydisk       force a floppy disk (default autodetect)\n" \
 " -l --fos-logger       that will turn on the FOS logger\n" \
 " -d --fuse-debugger    that will turn on the FUSE debugger\n" \
-" -i --image-pbm        convert on the fly .IMAGE to .PBM\n\n" \
+" -i --image-pbm        convert on the fly .IMAGE to .PBM\n" \
+" -j --image-xpm        convert on the fly .COLOR to .XPM\n\n" \
 " device                /dev/fd0 : floppy disk\n" \
 "                       /dev/sda : hard disk, etc\n" \
 " mountpoint            for example, /mnt/smaky\n" \
@@ -60,8 +61,10 @@
 static fosfat_t *fosfat;
 
 #define FOSID_PBM "[fosgra]"
+#define FOSID_XPM "[fosgra]"
 
 static int g_pbm = 0;
+static int g_xpm = 0;
 
 
 static int
@@ -88,62 +91,147 @@ trim_fosname (const char *path)
   return strdup (res);
 }
 
+static const char color_map[] = {
+  [0]   = 'a',
+  [1]   = 'b',
+  [2]   = 'c',
+  [3]   = 'd',
+  [4]   = 'e',
+  [5]   = 'f',
+  [6]   = 'g',
+  [7]   = 'h',
+  [8]   = 'i',
+  [9]   = 'j',
+  [10]  = 'k',
+  [11]  = 'l',
+  [12]  = 'm',
+  [13]  = 'n',
+  [14]  = 'o',
+  [15]  = 'p',
+};
+
 static size_t
 get_filesize (fosfat_file_t *file, const char *path)
 {
-  char *it;
+  char *it = NULL;
+  uint8_t bpp = 0;
+  uint16_t x = 0, y = 0;
 
-  if (!g_pbm)
+  if (g_pbm)
+    it = strstr (file->name, ".image\0");
+  if (!it && g_xpm)
+    it = strstr (file->name, ".color\0");
+
+  if (!it || file->att.isdir || file->att.islink || file->att.isencoded
+      || !fosgra_is_image (fosfat, path))
     return file->size;
 
-  /* .IMAGE handling */
-  it = strstr (file->name, ".image\0");
-  if (it && !file->att.isdir && !file->att.islink && !file->att.isencoded
-      && fosgra_is_image (fosfat, path))
-  {
-    uint16_t x = 0, y = 0;
+  fosgra_get_info (fosfat, path, &x, &y, &bpp);
 
-    fosgra_get_info (fosfat, path, &x, &y, NULL);
-    /* PBM file size */
-    return x / 8 * y + count_nb_dec (x) + count_nb_dec (y) + 5;
-  }
+  if (bpp == 4)
+    return x * y + y + count_nb_dec (x) + count_nb_dec (y) + 14 + 16 * 12;
 
-  return file->size;
+  return x / 8 * y + count_nb_dec (x) + count_nb_dec (y) + 5;
 }
+
+#define TO_8BPP(c) color_map[(c) & 0x0F]
+#define COLOR_TO_XPM(dec, size, mod, sn)                            \
+  {                                                                 \
+    size_t s;                                                       \
+    int j = 0, k = mod;                                             \
+    for (s = 0; s < (size); s++)                                    \
+    {                                                               \
+      (dec)[s] = TO_8BPP ((buf[j] & (0xF0 >> 4 * k)) >> 4 * !k);    \
+      k = !k;                                                       \
+      if (!k)                                                       \
+        j++;                                                        \
+                                                                    \
+      sn++;                                                         \
+      if (sn && !(sn % x) && (s + 1) < (size))                      \
+        (dec)[++s] = '\n';                                          \
+    }                                                               \
+  }
 
 static uint8_t *
 get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
 {
-  char *it;
+  char *it = NULL;
+  char head[1024];
+  char mapping[512];
+  uint8_t *buf, *dec;
+  uint8_t bpp = 0;
+  uint16_t x = 0, y = 0;
 
-  if (!g_pbm)
-    goto out;
+  if (g_pbm)
+    it = strstr (file->name, ".image\0");
+  if (!it && g_xpm)
+    it = strstr (file->name, ".color\0");
 
-  it = strstr (file->name, ".image\0");
-  if (it && !file->att.isdir && !file->att.islink && !file->att.isencoded
-      && fosgra_is_image (fosfat, path))
-  {
-    char head[256];
-    uint8_t *buf, *dec;
-    uint16_t x = 0, y = 0;
+  if (!it || file->att.isdir || file->att.islink || file->att.isencoded
+      || !fosgra_is_image (fosfat, path))
+    return fosfat_get_buffer (fosfat, path, offset, size);
 
-    fosgra_get_info (fosfat, path, &x, &y, NULL);
+  fosgra_get_info (fosfat, path, &x, &y, &bpp);
+  if (bpp == 1)
     snprintf (head, sizeof (head), "P4\n%u %u\n", x, y);
+  else
+  {
+    int i;
+
+    snprintf (head, sizeof (head), "! XPM2\n%u %u 16 1\n", x, y);
+    for (i = 0; i < 16; i++)
+    {
+      snprintf (mapping, sizeof (mapping), "%c c #%06x\n",
+                color_map[i], fosgra_color_get (fosfat, path, i));
+      strcat (head, mapping);
+    }
+  }
 
     /* no header needed */
     if (offset > (signed) strlen (head))
     {
-      buf = fosgra_get_buffer (fosfat, path, offset - strlen (head), size);
+      off_t off_conv   = offset - strlen (head);
+      off_t off_n      = off_conv - off_conv / (x + 1);
+      size_t size_conv = size;
+
+      int start_n = off_conv % (x + 1);
+
+      if (bpp == 4)
+      {
+        off_conv  = off_n / 2;
+        size_conv = (size_conv - size_conv / (x + 1)) / 2 + 1;
+      }
+
+      buf = fosgra_get_buffer (fosfat, path, off_conv, size_conv);
       if (!buf)
         return NULL;
 
+      if (bpp == 4)
+      {
+        dec = calloc (1, size);
+        if (!dec)
+        {
+          free (buf);
+          return NULL;
+        }
+
+        COLOR_TO_XPM (dec, size, off_n % 2, start_n)
+      }
+      else
       dec = buf;
     }
-    /* header for PBM */
+  /* header for PBM / XPM */
     else
     {
-      buf = fosgra_get_buffer (fosfat,
-                               path, 0, size - (strlen (head) - offset));
+      off_t off_conv   = 0;
+      size_t size_conv = size - (strlen (head) - offset);
+
+      int start_n = 0;
+
+      if (bpp == 4)
+        size_conv = (size_conv - size_conv / (x + 1)) / 2 + 1;
+
+      buf = fosgra_get_buffer (fosfat, path, off_conv, size_conv);
       if (!buf)
         return NULL;
 
@@ -152,15 +240,16 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
         return NULL;
 
       memcpy (dec, head + offset, strlen (head) - offset); /* copy header */
+
+      if (bpp == 4)
+        COLOR_TO_XPM (dec + (strlen (head) - offset),
+                      size - (strlen (head) - offset), 0, start_n)
+      else
       memcpy (dec + (strlen (head) - offset), /* copy data */
               buf, size - (strlen (head) - offset));
       free (buf);
     }
     return dec;
-  }
-
- out:
-  return fosfat_get_buffer (fosfat, path, offset, size);
 }
 
 /*
@@ -360,6 +449,13 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
         name = calloc (1, strlen (files->name) + strlen (FOSID_PBM) + 6);
         sprintf (name, "%s." FOSID_PBM ".pbm", files->name);
       }
+      /* add identification for .COLOR translated to XPM */
+      else if (g_xpm && strstr (files->name, ".color\0")
+               && fosgra_is_image (fosfat, _path))
+      {
+        name = calloc (1, strlen (files->name) + strlen (FOSID_XPM) + 6);
+        sprintf (name, "%s." FOSID_XPM ".xpm", files->name);
+      }
       else
         name = strdup (files->name);
 
@@ -503,7 +599,7 @@ main (int argc, char **argv)
   char **arg;
   fosfat_disk_t type = FOSFAT_AD;
 
-  const char *const short_options = "adfhliv";
+  const char *const short_options = "adfhlijv";
 
   const struct option long_options[] = {
     { "harddisk",      no_argument, NULL, 'a' },
@@ -512,6 +608,7 @@ main (int argc, char **argv)
     { "help",          no_argument, NULL, 'h' },
     { "fos-logger",    no_argument, NULL, 'l' },
     { "image-pbm",     no_argument, NULL, 'i' },
+    { "image-xpm",     no_argument, NULL, 'j' },
     { "version",       no_argument, NULL, 'v' },
     { NULL,            0,           NULL,  0  }
   };
@@ -546,6 +643,9 @@ main (int argc, char **argv)
     case 'i':           /* -i or --image-pbm */
       g_pbm = 1;
       break ;
+    case 'j':           /* -j or --image-xpm */
+      g_xpm = 1;
+      break;
     case -1:            /* end */
       break ;
     }

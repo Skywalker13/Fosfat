@@ -32,12 +32,15 @@
 
 #define FOSGRA_IMAGE_HEADER_LENGTH      32
 #define FOSGRA_IMAGE_HEADER_LENGTH_BIN  256
+#define FOSGRA_COLOR_HEADER_LENGTH_MAP  (6 * 32)
 #define FOSGRA_IMAGE_HEADER_TYP         0x81 /* .IMAGE header         */
+#define FOSGRA_COLOR_HEADER_TYP         0x82 /* .COLOR header         */
 #define FOSGRA_IMAGE_HEADER_BIN         0x82 /* binary header         */
 #define FOSGRA_IMAGE_HEADER_BIN_TYP     0x01 /* .IMAGE header for bin */
 #define FOSGRA_IMAGE_HEADER_COD_N       0x00 /* image uncoded         */
 #define FOSGRA_IMAGE_HEADER_COD_C       0x04 /* image coded           */
 #define FOSGRA_IMAGE_HEADER_BIT         0x01 /* 1 bit per pixel       */
+#define FOSGRA_COLOR_HEADER_BIT         0x04 /* 4 bit per pixel       */
 #define FOSGRA_IMAGE_HEADER_DIR         0x02 /* coord X-Y like screen */
 
 typedef struct fosgra_image_h_s {
@@ -50,6 +53,16 @@ typedef struct fosgra_image_h_s {
   uint32_t nbb;       /* Data length                     */
   uint8_t  res[160];  /* Unused                          */
 } fosgra_image_h_t;
+
+typedef struct fosgra_color_map_s {
+  uint8_t undef[32];
+  struct {
+    uint16_t idx[2];
+    uint8_t  red[2];
+    uint8_t  green[2];
+    uint8_t  blue[2];
+  } map[16];
+} fosgra_color_map_t;
 
 
 #define FOSGRA_IMAGE_GET_PIXEL                               \
@@ -176,6 +189,7 @@ fosgra_header_open (uint8_t *buffer, fosgra_image_h_t *header)
   SWAP_32 (header->nbb);
 
   if (   header->typ != FOSGRA_IMAGE_HEADER_TYP
+      && header->typ != FOSGRA_COLOR_HEADER_TYP
       && header->typ != FOSGRA_IMAGE_HEADER_BIN_TYP)
     return -1;
 
@@ -183,7 +197,8 @@ fosgra_header_open (uint8_t *buffer, fosgra_image_h_t *header)
       && header->cod != FOSGRA_IMAGE_HEADER_COD_C)
     return -1;
 
-  if (header->bip != FOSGRA_IMAGE_HEADER_BIT)
+  if (   header->bip != FOSGRA_IMAGE_HEADER_BIT
+      && header->bip != FOSGRA_COLOR_HEADER_BIT)
     return -1;
 
   if (header->dir != FOSGRA_IMAGE_HEADER_DIR)
@@ -206,7 +221,7 @@ fosgra_get_header (fosfat_t *fosfat, const char *path, fosgra_image_h_t *header)
     return -1;
 
   /* ignore BIN header if available */
-  if (*buffer == FOSGRA_IMAGE_HEADER_BIN)
+  if (strstr (path, ".image\0") && *buffer == FOSGRA_IMAGE_HEADER_BIN)
     jump = FOSGRA_IMAGE_HEADER_LENGTH_BIN;
   free (buffer);
 
@@ -219,6 +234,40 @@ fosgra_get_header (fosfat_t *fosfat, const char *path, fosgra_image_h_t *header)
   return res;
 }
 
+uint32_t
+fosgra_color_get (fosfat_t *fosfat, const char *path, uint8_t idx)
+{
+  fosgra_image_h_t header;
+  fosgra_color_map_t *map;
+  uint8_t *buffer;
+  int res;
+  uint32_t color;
+
+  if (!fosfat || !path || idx >= 16)
+    return 0;
+
+  res = fosgra_get_header (fosfat, path, &header);
+  if (res)
+    return 0;
+
+  if (header.bip != FOSGRA_COLOR_HEADER_BIT)
+    return 0;
+
+  buffer = fosfat_get_buffer (fosfat, path,
+                              FOSGRA_IMAGE_HEADER_LENGTH,
+                              FOSGRA_COLOR_HEADER_LENGTH_MAP);
+  if (!buffer)
+    return 0;
+
+  map = (fosgra_color_map_t *) buffer;
+  color =   map->map[idx].red[0]   << 16
+          | map->map[idx].green[0] << 8
+          | map->map[idx].blue[0]  << 0;
+
+  free (buffer);
+  return color;
+}
+
 uint8_t *
 fosgra_get_buffer (fosfat_t *fosfat,
                    const char *path, int offset, int size)
@@ -226,8 +275,10 @@ fosgra_get_buffer (fosfat_t *fosfat,
   fosgra_image_h_t header;
   uint8_t *buffer;
   uint8_t *dec;
+  size_t map = 0;
   int res;
   int jump = FOSGRA_IMAGE_HEADER_LENGTH;
+  int ucod_size;
 
   if (!fosfat || !path)
     return NULL;
@@ -237,18 +288,29 @@ fosgra_get_buffer (fosfat_t *fosfat,
     return NULL;
 
   /* ignore BIN header if available */
-  if (header.typ == FOSGRA_IMAGE_HEADER_BIN_TYP)
+  if (   header.bip == FOSGRA_IMAGE_HEADER_BIT
+      && header.typ == FOSGRA_IMAGE_HEADER_BIN_TYP)
     jump += FOSGRA_IMAGE_HEADER_LENGTH_BIN;
+  else if (header.bip == FOSGRA_COLOR_HEADER_BIT)
+    map = FOSGRA_COLOR_HEADER_LENGTH_MAP;
 
   if (header.cod != FOSGRA_IMAGE_HEADER_COD_C)
-    return fosfat_get_buffer (fosfat, path, jump + offset, size);
+    return fosfat_get_buffer (fosfat, path, jump + map + offset, size);
 
-  buffer = fosfat_get_buffer (fosfat, path, jump, header.nbb);
+  buffer = fosfat_get_buffer (fosfat, path, jump + map, header.nbb);
   if (!buffer)
     return NULL;
 
+  ucod_size = header.bip == 4
+              ? header.dlx / 2 * header.dly
+              : header.dlx / 8 * header.dly;
+
+  /* fix max size */
+  if (offset + size > ucod_size)
+    size = ucod_size - offset;
+
   dec = fosgra_image_decod (buffer, header.nbb,
-                            offset, size, header.dlx / 8 * header.dly);
+                            offset, size, ucod_size);
   free (buffer);
   return dec;
 }
