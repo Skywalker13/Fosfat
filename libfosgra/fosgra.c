@@ -52,7 +52,7 @@
  * | _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ |
  * |_______________________________________________|
  *
- * Please, note that NBB coners only the raw data and the color map with
+ * Please, note that NBB concerns only the raw data and the color map with
  * .COLOR files is not considered.
  */
 typedef struct fosgra_image_h_s {
