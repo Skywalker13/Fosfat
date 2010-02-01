@@ -1,5 +1,5 @@
 /*
- * FOS libfosgra: Smaky [.IMAGE] decoder
+ * FOS libfosgra: Smaky [.IMAGE|.COLOR] decoder
  * Copyright (C) 2009 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
  *
  * Thanks to Pierre Arnaud <pierre.arnaud@opac.ch>
@@ -79,8 +79,8 @@ typedef struct fosgra_color_map_s {
 
 
 /*
- * .IMAGE decoding
- * ~~~~~~~~~~~~~~~
+ * .IMAGE|.COLOR decoding
+ * ~~~~~~~~~~~~~~~~~~~~~~
  * The images are decoded from the bottom to the top. In order to limit
  * the size of an image, when a pattern of pixels is repeated consecutively,
  * this group is coded into 16 bits where the first byte is the pattern and
@@ -302,8 +302,8 @@ fosgra_get_buffer (fosfat_t *fosfat,
     return NULL;
 
   ucod_size = header.bip == 4
-              ? header.dlx / 2 * header.dly
-              : header.dlx / 8 * header.dly;
+              ? header.dlx / 2 * header.dly  /* 2 pixels / byte */
+              : header.dlx / 8 * header.dly; /* 8 pixels / byte */
 
   /* fix max size */
   if (offset + size > ucod_size)
