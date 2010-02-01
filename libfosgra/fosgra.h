@@ -39,6 +39,14 @@ extern "C" {
 #include <inttypes.h>
 #include <fosfat.h>
 
+/**
+ * \brief Get the color RGB24 from a .COLOR index.
+ *
+ * \param[in] fosfat     disk handle.
+ * \param[in] path       location on the FOS disk.
+ * \param[in] idx        color index in map.
+ * \return the color in RGB24.
+ */
 uint32_t fosgra_color_get (fosfat_t *fosfat, const char *path, uint8_t idx);
 
 /**
