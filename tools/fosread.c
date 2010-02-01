@@ -2,8 +2,7 @@
  * FOS fosread: tool in read-only for Smaky file system
  * Copyright (C) 2006-2008 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
  *
- * Thanks to Pierre Arnaud <pierre.arnaud@opac.ch>
- *           for his help and the documentation
+ * Thanks to Pierre Arnaud for his help and the documentation
  *    And to Epsitec SA for the Smaky computers
  *
  * This file is part of Fosfat.

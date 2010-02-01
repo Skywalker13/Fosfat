@@ -2,8 +2,7 @@
  * FOS ascii: Smaky's ASCII to Extended ASCII (ISO-8859-1) converter
  * Copyright (C) 2007-2009 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
  *
- * Thanks to Pierre Arnaud <pierre.arnaud@opac.ch>
- *           for his help and the documentation
+ * Thanks to Pierre Arnaud for his help and the documentation
  *    And to Epsitec SA for the Smaky computers
  *
  * This file is part of Fosfat.
