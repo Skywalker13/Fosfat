@@ -85,7 +85,7 @@ typedef struct fosgra_image_h_s {
  * |__________IDX__________|____RED____|___GREEN___|
  * |___BLUE____| _ _ _ _ _IDX_ _
  *
- * The first index is 0 and the last is 15. Each color is stores on 16
+ * The first index is 0 and the last is 15. Each color is stored with 16
  * bits. But in all samples, only 8 bits are used.
  */
 typedef struct fosgra_color_map_s {
