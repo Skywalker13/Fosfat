@@ -242,8 +242,10 @@ in_stat (fosfat_file_t *file, const char *path)
   struct stat *st;
   struct tm time;
 
-  st = (struct stat *) malloc (sizeof (struct stat));
-  memset (st, 0, sizeof (*st));
+  st = calloc (1, sizeof (struct stat));
+  if (!st)
+    return NULL;
+
   memset (&time, 0, sizeof (time));
 
   /* Directory, symlink or file */
