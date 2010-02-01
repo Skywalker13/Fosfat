@@ -216,6 +216,7 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
       }
 
       COLOR_TO_XPM (dec, size, off_n % 2, start_n)
+      free (buf);
     }
     else
       dec = buf;
