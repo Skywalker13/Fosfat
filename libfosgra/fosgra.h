@@ -1,5 +1,5 @@
 /*
- * FOS libfosgra: Smaky [.IMAGE] decoder
+ * FOS libfosgra: Smaky [.IMAGE|.COLOR] decoder
  * Copyright (C) 2009 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
  *
  * Thanks to Pierre Arnaud <pierre.arnaud@opac.ch>
