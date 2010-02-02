@@ -60,7 +60,6 @@
 static fosfat_t *fosfat;
 
 #define FOSGRAID "[fosgra]"
-#define FOSGRAID "[fosgra]"
 
 static int g_pbm = 0;
 static int g_xpm = 0;
