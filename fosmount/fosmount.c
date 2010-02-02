@@ -59,8 +59,8 @@
 
 static fosfat_t *fosfat;
 
-#define FOSID_PBM "[fosgra]"
-#define FOSID_XPM "[fosgra]"
+#define FOSGRAID "[fosgra]"
+#define FOSGRAID "[fosgra]"
 
 static int g_pbm = 0;
 static int g_xpm = 0;
@@ -83,7 +83,7 @@ trim_fosname (const char *path)
   char *it, res[256];
 
   snprintf (res, sizeof (res), "%s", path);
-  it = strstr (res, "." FOSID_PBM ".");
+  it = strstr (res, "." FOSGRAID ".");
   if (it)
     *it = '\0';
 
@@ -429,15 +429,15 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
       if (g_pbm && strstr (files->name, ".image\0")
           && fosgra_is_image (fosfat, _path))
       {
-        name = calloc (1, strlen (files->name) + strlen (FOSID_PBM) + 6);
-        sprintf (name, "%s." FOSID_PBM ".pbm", files->name);
+        name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
+        sprintf (name, "%s." FOSGRAID ".pbm", files->name);
       }
       /* add identification for .COLOR translated to XPM */
       else if (g_xpm && strstr (files->name, ".color\0")
                && fosgra_is_image (fosfat, _path))
       {
-        name = calloc (1, strlen (files->name) + strlen (FOSID_XPM) + 6);
-        sprintf (name, "%s." FOSID_XPM ".xpm", files->name);
+        name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
+        sprintf (name, "%s." FOSGRAID ".xpm", files->name);
       }
       else
         name = strdup (files->name);
