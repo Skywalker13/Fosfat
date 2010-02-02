@@ -4,7 +4,7 @@ endif
 include ../config.win32
 
 BUILD_RULES += lib_dll
-CFLAGS += -DBUILD_DLL
+CPPFLAGS += -DBUILD_DLL
 
 LIBNAME = w32disk
 STATIC_LIBNAME = lib${LIBNAME}dll.a
@@ -19,10 +19,10 @@ OBJS = $(SRCS:.cxx=.o)
 all: depend $(BUILD_RULES)
 
 .cxx.o:
-	$(CXX) -c $(CFLAGS) $(OPTFLAGS) -o $@ $<
+	$(CXX) -c $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 lib_dll: $(OBJS)
-	$(CXX) $(CFLAGS) $(OPTFLAGS) -shared -o $(SHARED_LIBNAME) -Wl,--out-implib,$(STATIC_LIBNAME) $(OBJS) $(LDFLAGS)
+	$(CXX) -shared -o $(SHARED_LIBNAME) -Wl,--out-implib,$(STATIC_LIBNAME) $(OBJS) $(LDFLAGS)
 	$(STRIP) $(SHARED_LIBNAME)
 
 clean:
@@ -30,7 +30,7 @@ clean:
 	rm -f .depend
 
 depend:
-	$(CXX) -MM $(CFLAGS) $(OPTFLAGS) $(SRCS) 1>.depend
+	$(CXX) -MM $(CFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
 
 .PHONY: clean depend
 
