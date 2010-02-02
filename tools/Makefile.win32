@@ -28,7 +28,7 @@ OBJS3 = $(SRCS3:.c=.o)
 all: depend $(APPNAME1) $(APPNAME2) $(APPNAME3)
 
 .c.o:
-	$(CC) -c $(CFLAGS1) $(OPTFLAGS) -o $@ $<
+	$(CC) -c $(OPTFLAGS) $(CFLAGS1) $(CPPFLAGS) -o $@ $<
 
 $(APPNAME1): $(OBJS1)
 	$(CC) $(OBJS1) $(LDFLAGS1) -o $(APPNAME1).exe
@@ -47,9 +47,9 @@ clean:
 	rm -f .depend*
 
 depend:
-	$(CC) -MM $(CFLAGS1) $(OPTFLAGS) $(SRCS1) 1>.depend1
-	$(CC) -MM $(CFLAGS2) $(OPTFLAGS) $(SRCS2) 1>.depend2
-	$(CC) -MM $(CFLAGS3) $(OPTFLAGS) $(SRCS3) 1>.depend3
+	$(CC) -MM $(CFLAGS1) $(CPPFLAGS) $(SRCS1) 1>.depend1
+	$(CC) -MM $(CFLAGS2) $(CPPFLAGS) $(SRCS2) 1>.depend2
+	$(CC) -MM $(CFLAGS3) $(CPPFLAGS) $(SRCS3) 1>.depend3
 
 .PHONY: clean depend
 

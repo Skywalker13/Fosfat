@@ -25,7 +25,7 @@ endif
 all: $(TARGETB)
 
 .c.o:
-	$(CC) -c $(CFLAGS) $(OPTFLAGS) -o $@ $<
+	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 $(APPNAME): $(OBJS)
 	$(CC) $(OBJS) $(LDFLAGS) $(OPTLDFLAGS) $(EXTRALIBS) -o $(APPNAME)
@@ -55,7 +55,7 @@ uninstall-man:
 	rm -f $(mandir)/man1/$(MANPAGES)
 
 depend:
-	$(CC) -MM $(CFLAGS) $(OPTFLAGS) $(SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
 
 .PHONY: clean install-man uninstall-man depend
 

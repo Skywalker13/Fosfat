@@ -71,6 +71,11 @@ echolog(){
     echo "$@"
 }
 
+echologn(){
+    log "$@"
+    echo -n "$@"
+}
+
 clean(){
     rm -f $TMPC $TMPO $TMPE $TMPS
 }
@@ -86,6 +91,18 @@ die(){
     exit 1
 }
 
+set_all(){
+    value=$1
+    shift
+    for var in $*; do
+        eval $var=$value
+    done
+}
+
+enable(){
+    set_all yes $*
+}
+
 enabled(){
     eval test "x\$$1" = "xyes"
 }
@@ -97,21 +114,35 @@ flags_saved(){
 save_flags(){
     flags_saved && return
     SAVE_CFLAGS="$CFLAGS"
+    SAVE_CPPFLAGS="$CPPFLAGS"
+    SAVE_HOST_CFLAGS="$HOST_CFLAGS"
     SAVE_LDFLAGS="$LDFLAGS"
     SAVE_extralibs="$extralibs"
 }
 
 restore_flags(){
     CFLAGS="$SAVE_CFLAGS"
+    CPPFLAGS="$SAVE_CPPFLAGS"
+    HOST_CFLAGS="$SAVE_HOST_CFLAGS"
     LDFLAGS="$SAVE_LDFLAGS"
     extralibs="$SAVE_extralibs"
     unset SAVE_CFLAGS
+    unset SAVE_CPPFLAGS
+    unset SAVE_HOST_CFLAGS
     unset SAVE_LDFLAGS
     unset SAVE_extralibs
 }
 
 temp_cflags(){
     temp_append CFLAGS "$@"
+}
+
+temp_cppflags(){
+    temp_append CPPFLAGS "$@"
+}
+
+temp_host_cflags(){
+    temp_append HOST_CFLAGS "$@"
 }
 
 temp_ldflags(){
@@ -136,7 +167,7 @@ append_var(){
     shift
     for f in $@; do
       if eval echo \$$var | grep -qv -e "$f"; then
-        eval "$var=\"\$$var $f\""
+        test -n "$(eval echo \$$var)" && eval "$var=\"\$$var $f\"" || eval "$var=\"$f\""
       fi
     done
 }
@@ -153,12 +184,20 @@ add_cflags(){
     append CFLAGS "$@"
 }
 
+add_cppflags(){
+    append CPPFLAGS "$@"
+}
+
 add_ldflags(){
     append LDFLAGS "$@"
 }
 
 add_extralibs(){
     append extralibs "$@"
+}
+
+add_pkgconfig_requires(){
+    append pkgconfig_requires "$@"
 }
 
 check_cmd(){
@@ -170,14 +209,21 @@ check_cc(){
     log check_cc "$@"
     cat >$TMPC
     log_file $TMPC
-    check_cmd $cc $CFLAGS "$@" -c -o $TMPO $TMPC
+    check_cmd $cc $CPPFLAGS $CFLAGS "$@" -c -o $TMPO $TMPC
+}
+
+check_host_cc(){
+    log check_host_cc "$@"
+    cat >$TMPC
+    log_file $TMPC
+    check_cmd $host_cc $HOST_CFLAGS "$@" -c -o $TMPO $TMPC
 }
 
 check_cpp(){
     log check_cpp "$@"
     cat >$TMPC
     log_file $TMPC
-    check_cmd $cc $CFLAGS "$@" -E -o $TMPO $TMPC
+    check_cmd $cc $CPPFLAGS $CFLAGS "$@" -E -o $TMPO $TMPC
 }
 
 check_ld(){
@@ -186,8 +232,21 @@ check_ld(){
     check_cmd $cc $LDFLAGS "$@" -o $TMPE $TMPO $extralibs
 }
 
+check_host_ld(){
+    log check_host_ld "$@"
+    check_host_cc || return
+    check_cmd $host_cc $HOST_LDFLAGS "$@" -o $TMPE $TMPO
+}
+
 check_exec(){
     check_ld "$@" && { enabled cross_compile || $TMPE >>$logfile 2>&1; }
+}
+
+check_cppflags(){
+    log check_cppflags "$@"
+    check_cc "$@" <<EOF && append CPPFLAGS "$@"
+int x;
+EOF
 }
 
 check_cflags(){
@@ -266,8 +325,51 @@ check_libconfig(){
     return $err
 }
 
+check_lib_version() {
+    local min_ver toobig_ver
+    min_ver="$2"
+    toobig_ver="$3"
+    check_cmd pkg-config --print-errors --exists "$1 >= $min_ver $1 < $toobig_ver" 2>>$logfile
+    err=$?
+    return $err
+}
+
 append_config(){
     echo "$@" >> $CONFIGFILE
+}
+
+pkgconfig_generate(){
+    name=$1
+    comment=$2
+    version=$3
+    libs=$4
+    libs_private=$5
+    cflags=$6
+    requires=$7
+    requires_private=$8
+
+    cat <<EOF >$name.pc
+PREFIX=$PREFIX
+libdir=$libdir
+includedir=$includedir
+
+Name: $name
+Description: $comment
+Version: $version
+Requires: $requires
+Requires.private: $requires_private
+Conflicts:
+Libs: -L\${libdir} $libs
+Libs.private: $libs_private
+Cflags: -I\${includedir} $cflags
+EOF
+}
+
+add_pkgconfig_deps() {
+    if `which pkg-config 1>/dev/null 2>&1`; then
+      add_cflags `pkg-config "$1" --cflags 2>>$logfile`
+      add_extralibs `pkg-config "$1" --libs 2>>$logfile`
+    fi
 }
 
 # set temporary file name
@@ -303,76 +405,19 @@ ar="ar"
 ranlib="ranlib"
 make="make"
 strip="strip"
-cpu=`uname -m`
+arch=`uname -m`
+cpu="generic"
 optimize="yes"
-debug="no"
+debug="yes"
 dostrip="yes"
 extralibs=""
 installstrip="-s"
 cross_compile="no"
+pic="no"
+INSTALL="install"
 tools="yes"
 fosmount="yes"
-INSTALL="install"
 doc="no"
-
-#################################################
-#   set cpu variable and specific cpu flags
-#################################################
-case "$cpu" in
-  i386|i486|i586|i686|i86pc|BePC)
-    cpu="x86"
-  ;;
-  x86_64|amd64)
-    cpu="x86"
-    canon_arch="`$cc -dumpmachine | sed -e 's,\([^-]*\)-.*,\1,'`"
-    if [ x"$canon_arch" = x"x86_64" -o x"$canon_arch" = x"amd64" ]; then
-      if [ -z "`echo $CFLAGS | grep -- -m32`"  ]; then
-        cpu="x86_64"
-      fi
-    fi
-  ;;
-# armv4l is a subset of armv5tel
-  arm|armv4l|armv5tel)
-    cpu="armv4l"
-  ;;
-  alpha)
-    cpu="alpha"
-  ;;
-  "Power Macintosh"|ppc|ppc64|powerpc)
-    cpu="powerpc"
-  ;;
-  mips|mipsel|IP*)
-    cpu="mips"
-  ;;
-  sun4u|sparc64)
-    cpu="sparc64"
-  ;;
-  sparc)
-    cpu="sparc"
-  ;;
-  sh4)
-    cpu="sh4"
-  ;;
-  parisc|parisc64)
-    cpu="parisc"
-  ;;
-  s390|s390x)
-    cpu="s390"
-  ;;
-  m68k)
-    cpu="m68k"
-  ;;
-  ia64)
-    cpu="ia64"
-  ;;
-  bfin)
-    cpu="bfin"
-  ;;
-  *)
-    cpu="unknown"
-  ;;
-esac
-
 
 #################################################
 #   check options
@@ -458,6 +503,134 @@ else
 fi
 [ -n "$MAKE" ] && make="$MAKE"
 
+[ -n "$HOST_CC" ] && HOST_CC="$HOST_CC"
+[ -n "$HOST_CFLAGS" ] && HOST_CFLAGS="$HOST_CFLAGS"
+[ -n "$HOST_LDFLAGS" ] && HOST_LDFLAGS="$HOST_LDFLAGS"
+
+#################################################
+#   set arch variable and specific cpu flags
+#################################################
+if enabled cross_compile; then
+  arch="`$cc -dumpmachine | sed -e 's,\([^-]*\)-.*,\1,'`"
+fi
+
+case "$arch" in
+  i386|i486|i586|i686|i86pc|BePC)
+    arch="x86_32"
+  ;;
+  x86_64|amd64)
+    arch="x86_32"
+    canon_arch="`$cc -dumpmachine | sed -e 's,\([^-]*\)-.*,\1,'`"
+    if [ x"$canon_arch" = x"x86_64" -o x"$canon_arch" = x"amd64" ]; then
+      if [ -z "`echo $CFLAGS | grep -- -m32`"  ]; then
+        arch="x86_64"
+      fi
+    fi
+    spic=$shared
+  ;;
+# armv4l is a subset of armv5tel
+  arm|armv4l|armv5tel)
+    arch="armv4l"
+  ;;
+  alpha)
+    arch="alpha"
+    spic=$shared
+  ;;
+  "Power Macintosh"|ppc|ppc64|powerpc)
+    arch="powerpc"
+  ;;
+  mips|mipsel|IP*)
+    arch="mips"
+    spic=$shared
+  ;;
+  mips64)
+    arch="mips64"
+    spic=$shared
+  ;;
+  sun4u|sparc64)
+    arch="sparc64"
+    spic=$shared
+  ;;
+  sparc)
+    arch="sparc"
+    spic=$shared
+  ;;
+  sh4)
+    arch="sh4"
+  ;;
+  parisc|parisc64)
+    arch="parisc"
+    spic=$shared
+  ;;
+  s390|s390x)
+    arch="s390"
+  ;;
+  m68k)
+    arch="m68k"
+  ;;
+  ia64)
+    arch="ia64"
+    spic=$shared
+  ;;
+  bfin)
+    arch="bfin"
+  ;;
+  *)
+    arch="unknown"
+  ;;
+esac
+
+# Add processor-specific flags
+if test $cpu != "generic"; then
+  case $cpu in
+    601|ppc601|PowerPC601)
+      add_cflags "-mcpu=601"
+    ;;
+    603*|ppc603*|PowerPC603*)
+      add_cflags "-mcpu=603"
+    ;;
+    604*|ppc604*|PowerPC604*)
+      add_cflags "-mcpu=604"
+    ;;
+    G3|g3|75*|ppc75*|PowerPC75*)
+      add_cflags "-mcpu=750 -mpowerpc-gfxopt"
+    ;;
+    G4|g4|745*|ppc745*|PowerPC745*)
+      add_cflags "-mcpu=7450 -mpowerpc-gfxopt"
+    ;;
+    74*|ppc74*|PowerPC74*)
+      add_cflags "-mcpu=7400 -mpowerpc-gfxopt"
+    ;;
+    G5|g5|970|ppc970|PowerPC970|power4*|Power4*)
+      add_cflags "-mcpu=970 -mpowerpc-gfxopt -mpowerpc64"
+    ;;
+    Cell|CELL|cell)
+      add_cflags "-mcpu=cell"
+    ;;
+    i[3456]86|pentium|pentium-mmx|pentiumpro|pentium[23]|pentium-m|k6|k6-[23]|winchip-c6|winchip2|c3|athlon|athlon-tbird|athlon-4|athlon-[mx]p|athlon64|k8|opteron|athlon-fx|core2|pentium4|pentium4m|prescott|nocona)
+      add_cflags "-march=$cpu"
+    ;;
+    sparc64)
+      add_cflags "-mcpu=v9"
+    ;;
+    arm*|cortex*)
+      add_cflags "-mcpu=$cpu"
+    ;;
+    *)
+      die "WARNING: Unknown CPU \"$cpu\", ignored."
+    ;;
+  esac
+fi
+
+enable_pic(){
+    enable pic
+    add_cppflags -DPIC
+    add_cflags   -fPIC
+}
+
+enabled spic && enable pic
+enabled pic && enable_pic
+
 #################################################
 #   create logging file
 #################################################
@@ -468,7 +641,6 @@ if test "$logging" != no; then
 else
   logfile=/dev/null
 fi
-
 
 #################################################
 #   compiler sanity check
@@ -487,45 +659,20 @@ if test "$?" != 0; then
   die "C compiler test failed."
 fi
 
+if test -n "`$cc -v 2>&1 | grep version | grep Apple`"; then
+  dylib="yes"
+else
+  dylib="no"
+fi
 
 #################################################
 #   check for target specific flags
 #################################################
 # check for SIMD availability
 
-# AltiVec flags: The FSF version of GCC differs from the Apple version
-if test $cpu = "powerpc"; then
-  if test $altivec = "yes"; then
-    if test -n "`$cc -v 2>&1 | grep version | grep Apple`"; then
-      add_cflags "-faltivec"
-    else
-      add_cflags "-maltivec -mabi=altivec"
-    fi
-  fi
-fi
-
-check_header altivec.h && _altivec_h=yes || _altivec_h=no
-
-# check if our compiler supports Motorola AltiVec C API
-if enabled altivec; then
-  if enabled _altivec_h; then
-    inc_altivec_h="#include <altivec.h>"
-  else
-    inc_altivec_h=
-  fi
-  check_cc <<EOF || altivec=no
-$inc_altivec_h
-int main(void) {
-    vector signed int v1, v2, v3;
-    v1 = vec_add(v2,v3);
-    return 0;
-}
-EOF
-fi
-
 # mmi only available on mips
 if [ "$mmi" = "default" ]; then
-  if [ "$cpu" = "mips" ]; then
+  if [ "$arch" = "mips" ]; then
     mmi="yes"
   else
     mmi="no"
@@ -554,7 +701,7 @@ return 0;
 EOF
 
 # test for mm3dnow.h
-test "$cpu" = "x86_64" && march=k8 || march=athlon
+test "$arch" = "x86_64" && march=k8 || march=athlon
 check_cc -march=$march <<EOF && mm3dnow=yes || mm3dnow=no
 #include <mm3dnow.h>
 int main(void) {
@@ -567,27 +714,17 @@ EOF
 
 # ---
 # big/little-endian test
-if test "$cross_compile" = "no"; then
-  check_ld <<EOF || die "endian test failed" && $TMPE && bigendian="yes"
-#include <inttypes.h>
-int main(int argc, char ** argv){
-        volatile uint32_t i=0x01234567;
-        return (*((uint8_t*)(&i))) == 0x67;
-}
+check_cc <<EOF || die "endian test failed"
+unsigned int endian = 'B' << 24 | 'I' << 16 | 'G' << 8 | 'E';
 EOF
-else
-# programs cannot be launched if cross compiling, so make a static guess
-  if test "$cpu" = "powerpc" -o "$cpu" = "mips" ; then
-    bigendian="yes"
-  fi
-fi
+od -A n -t x1 $TMPO | grep -q '42 *49 *47 *45' && enable bigendian
 
 # add some useful compiler flags if supported
 check_cflags -W
 check_cflags -Wall
-check_cflags -D_LARGEFILE_SOURCE
-check_cflags -D_FILE_OFFSET_BITS=64
-check_cflags -D_REENTRANT
+check_cppflags -D_LARGEFILE_SOURCE
+check_cppflags -D_FILE_OFFSET_BITS=64
+check_cppflags -D_REENTRANT
 
 # add needed compiler flags
 check_cflags -D_GNU_SOURCE
@@ -595,68 +732,37 @@ check_cflags -D_GNU_SOURCE
 #################################################
 #   check for debug symbols
 #################################################
-if enabled debug; then
-  add_cflags -g3
-  add_cflags -DHAVE_DEBUG
-  add_ldflags -g3
-  optimize="no"
-fi
+enabled debug && add_cflags -g"$debuglevel" && add_cppflags -DHAVE_DEBUG
 
-if enabled optimize; then
+if enabled small; then
+  check_cflags -Os
+elif enabled optimize; then
   if test -n "`$cc -v 2>&1 | grep xlc`"; then
     add_cflags  "-O5"
     add_ldflags "-O5"
   else
-    add_cflags "-O3"
+    add_cflags "-O2"
   fi
 fi
 
-#################################################
-# check for shared library build
-#################################################
-if enabled shared; then
-  case "$cpu" in
-  x86_64|ia64|alpha|sparc*|power*) add_cflags "-fPIC" ;;
-  esac
-fi
 
-#################################################
-#   check some standard headers
-#################################################
 echolog "Checking for Blupi ..."
-echolog "Checking for stdio ..."
-check_header stdio.h || die "Error, can't find stdio !"
-echolog "Checking for stdlib ..."
-check_header stdlib.h || die "Error, can't find stdlib !"
-echolog "Checking for string ..."
-check_header string.h || die "Error, can't find string !"
-echolog "Checking for stdarg ..."
-check_header stdarg.h || die "Error, can't find stdarg !"
-echolog "Checking for ctype ..."
-check_header ctype.h || die "Error, can't find ctype !"
-echolog "Checking for getopt ..."
-check_header getopt.h || die "Error, can't find getopt !"
-
-if test "$fosmount" = "yes"; then
-  echolog "Checking for errno ..."
-  check_header errno.h || die "Error, can't find errno !"
-  echolog "Checking for fcntl ..."
-  check_header fcntl.h || die "Error, can't find fcntl !"
-  echolog "Checking for time ..."
-  check_header time.h || die "Error, can't find time !"
-fi
 
 #################################################
 #   check for libfuse
 #################################################
 if test "$fosmount" = "yes"; then
-  echolog "Checking for libfuse ..."
   if [ -n "$libfusedir" ]; then
     check_cflags -I$libfusedir
     check_ldflags -L$libfusedir
   fi
+  if [ -z "$libfusedir" ]; then
+    add_pkgconfig_deps fuse
+  fi
+
+  echolog "Checking for libfuse ..."
   check_lib fuse.h fuse_main -lfuse || die "Error, can't find libfuse !"
-  add_cflags -DFUSE_USE_VERSION=26
+  add_cppflags -DFUSE_USE_VERSION=26
 fi
 
 #################################################
@@ -681,14 +787,15 @@ echolog "  AR                 $ar"
 echolog "  RANLIB             $ranlib"
 echolog "  STRIP              $strip"
 echolog "  make               $make"
-echolog "  CPU                $cpu"
+echolog "  Architecture       $arch ($cpu)"
+echolog "  big-endian         ${bigendian-no}"
 echolog "  debug symbols      $debug"
 echolog "  strip symbols      $dostrip"
 echolog "  optimize           $optimize"
 echolog "  static             ${static}"
 echolog "  shared             ${shared}"
 echolog ""
-echolog "  CFLAGS             $CFLAGS"
+echolog "  CFLAGS             $CFLAGS $CPPFLAGS"
 echolog "  LDFLAGS            $LDFLAGS"
 echolog "  extralibs          $extralibs"
 echolog ""
@@ -715,6 +822,7 @@ append_config "LN=ln"
 
 append_config "BUILD_STATIC=$static"
 append_config "BUILD_SHARED=$shared"
+append_config "BUILD_DYLIB=$dylib"
 
 if enabled dostrip; then
   append_config "STRIP=$strip"
@@ -725,9 +833,14 @@ else
 fi
 append_config "EXTRALIBS=$extralibs"
 
+append_config "CPPFLAGS=$CPPFLAGS"
 append_config "OPTFLAGS=$CFLAGS"
 append_config "LDFLAGS=$LDFLAGS"
 append_config "INSTALL=$INSTALL"
+
+if enabled bigendian; then
+  append_config "WORDS_BIGENDIAN=yes"
+fi
 
 append_config "DEBUG=$debug"
 append_config "TOOLS=$tools"
