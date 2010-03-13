@@ -32,6 +32,7 @@ endif
 MANS = $(FOSREAD_MAN) $(SMASCII_MAN) $(FOSREC_MAN)
 
 EXTRADIST = \
+	ascii.h \
 	$(MANS)
 
 ifeq ($(BUILD_STATIC),yes)
