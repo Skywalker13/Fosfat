@@ -208,7 +208,7 @@ static int g_logger = 0;
 #define FOSFAT_IS_ENCODED(handle, loc) FOSFAT_IS(handle, loc, encoded)
 #define FOSFAT_IS_OPENEXM(handle, loc) FOSFAT_IS(handle, loc, openexm)
 
-#ifdef __linux__
+#ifndef _WIN32
 /*
  * Translate a block number to an address.
  *
