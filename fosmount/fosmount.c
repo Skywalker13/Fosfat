@@ -48,7 +48,7 @@
 " -l --fos-logger       that will turn on the FOS logger\n" \
 " -d --fuse-debugger    that will turn on the FUSE debugger\n" \
 " -i --image-pbm        convert on the fly .IMAGE to .PBM\n" \
-" -j --image-xpm        convert on the fly .COLOR to .XPM\n\n" \
+" -j --image-xpm        convert on the fly .COLOR to .XPM (ver. 2)\n\n" \
 " device                /dev/fd0 : floppy disk\n" \
 "                       /dev/sda : hard disk, etc\n" \
 " mountpoint            for example, /mnt/smaky\n" \
