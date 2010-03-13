@@ -94,8 +94,8 @@ typedef struct fosgra_color_map_s {
     uint8_t  red[2];
     uint8_t  green[2];
     uint8_t  blue[2];
-  } map[16];
-} fosgra_color_map_t;
+  } __attribute__ ((__packed__)) map[16];
+} __attribute__ ((__packed__)) fosgra_color_map_t;
 
 
 #define FOSGRA_IMAGE_GET_PIXEL                               \
