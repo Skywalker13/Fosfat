@@ -1,12 +1,12 @@
 .\" 
-.TH "FOSREC" "1" "July 2009" "fosrec #VERSION#" "User Commands"
+.TH "FOSMOUNT" "1" "July 2009" "fosmount" "User Commands"
 .SH "NAME"
-fosrec \- FOS recovery
+fosmount \- FOS mounter for fuse
 .SH "SYNOPSIS"
-.B fosrec
-[\fIoptions\fR] \fIdevice \fIdestination
+.B fosmount
+[\fIoptions\fR] \fIdevice mountpoint\fR
 .SH "DESCRIPTION"
-Tool to recovery files on a Smaky FOS disk.
+FUSE extension for a read\-only access on Smaky FOS.
 .TP 
 \fB\-h\fR \fB\-\-help\fR
 Display help message.
@@ -21,23 +21,32 @@ Force an hard disk instead of the autodetection.
 Force a floppy disk instead of the autodetection.
 .TP 
 \fB\-l\fR \fB\-\-fos\-logger\fR
-Turn ON the FOS logger.
+Turn ON the FOS logger, fosmount will not be detached of the terminal.
+.TP 
+\fB\-d\fR \fB\-\-fuse\-debugger\fR
+Turn ON the FUSE debugger, fosmount will not be detached of the terminal.
+.TP 
+\fB\-i\fR \fB\-\-image\-pbm\fR
+Convert on the fly .IMAGE to .PBM (portable bitmap format).
+.TP 
+\fB\-j\fR \fB\-\-image\-xpm\fR
+Convert on the fly .COLOR to .XPM (X Pixmap).
 .TP 
 \fBdevice\fR
 /dev/fd0 for floppy disk
 .br 
 /dev/sda for hard disk, etc, ...
 .TP 
-\fBdestination\fR
-The destination to save the files.
+\fBmountpoint\fR
+Mount point for the FOS, like /mnt/smaky.
 .SH "AUTHOR"
 Written by Mathieu Schroeter <mathieu.schroeter@gamesover.ch>.
 .SH "REPORTING BUGS"
 Report bugs to <\fIfosfat\-devel@gamesover.ch\fP>.
 .SH "COPYRIGHT"
-Copyright \(co 2006\-2009 Mathieu Schroeter
+Copyright \(co 2006\-2010 Mathieu Schroeter
 
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .SH "SEE ALSO"
-fosrec(1)
+fosread(1)
