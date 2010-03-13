@@ -35,7 +35,7 @@ void free_w32disk (win32disk_t *disk);
 
 size_t w32disk_sectorsize (win32disk_t *disk);
 int w32disk_readsectors (win32disk_t *disk, void *buffer,
-                                unsigned long sector_index, size_t csectors);
+                         unsigned long sector_index, size_t csectors);
 unsigned int w32disk_getdriveindex (win32disk_t *disk);
 int w32disk_valid (win32disk_t *disk);
 
