@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Fosfat configure script - (c) 2006 Mathieu Schroeter
+# Fosfat configure script - (c) 2006-2010 Mathieu Schroeter
 #
 #   (Based on the libplayer configure script, (c) 2006 Benjamin Zores
 #   fully inspirated from ffmpeg configure script, thanks to Fabrice Bellard
@@ -33,6 +33,7 @@ show_help(){
   echo "  --bindir=DIR                install bins in DIR [PREFIX/bin]"
   echo "  --libdir=DIR                install libs in DIR [PREFIX/lib]"
   echo "  --includedir=DIR            install includes in DIR [PREFIX/include]"
+  echo "  --docdir=DIR                install docs in DIR [PREFIX/share/doc]"
   echo "  --mandir=DIR                install man page in DIR [PREFIX/share/man]"
   echo "  --enable-static             build static libraries [default=yes]"
   echo "  --disable-static            do not build static libraries [default=no]"
@@ -45,11 +46,16 @@ show_help(){
   echo "  --with-fuse-dir=DIR         check for libfuse installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
-  echo "  --enable-debug              enable debugging symbols"
+  echo "  --arch=ARCH                 force architecture"
+  echo "  --cpu=CPU                   force CPU optimization"
+  echo "  --disable-debug             disable debugging symbols"
+  echo "  --enable-debug=LEVEL        set the debug level [$debuglevel]"
   echo "  --disable-strip             disable stripping of executables at installation"
   echo "  --disable-optimize          disable compiler optimization"
+  echo "  --enable-small              optimize for size instead of speed"
   echo "  --cross-prefix=PREFIX       use PREFIX for compilation tools [$cross_prefix]"
   echo "  --cross-compile             assume a cross-compiler is used"
+  echo "  --enable-pic                build position-independent code"
   echo ""
   echo "Miscellaneous:"
   echo "  --enable-doc                build Doxygen documentation"
@@ -105,6 +111,10 @@ enable(){
 
 enabled(){
     eval test "x\$$1" = "xyes"
+}
+
+disabled(){
+    eval test "x\$$1" = "xno"
 }
 
 flags_saved(){
@@ -200,6 +210,10 @@ add_pkgconfig_requires(){
     append pkgconfig_requires "$@"
 }
 
+add_pkgconfig_libs(){
+    append pkgconfig_libs "$@"
+}
+
 check_cmd(){
     log "$@"
     "$@" >>$logfile 2>&1
@@ -229,7 +243,7 @@ check_cpp(){
 check_ld(){
     log check_ld "$@"
     check_cc || return
-    check_cmd $cc $LDFLAGS "$@" -o $TMPE $TMPO $extralibs
+    check_cmd $cc "$@" -o $TMPE $TMPO $extralibs $LDFLAGS
 }
 
 check_host_ld(){
@@ -290,6 +304,24 @@ int main(){
 EOF
 }
 
+check_func_headers(){
+    log check_func_headers "$@"
+    headers=$1
+    func=$2
+    shift 2
+    incs=""
+    for hdr in $headers; do
+      incs="$incs
+#include <$hdr>"
+    done
+    check_ld "$@" <<EOF
+$incs
+int main(){
+    return (long) $func;
+}
+EOF
+}
+
 check_lib(){
     local header func err
     log check_lib "$@"
@@ -325,6 +357,54 @@ check_libconfig(){
     return $err
 }
 
+check_pkgconfig(){
+    local pkg func ccflags clibs err
+    log check_pkgconfig "$@"
+    pkg="$1"
+    func="$2"
+    ccflags="${3:---cflags}"
+    clibs="${4:---libs}"
+    err=1
+    if `which pkg-config 1>/dev/null 2>&1`; then
+      cflags=`pkg-config $pkg $ccflags`
+      [ -n "$cflags" ] && check_cflags "$cflags"
+      libs=`pkg-config $pkg $clibs`
+      if [ -n "$libs" ]; then
+        temp_extralibs "$libs"
+        check_func $func
+        err=$?
+        restore_flags
+      fi
+    fi
+    return $err
+}
+
+check_lib_pkgcfg(){
+    local pkg header func err
+    log check_lib_pkgcfg "$@"
+    pkg="$1"
+    header="$2"
+    func="$3"
+    shift 3
+    err=1
+    check_pkgconfig $pkg $func && add_pkgconfig_requires $pkg && err=0
+    [ "$err" != 0 ] && check_lib $header $func "$@" && add_pkgconfig_libs "$@" && err=0
+    return $err
+}
+
+check_lib_libcfg(){
+    local config header func err
+    log check_lib_pkgcfg "$@"
+    config="$1"
+    header="$2"
+    func="$3"
+    shift 3
+    err=1
+    check_libconfig $config $func && add_pkgconfig_libs "$@" && err=0
+    [ "$err" != 0 ] && check_lib $header $func "$@" && add_pkgconfig_libs "$@" && err=0
+    return $err
+}
+
 check_lib_version() {
     local min_ver toobig_ver
     min_ver="$2"
@@ -340,13 +420,12 @@ append_config(){
 
 pkgconfig_generate(){
     name=$1
+    shortname=${name#lib}
     comment=$2
     version=$3
     libs=$4
-    libs_private=$5
+    requires=$5
     cflags=$6
-    requires=$7
-    requires_private=$8
 
     cat <<EOF >$name.pc
 PREFIX=$PREFIX
@@ -356,11 +435,11 @@ includedir=$includedir
 Name: $name
 Description: $comment
 Version: $version
-Requires: $requires
-Requires.private: $requires_private
+Requires: $(enabled shared || echo $requires)
+Requires.private: $(enabled shared && echo $requires)
 Conflicts:
-Libs: -L\${libdir} $libs
-Libs.private: $libs_private
+Libs: -L\${libdir} -l${shortname} $(enabled shared || echo $libs)
+Libs.private: $(enabled shared && echo $libs)
 Cflags: -I\${includedir} $cflags
 EOF
 }
@@ -397,10 +476,12 @@ PREFIX="/usr/local"
 bindir='${PREFIX}/bin'
 libdir='${PREFIX}/lib'
 includedir='${PREFIX}/include'
+docdir='${PREFIX}/share/doc'
 mandir='$(PREFIX)/share/man'
 static="yes"
 shared="yes"
 cc="gcc"
+host_cc="gcc"
 ar="ar"
 ranlib="ranlib"
 make="make"
@@ -408,6 +489,7 @@ strip="strip"
 arch=`uname -m`
 cpu="generic"
 optimize="yes"
+small="no"
 debug="yes"
 dostrip="yes"
 extralibs=""
@@ -415,6 +497,9 @@ installstrip="-s"
 cross_compile="no"
 pic="no"
 INSTALL="install"
+VERSION=""
+pkgconfig_requires=""
+pkgconfig_libs=""
 tools="yes"
 fosmount="yes"
 doc="no"
@@ -437,6 +522,8 @@ for opt do
   ;;
   --includedir=*) includedir="$optval"
   ;;
+  --docdir=*) docdir="$optval"; force_docdir=yes
+  ;;
   --mandir=*) mandir="$optval"
   ;;
   --enable-static) static="yes"
@@ -447,15 +534,27 @@ for opt do
   ;;
   --disable-shared) shared="no"
   ;;
-  --enable-debug) debug="yes"
+  --enable-debug=*) debug="yes"; debuglevel="$optval"
+  ;;
+  --disable-debug) debug="no"
+  ;;
+  --enable-strip) dostrip="yes"
   ;;
   --disable-strip) dostrip="no"
   ;;
+  --enable-optimize) optimize="yes"
+  ;;
   --disable-optimize) optimize="no"
+  ;;
+  --enable-small) small="yes"
+  ;;
+  --disable-small) small="no"
   ;;
   --cross-prefix=*) cross_prefix="$optval"
   ;;
   --cross-compile) cross_compile="yes"
+  ;;
+  --with-fuse-dir=*) libfusedir="$optval";
   ;;
   --enable-tools) tools="yes";
   ;;
@@ -465,7 +564,9 @@ for opt do
   ;;
   --disable-fosmount) fosmount="no";
   ;;
-  --with-fuse-dir=*) libfusedir="$optval";
+  --enable-pic) pic="yes";
+  ;;
+  --disable-pic) pic="no";
   ;;
   --enable-doc) doc="yes";
   ;;
@@ -665,6 +766,12 @@ else
   dylib="no"
 fi
 
+mingw32="no"
+if test -n "`$cc -v 2>&1 | grep version | grep mingw`" \
+     -o -n "`$cc -v 2>&1 | grep Target  | grep mingw`"; then
+  mingw32="yes"
+fi
+
 #################################################
 #   check for target specific flags
 #################################################
@@ -719,6 +826,8 @@ unsigned int endian = 'B' << 24 | 'I' << 16 | 'G' << 8 | 'E';
 EOF
 od -A n -t x1 $TMPO | grep -q '42 *49 *47 *45' && enable bigendian
 
+enabled bigendian && add_cppflags -DHAVE_BIGENDIAN
+
 # add some useful compiler flags if supported
 check_cflags -W
 check_cflags -Wall
@@ -736,6 +845,7 @@ enabled debug && add_cflags -g"$debuglevel" && add_cppflags -DHAVE_DEBUG
 
 if enabled small; then
   check_cflags -Os
+  add_cppflags -DCONFIG_SMALL
 elif enabled optimize; then
   if test -n "`$cc -v 2>&1 | grep xlc`"; then
     add_cflags  "-O5"
@@ -756,14 +866,27 @@ if test "$fosmount" = "yes"; then
     check_cflags -I$libfusedir
     check_ldflags -L$libfusedir
   fi
-  if [ -z "$libfusedir" ]; then
-    add_pkgconfig_deps fuse
-  fi
+
+  add_cppflags -DFUSE_USE_VERSION=26
 
   echolog "Checking for libfuse ..."
-  check_lib fuse.h fuse_main -lfuse || die "Error, can't find libfuse !"
-  add_cppflags -DFUSE_USE_VERSION=26
+  check_lib_pkgcfg fuse fuse.h fuse_main -lfuse || die "Error, can't find libfuse !"
 fi
+
+#################################################
+#   version
+#################################################
+get_version(){
+    local name file version
+    name=$1
+    file=src/$2
+    eval $(grep "#define ${name}_VERSION_M" "$file" | awk '{ print $2"="$3 }')
+    eval version=\$${name}_VERSION_MAJOR.\$${name}_VERSION_MINOR.\$${name}_VERSION_MICRO
+    echo $version
+}
+
+VERSION=`get_version LIBVALHALLA valhalla.h`
+
 
 #################################################
 #   Miscellaneous
@@ -775,11 +898,16 @@ if enabled doc; then
   [ "$?" = 0 ] && doc="yes"
 fi
 
+# Add all extralibs provided by the pkgconfig files
+[ -n "$pkgconfig_requires" ] && add_extralibs `pkg-config $pkgconfig_requires --libs`
+
+
 #################################################
 #   logging result
 #################################################
 echolog ""
 echolog "Blupi says: configure is OK"
+echolog "  version            $VERSION"
 echolog "configuration:"
 echolog "  install prefix     $PREFIX"
 echolog "  C compiler         $cc"
@@ -799,6 +927,9 @@ echolog "  CFLAGS             $CFLAGS $CPPFLAGS"
 echolog "  LDFLAGS            $LDFLAGS"
 echolog "  extralibs          $extralibs"
 echolog ""
+echolog "Miscellaneous:"
+echolog "  Documentation:     $doc"
+echolog ""
 
 #################################################
 #   save configs attributes
@@ -812,6 +943,7 @@ append_config "prefix=\$(DESTDIR)\$(PREFIX)"
 append_config "bindir=\$(DESTDIR)$bindir"
 append_config "libdir=\$(DESTDIR)$libdir"
 append_config "includedir=\$(DESTDIR)$includedir"
+append_config "docdir=\$(DESTDIR)$docdir"
 append_config "mandir=\$(DESTDIR)$mandir"
 
 append_config "MAKE=$make"
@@ -823,6 +955,9 @@ append_config "LN=ln"
 append_config "BUILD_STATIC=$static"
 append_config "BUILD_SHARED=$shared"
 append_config "BUILD_DYLIB=$dylib"
+append_config "BUILD_MINGW32=$mingw32"
+
+append_config "VERSION=$VERSION"
 
 if enabled dostrip; then
   append_config "STRIP=$strip"
@@ -842,15 +977,32 @@ if enabled bigendian; then
   append_config "WORDS_BIGENDIAN=yes"
 fi
 
-append_config "DEBUG=$debug"
 append_config "TOOLS=$tools"
 append_config "FOSMOUNT=$fosmount"
+
+append_config "DEBUG=$debug"
 append_config "DOC=$doc"
 
-touch config.win32
-cp -f libfosfat/Makefile.linux libfosfat/Makefile
-cp -f libfosgra/Makefile.linux libfosgra/Makefile
-cp -f tools/Makefile.linux tools/Makefile
+#################################################
+#   make pkg-config files
+#################################################
+echolog "Creating libfosfat.pc ..."
+
+pkgconfig_generate libfosfat \
+                   "API for Smaky file system" \
+                   "$VERSION" \
+                   "$pkgconfig_libs" \
+                   "$pkgconfig_requires" \
+                   ""
+
+echolog "Creating libfosgra.pc ..."
+
+pkgconfig_generate libfosgra \
+                   "Smaky [.IMAGE|.COLOR] decoder" \
+                   "$VERSION" \
+                   "$pkgconfig_libs" \
+                   "$pkgconfig_requires" \
+                   ""
 
 clean
 exit 0
