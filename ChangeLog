@@ -5,8 +5,8 @@
 	* libfosgra: new library to support .IMAGE decoding.
 
 	* fosmount: some improvements to convert on the fly
-	the images [.IMAGE] to PBM (portable bitmap format)
-	with libfosgra.
+	  the images [.IMAGE] to PBM (portable bitmap format)
+	  with libfosgra.
 
 	* Fix doxygen, packaging and Makefiles.
 
@@ -23,10 +23,10 @@
 2009-01-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* A lot of cleaning and all doxygen documentations
-	are only in the public header file.
+	  are only in the public header file.
 
 	* Add option in configure to generate doxygen HTML
-	and PDF outputs.
+	  and PDF outputs.
 
 2008-02-04  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
@@ -43,30 +43,30 @@
 	* New major beta released 0.3.0
 
 	* Add Window$ support, and use MinGW32 to compile
-	DLL libraries, fosread and smascii. A script
-	package-win32.sh can be used to create a zip package.
+	  DLL libraries, fosread and smascii. A script
+	  package-win32.sh can be used to create a zip package.
 
 	* libfosfat: add support for Window$ through
-	libw32disk.
+	  libw32disk.
 
 	* libw32disk: add C wrapper to use original Disk.cxx
-	class with libfosfat.
+	  class with libfosfat.
 
 	* fosread: fix symlink support, now that is possible
-	to read like a directory.
-	Add support to list and restore deleted files.
+	  to read like a directory.
+	  Add support to list and restore deleted files.
 
 2007-12-13  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: first implementation of an undelete tool
-	just disabled by default. The next step is added some
-	options to list and restore files.
+	  just disabled by default. The next step is added some
+	  options to list and restore files.
 
 2007-12-12  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: add support for multiple devices. A new
-	main structure is used instead of global variables.
-	Only the logger is always global.
+	  main structure is used instead of global variables.
+	  Only the logger is always global.
 
 2007-12-09  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
@@ -87,39 +87,39 @@
 2007-06-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: change the auto detection function for a
-	better way. Use the name was very bad because a lot
-	of disks have no name. Then the test is does with the
-	CHK (look the code for more informations).
+	  better way. Use the name was very bad because a lot
+	  of disks have no name. Then the test is does with the
+	  CHK (look the code for more informations).
 
 2007-06-24  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Add auto detection for the disk type. The type can
-	be forced with fosmount and fosread if necessary.
+	  be forced with fosmount and fosread if necessary.
 
 	* libfosfat: an internal logger can be enabled to
-	know what the FOS is doing. A new option is available
-	in fosread and fosmount.
+	  know what the FOS is doing. A new option is available
+	  in fosread and fosmount.
 
 2007-06-22  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Second beta released 0.2.1
 
 	* Add support for symbolic links. The Smaky's soft
-	links are now converted to symlink.
+	  links are now converted to symlink.
 
 	* libfosfat: the cache is now released when the device
-	is closed.
+	  is closed.
 
 2007-06-20  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: a new system of caching is implemented
-	to improve the speed. Now that will be very fast for
-	looking in a directory. The system must be fixed for
-	that the memory is released.
+	  to improve the speed. Now that will be very fast for
+	  looking in a directory. The system must be fixed for
+	  that the memory is released.
 
 	* fosmount: a bug is fixed for that FUSE is always
-	loaded as single-thread. If not there is a really a
-	big problem when data are loaded with libfosfat.
+	  loaded as single-thread. If not there is a really a
+	  big problem when data are loaded with libfosfat.
 
 2007-05-10  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
@@ -128,12 +128,12 @@
 2007-04-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Use getopt header with fosmount and fosread and add
-	--help and --version options.
+	  --help and --version options.
 
 2007-03-25  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* smascii: add an option to convert Carriage Return
-	to Unix newline (Line Feed).
+	  to Unix newline (Line Feed).
 
 	* Fix Ubuntu package builder with CDBS.
 
@@ -142,30 +142,30 @@
 	* Some fixes in all the project.
 
 	* smascii: new tool to convert Smaky's text files to
-	Extended ASCII (ISO-8859-1) files.
+	  Extended ASCII (ISO-8859-1) files.
 
 2007-03-22  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: change all long variables for int because
-	the FOS uses only 32 bits addresses.
-	The lpow() function is removed and it was used only for
-	the c2l() function. Then a shift register is enough and
-	faster.
+	  the FOS uses only 32 bits addresses.
+	  The lpow() function is removed and it was used only for
+	  the c2l() function. Then a shift register is enough and
+	  faster.
 
 2007-03-19  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: add a test for CHK value in BD and BL.
-	If this value changes, then NULL is returned and not
-	the block.
-	A lot of possible segfaults are fixed and now that
-	is possible to list the smaky's system directory
-	without killing Fuse.
-	The smaky's soft-link are now listed like a simple
-	file. In the futur, that will be translated to an
-	symbolic unix link.
+	  If this value changes, then NULL is returned and not
+	  the block.
+	  A lot of possible segfaults are fixed and now that
+	  is possible to list the smaky's system directory
+	  without killing Fuse.
+	  The smaky's soft-link are now listed like a simple
+	  file. In the futur, that will be translated to an
+	  symbolic unix link.
 
 	* fosmount: fix possible segfault and add the creation
-	date to listed files.
+	  date to listed files.
 
 2007-03-18  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
@@ -174,8 +174,8 @@
 2007-03-17  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: some bugfixes and malloc are now checked.
-	All variables as input of each function are tested
-	for not to be NULL.
+	  All variables as input of each function are tested
+	  for not to be NULL.
 
 2007-03-15  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
@@ -190,17 +190,17 @@
 2006-12-29  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Add configure script with some options to compile
-	only fosmount, fosread or both.
+	  only fosmount, fosread or both.
 
 2006-12-28  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* libfosfat: add high level functions to work with
-	the FOS's files. Now the processing with the blocks
-	is not available in public. The fosread tool have been
-	adapted in this way.
+	  the FOS's files. Now the processing with the blocks
+	  is not available in public. The fosread tool have been
+	  adapted in this way.
 
 	* fosmount: add a very simple FUSE extension that works
-	with libfosfat.
+	  with libfosfat.
 
 2006-11-26  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
