@@ -497,8 +497,7 @@ installstrip="-s"
 cross_compile="no"
 pic="no"
 INSTALL="install"
-VERSION_FF=""
-VERSION_FG=""
+VERSION=""
 pkgconfig_requires=""
 pkgconfig_libs=""
 tools="yes"
@@ -880,14 +879,13 @@ fi
 get_version(){
     local name file version
     name=$1
-    file=$2/$3
+    file=libfosfat/$2
     eval $(grep "#define ${name}_VERSION_M" "$file" | awk '{ print $2"="$3 }')
     eval version=\$${name}_VERSION_MAJOR.\$${name}_VERSION_MINOR.\$${name}_VERSION_MICRO
     echo $version
 }
 
-VERSION_FF=`get_version LIBFOSFAT libfosfat fosfat.h`
-VERSION_FG=`get_version LIBFOSGRA libfosgra fosgra.h`
+VERSION=`get_version LIBFOSFAT fosfat.h`
 
 
 #################################################
@@ -909,8 +907,7 @@ fi
 #################################################
 echolog ""
 echolog "Blupi says: configure is OK"
-echolog "  version fosfat     $VERSION_FF"
-echolog "  version fosgra     $VERSION_FG"
+echolog "  version            $VERSION"
 echolog "configuration:"
 echolog "  install prefix     $PREFIX"
 echolog "  C compiler         $cc"
@@ -960,8 +957,7 @@ append_config "BUILD_SHARED=$shared"
 append_config "BUILD_DYLIB=$dylib"
 append_config "BUILD_MINGW32=$mingw32"
 
-append_config "VERSION_FF=$VERSION_FF"
-append_config "VERSION_FG=$VERSION_FG"
+append_config "VERSION=$VERSION"
 
 if enabled dostrip; then
   append_config "STRIP=$strip"
@@ -994,7 +990,7 @@ echolog "Creating libfosfat.pc ..."
 
 pkgconfig_generate libfosfat \
                    "API for Smaky file system" \
-                   "$VERSION_FF" \
+                   "$VERSION" \
                    "$pkgconfig_libs" \
                    "$pkgconfig_requires" \
                    ""
@@ -1003,7 +999,7 @@ echolog "Creating libfosgra.pc ..."
 
 pkgconfig_generate libfosgra \
                    "Smaky [.IMAGE|.COLOR] decoder" \
-                   "$VERSION_FG" \
+                   "$VERSION" \
                    "$pkgconfig_libs" \
                    "$pkgconfig_requires" \
                    ""
