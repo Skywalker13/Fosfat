@@ -5,7 +5,7 @@ include ../config.mak
 
 VERSION = "0.0.1"
 
-LIBNAME = w32disk
+LIBNAME = libw32disk
 STATIC_LIBNAME = ${LIBNAME}.a
 SHARED_LIBNAME = $(LIBNAME)-$(shell echo $(VERSION) | cut -f1 -d.).dll
 SHARED_LIBNAME_VERSION = $(SHARED_LIBNAME)
