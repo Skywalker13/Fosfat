@@ -497,7 +497,8 @@ installstrip="-s"
 cross_compile="no"
 pic="no"
 INSTALL="install"
-VERSION=""
+VERSION_FF=""
+VERSION_FG=""
 pkgconfig_requires=""
 pkgconfig_libs=""
 tools="yes"
@@ -879,13 +880,14 @@ fi
 get_version(){
     local name file version
     name=$1
-    file=src/$2
+    file=$2/$3
     eval $(grep "#define ${name}_VERSION_M" "$file" | awk '{ print $2"="$3 }')
     eval version=\$${name}_VERSION_MAJOR.\$${name}_VERSION_MINOR.\$${name}_VERSION_MICRO
     echo $version
 }
 
-VERSION=`get_version LIBVALHALLA valhalla.h`
+VERSION_FF=`get_version LIBFOSFAT libfosfat fosfat.h`
+VERSION_FG=`get_version LIBFOSGRA libfosgra fosgra.h`
 
 
 #################################################
@@ -907,7 +909,8 @@ fi
 #################################################
 echolog ""
 echolog "Blupi says: configure is OK"
-echolog "  version            $VERSION"
+echolog "  version fosfat     $VERSION_FF"
+echolog "  version fosgra     $VERSION_FG"
 echolog "configuration:"
 echolog "  install prefix     $PREFIX"
 echolog "  C compiler         $cc"
@@ -957,7 +960,8 @@ append_config "BUILD_SHARED=$shared"
 append_config "BUILD_DYLIB=$dylib"
 append_config "BUILD_MINGW32=$mingw32"
 
-append_config "VERSION=$VERSION"
+append_config "VERSION_FF=$VERSION_FF"
+append_config "VERSION_FG=$VERSION_FG"
 
 if enabled dostrip; then
   append_config "STRIP=$strip"
@@ -968,9 +972,9 @@ else
 fi
 append_config "EXTRALIBS=$extralibs"
 
-append_config "CPPFLAGS=$CPPFLAGS"
+append_config "CFG_CPPFLAGS=$CPPFLAGS"
 append_config "OPTFLAGS=$CFLAGS"
-append_config "LDFLAGS=$LDFLAGS"
+append_config "CFG_LDFLAGS=$LDFLAGS"
 append_config "INSTALL=$INSTALL"
 
 if enabled bigendian; then
@@ -990,7 +994,7 @@ echolog "Creating libfosfat.pc ..."
 
 pkgconfig_generate libfosfat \
                    "API for Smaky file system" \
-                   "$VERSION" \
+                   "$VERSION_FF" \
                    "$pkgconfig_libs" \
                    "$pkgconfig_requires" \
                    ""
@@ -999,7 +1003,7 @@ echolog "Creating libfosgra.pc ..."
 
 pkgconfig_generate libfosgra \
                    "Smaky [.IMAGE|.COLOR] decoder" \
-                   "$VERSION" \
+                   "$VERSION_FG" \
                    "$pkgconfig_libs" \
                    "$pkgconfig_requires" \
                    ""
