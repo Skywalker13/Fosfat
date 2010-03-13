@@ -1010,8 +1010,8 @@ echolog "Creating libfosgra.pc ..."
 pkgconfig_generate libfosgra \
                    "Smaky [.IMAGE|.COLOR] decoder" \
                    "$VERSION" \
-                   "$pkgconfig_libs" \
-                   "$pkgconfig_requires" \
+                   "" \
+                   "libfosfat" \
                    ""
 
 clean
