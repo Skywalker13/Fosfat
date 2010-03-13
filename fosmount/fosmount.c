@@ -305,7 +305,8 @@ get_stat (const char *path)
 
   location = trim_fosname (path);
 
-  if ((file = fosfat_get_stat (fosfat, location)))
+  file = fosfat_get_stat (fosfat, location);
+  if (file)
   {
     st = in_stat (file, location);
     free (file);
@@ -370,7 +371,8 @@ fos_getattr (const char *path, struct stat *stbuf)
     location = trim_fosname (path);
 
   /* Get file stats */
-  if ((st = get_stat (location)))
+  st = get_stat (location);
+  if (st)
   {
     memcpy (stbuf, st, sizeof (*stbuf));
     free (st);
@@ -411,8 +413,13 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
   filler (buf, "..", NULL, 0);
 
   /* Files and directories */
-  if ((files = fosfat_list_dir (fosfat, location)))
+  files = fosfat_list_dir (fosfat, location);
+  if (!files)
   {
+    ret = -ENOENT;
+    goto out;
+  }
+
     first_file = files;
 
     do
@@ -450,10 +457,8 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
       free (name);
     } while ((files = files->next_file));
     fosfat_free_listdir (first_file);
-  }
-  else
-    ret = -ENOENT;
 
+ out:
   if (location)
     free (location);
 
