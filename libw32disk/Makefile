@@ -69,7 +69,7 @@ uninstall:
 	rm -f $(includedir)/fosfat.h
 
 depend:
-	$(CC) -MM $(CFLAGS) $(CFG_CPPFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
+	$(CXX) -MM $(CFLAGS) $(CFG_CPPFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
 
 .PHONY: clean depend
 .PHONY: uninstall
