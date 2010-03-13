@@ -523,29 +523,27 @@ fos_read (const char *path, char *buf, size_t size,
   if (file->att.isdir)
     goto out;
 
-      length = get_filesize (file, location);
+  length = get_filesize (file, location);
 
-      if (offset < length)
-      {
-        /* Fix the size in function of the offset */
-        if (offset + (signed) size > length)
-          size = length - offset;
+  if (offset < length)
+  {
+    /* Fix the size in function of the offset */
+    if (offset + (signed) size > length)
+      size = length - offset;
 
-        /* Read the data */
-        buf_tmp = get_buffer (file, location, offset, size);
+    /* Read the data */
+    buf_tmp = get_buffer (file, location, offset, size);
 
-        /* Copy the data for FUSE */
-        if (buf_tmp)
-        {
-          memcpy (buf, buf_tmp, size);
-          free (buf_tmp);
-          res = size;
-        }
-        else
-          res = -ENOENT;
-      }
-      else
-        res = 0;
+    /* Copy the data for FUSE */
+    if (buf_tmp)
+    {
+      memcpy (buf, buf_tmp, size);
+      free (buf_tmp);
+      res = size;
+    }
+  }
+  else
+    res = 0;
 
  out:
   if (file)
