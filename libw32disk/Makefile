@@ -1,16 +1,30 @@
-ifeq (,$(wildcard ../config.win32))
-$(error "../config.win32 is not present, run `make win32` !")
+ifeq (,$(wildcard ../config.mak))
+$(error "../config.mak is not present, run configure !")
 endif
-include ../config.win32
+include ../config.mak
 
-BUILD_RULES += lib_dll
-CPPFLAGS += -DBUILD_DLL
+VERSION = "0.0.1"
 
 LIBNAME = w32disk
-STATIC_LIBNAME = lib${LIBNAME}dll.a
-SHARED_LIBNAME = ${LIBNAME}.dll
+STATIC_LIBNAME = ${LIBNAME}.a
+SHARED_LIBNAME = $(LIBNAME)-$(shell echo $(VERSION) | cut -f1 -d.).dll
+SHARED_LIBNAME_VERSION = $(SHARED_LIBNAME)
+SHARED_LIBNAME_MAJOR = $(SHARED_LIBNAME)
+SHARED_LIBNAME_FLAGS = -shared -Wl,--out-implib=$(LIBNAME).dll.a -Wl,--export-all-symbols -Wl,--enable-auto-import
 
-SRCS = Disk.cxx wrapper.cxx
+ifeq ($(BUILD_STATIC),yes)
+  BUILD_RULES += lib_static
+endif
+ifeq ($(BUILD_SHARED),yes)
+  BUILD_RULES += lib_shared
+endif
+
+SRCS =  Disk.cxx \
+	wrapper.cxx \
+
+EXTRADIST = \
+	Disk.h \
+	w32disk.h \
 
 OBJS = $(SRCS:.cxx=.o)
 
@@ -19,20 +33,51 @@ OBJS = $(SRCS:.cxx=.o)
 all: depend $(BUILD_RULES)
 
 .cxx.o:
-	$(CXX) -c $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -o $@ $<
+	$(CXX) -c $(OPTFLAGS) $(CXXFLAGS) $(CFG_CPPFLAGS) $(CPPFLAGS) -o $@ $<
 
-lib_dll: $(OBJS)
-	$(CXX) -shared -o $(SHARED_LIBNAME) -Wl,--out-implib,$(STATIC_LIBNAME) $(OBJS) $(LDFLAGS)
-	$(STRIP) $(SHARED_LIBNAME)
+lib_static: $(STATIC_LIBNAME)
+
+lib_shared: $(SHARED_LIBNAME)
+
+$(STATIC_LIBNAME): $(OBJS)
+	$(AR) r $(STATIC_LIBNAME) $(OBJS)
+	$(RANLIB) $(STATIC_LIBNAME)
+
+$(SHARED_LIBNAME): $(OBJS)
+	$(CXX) $(SHARED_LIBNAME_FLAGS) \
+	  $(OBJS) $(CFG_LDFLAGS) $(EXTRALIBS) $(LDFLAGS) -o $(SHARED_LIBNAME_VERSION)
 
 clean:
 	rm -f *.o *.a *.dll
 	rm -f .depend
 
+install: $(BUILD_RULES)
+	$(INSTALL) -d $(libdir)
+	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(STATIC_LIBNAME) $(libdir); \
+	if [ $(BUILD_SHARED) = yes ]; then \
+	  $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(bindir); \
+	  $(INSTALL) -c $(LIBNAME).dll.a $(libdir); \
+	fi
+	$(INSTALL) -d $(includedir)
+	$(INSTALL) -c -m 644 w32disk.h $(includedir)
+
+uninstall:
+	rm -f $(bindir)/$(SHARED_LIBNAME); \
+	rm -f $(libdir)/$(LIBNAME).dll.a; \
+	rm -f $(libdir)/$(STATIC_LIBNAME)
+	rm -f $(libdir)/$(SHARED_LIBNAME)*
+	rm -f $(includedir)/fosfat.h
+
 depend:
-	$(CXX) -MM $(CFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(CFG_CPPFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
 
 .PHONY: clean depend
+.PHONY: uninstall
+
+dist-all:
+	cp $(EXTRADIST) $(SRCS) Makefile $(DIST)
+
+.PHONY: dist-all
 
 #
 # include dependency files if they exist
