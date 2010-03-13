@@ -38,9 +38,9 @@ show_help(){
   echo "  --enable-static             build static libraries [default=yes]"
   echo "  --disable-static            do not build static libraries [default=no]"
   echo "  --enable-shared             build shared libraries [default=yes]"
-  echo "  --disable-shared            do not build shared libraries [default=no]" 
-  echo "  --enable-tools              build fosread and smascii tools"
-  echo "  --disable-tools             do not build fosread ans smascii tools"
+  echo "  --disable-shared            do not build shared libraries [default=no]"
+  echo "  --enable-tools              build fosread, fosrec and smascii tools"
+  echo "  --disable-tools             do not build fosread, fosrec ans smascii tools"
   echo "  --enable-fosmount           build fosmount FUSE extension"
   echo "  --disable-fosmount          do not build fosmount FUSE extension"
   echo "  --with-fuse-dir=DIR         check for libfuse installed in DIR"
@@ -775,6 +775,8 @@ if test -n "`$cc -v 2>&1 | grep version | grep mingw`" \
   mingw32="yes"
 fi
 
+enabled mingw32 && fosmount="no"
+
 #################################################
 #   check for target specific flags
 #################################################
@@ -929,6 +931,10 @@ echolog ""
 echolog "  CFLAGS             $CFLAGS $CPPFLAGS"
 echolog "  LDFLAGS            $LDFLAGS"
 echolog "  extralibs          $extralibs"
+echolog ""
+echolog "Executables:"
+echolog "  tools              $tools"
+echolog "  fosmount           $fosmount"
 echolog ""
 echolog "Miscellaneous:"
 echolog "  Documentation:     $doc"

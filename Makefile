@@ -39,12 +39,14 @@ endif
 	$(MAKE) -C libfosgra
 
 fosmount: libs
-ifeq ($(BUILD_MINGW32),no)
+ifeq ($(FOSMOUNT),yes)
 	$(MAKE) -C fosmount
 endif
 
 tools: libs
+ifeq ($(TOOLS),yes)
 	$(MAKE) -C tools
+endif
 
 docs:
 	$(MAKE) -C DOCS
