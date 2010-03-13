@@ -30,6 +30,14 @@ ifeq ($(BUILD_SHARED),yes)
   endif
 endif
 
+ifeq ($(BUILD_MINGW32),yes)
+  LIB_CPPFLAGS = -I../libw32disk $(CFG_CPPFLAGS) $(CPPFLAGS)
+  LIB_LDFLAGS = -L../libw32disk $(CFG_LDFLAGS) $(LDFLAGS) -lw32disk
+else
+  LIB_CPPFLAGS = $(CFG_CPPFLAGS) $(CPPFLAGS)
+  LIB_LDFLAGS = $(CFG_LDFLAGS) $(LDFLAGS)
+endif
+
 SRCS =  fosfat.c \
 
 EXTRADIST = \
@@ -42,7 +50,7 @@ OBJS = $(SRCS:.c=.o)
 all: depend $(BUILD_RULES)
 
 .c.o:
-	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(CFG_CPPFLAGS) $(CPPFLAGS) -o $@ $<
+	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(LIB_CPPFLAGS) -o $@ $<
 
 lib_static: $(STATIC_LIBNAME)
 
@@ -54,7 +62,7 @@ $(STATIC_LIBNAME): $(OBJS)
 
 $(SHARED_LIBNAME): $(OBJS)
 	$(CC) $(SHARED_LIBNAME_FLAGS) \
-	  $(OBJS) $(CFG_LDFLAGS) $(EXTRALIBS) $(LDFLAGS) -o $(SHARED_LIBNAME_VERSION)
+	  $(OBJS) $(EXTRALIBS) $(LIB_LDFLAGS) -o $(SHARED_LIBNAME_VERSION)
 	if [ $(BUILD_MINGW32) = no ]; then \
 	  $(LN) -sf $(SHARED_LIBNAME_VERSION) $(SHARED_LIBNAME_MAJOR); \
 	  $(LN) -sf $(SHARED_LIBNAME_MAJOR) $(SHARED_LIBNAME); \
@@ -90,13 +98,13 @@ uninstall:
 	rm -f $(includedir)/fosfat.h
 
 depend:
-	$(CC) -MM $(CFLAGS) $(CFG_CPPFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(LIB_CPPFLAGS) $(SRCS) 1>.depend
 
 .PHONY: clean depend
 .PHONY: uninstall
 
 dist-all:
-	cp $(EXTRADIST) $(SRCS) $(SRCS_GRABBER-no) Makefile $(DIST)
+	cp $(EXTRADIST) $(SRCS) Makefile $(DIST)
 
 .PHONY: dist-all
 

@@ -32,11 +32,16 @@ config.mak: configure
 	@echo "############################################################"
 
 libs:
+ifeq ($(BUILD_MINGW32),yes)
+	$(MAKE) -C libw32disk
+endif
 	$(MAKE) -C libfosfat
 	$(MAKE) -C libfosgra
 
 fosmount: libs
+ifeq ($(BUILD_MINGW32),no)
 	$(MAKE) -C fosmount
+endif
 
 tools: libs
 	$(MAKE) -C tools
