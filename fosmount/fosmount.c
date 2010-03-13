@@ -39,7 +39,7 @@
 #define FOS_FILE            0444
 
 #define HELP_TEXT \
-"FUSE extension for a read-only access on Smaky FOS. fosfat-" VERSION "\n\n" \
+"FUSE extension for a read-only access on Smaky FOS. fosfat-" LIBFOSFAT_VERSION_STR "\n\n" \
 "Usage: fosmount [options] device mountpoint\n\n" \
 " -h --help             this help\n" \
 " -v --version          version\n" \
@@ -54,7 +54,7 @@
 " mountpoint            for example, /mnt/smaky\n" \
 "\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
 
-#define VERSION_TEXT "fosmount-" VERSION "\n"
+#define VERSION_TEXT "fosmount-" LIBFOSFAT_VERSION_STR "\n"
 
 
 static fosfat_t *fosfat;

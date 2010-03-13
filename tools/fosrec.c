@@ -30,7 +30,7 @@
 #include "fosfat.h"
 
 #define HELP_TEXT \
-"Tool to search deleted files on a Smaky disk. fosfat-" VERSION "\n\n" \
+"Tool to search deleted files on a Smaky disk. fosfat-" LIBFOSFAT_VERSION_STR "\n\n" \
 "Usage: fosrec [options] device destination\n\n" \
 " -h --help             this help\n" \
 " -v --version          version\n" \
@@ -40,7 +40,7 @@
 "\n" \
 "\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
 
-#define VERSION_TEXT "fosrec-" VERSION "\n"
+#define VERSION_TEXT "fosrec-" LIBFOSFAT_VERSION_STR "\n"
 
 static void
 search_deleted (fosfat_t *fosfat, const char *location, const char *dest)

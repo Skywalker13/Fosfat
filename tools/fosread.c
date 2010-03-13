@@ -45,7 +45,7 @@ typedef struct ginfo {
 #endif
 
 #define HELP_TEXT \
-"Tool for a read-only access on a Smaky disk. fosfat-" VERSION "\n\n" \
+"Tool for a read-only access on a Smaky disk. fosfat-" LIBFOSFAT_VERSION_STR "\n\n" \
 "Usage: fosread [options] device mode [node] [path]\n\n" \
 " -h --help             this help\n" \
 " -v --version          version\n" \
@@ -66,7 +66,7 @@ typedef struct ginfo {
 " the file (with get mode)\n" \
 "\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
 
-#define VERSION_TEXT "fosread-" VERSION "\n"
+#define VERSION_TEXT "fosread-" LIBFOSFAT_VERSION_STR "\n"
 
 
 /*
