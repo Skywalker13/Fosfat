@@ -35,6 +35,26 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#define FF_STRINGIFY(s) #s
+#define FF_TOSTRING(s) FF_STRINGIFY(s)
+
+#define FF_VERSION_INT(a, b, c) (a << 16 | b << 8 | c)
+#define FF_VERSION_DOT(a, b, c) a ##.## b ##.## c
+#define FF_VERSION(a, b, c) FF_VERSION_DOT(a, b, c)
+
+#define LIBFOSFAT_VERSION_MAJOR  0
+#define LIBFOSFAT_VERSION_MINOR  4
+#define LIBFOSFAT_VERSION_MICRO  0
+
+#define LIBFOSFAT_VERSION_INT FF_VERSION_INT(LIBFOSFAT_VERSION_MAJOR, \
+                                             LIBFOSFAT_VERSION_MINOR, \
+                                             LIBFOSFAT_VERSION_MICRO)
+#define LIBFOSFAT_VERSION     FF_VERSION(LIBFOSFAT_VERSION_MAJOR, \
+                                         LIBFOSFAT_VERSION_MINOR, \
+                                         LIBFOSFAT_VERSION_MICRO)
+#define LIBFOSFAT_VERSION_STR FF_TOSTRING(LIBFOSFAT_VERSION)
+#define LIBFOSFAT_BUILD       LIBFOSFAT_VERSION_INT
+
 #include <inttypes.h>
 
 #define FOSFAT_NAMELGT  17
