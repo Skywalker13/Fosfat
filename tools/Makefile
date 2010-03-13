@@ -17,7 +17,17 @@ FOSREC_OBJS = $(FOSREC_SRCS:.c=.o)
 FOSREC_MAN = $(FOSREC).1
 
 APPS_CPPFLAGS = -I../libfosfat $(CFG_CPPFLAGS) $(CPPFLAGS)
-APPS_LDFLAGS = -L../libfosfat -lfosfat $(CFG_LDFLAGS) $(LDFLAGS)
+ifeq ($(BUILD_MINGW32),yes)
+  STDCXX_LDFLAGS =
+  ifeq ($(BUILD_STATIC),yes)
+  ifeq ($(BUILD_SHARED),no)
+    STDCXX_LDFLAGS = -lstdc++
+  endif
+  endif
+  APPS_LDFLAGS = -L../libfosfat -L../libw32disk -lfosfat -lw32disk $(CFG_LDFLAGS) $(LDFLAGS) $(STDCXX_LDFLAGS)
+else
+  APPS_LDFLAGS = -L../libfosfat -lfosfat $(CFG_LDFLAGS) $(LDFLAGS)
+endif
 
 MANS = $(FOSREAD_MAN) $(SMASCII_MAN) $(FOSREC_MAN)
 
