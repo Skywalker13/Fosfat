@@ -1,92 +1,115 @@
 ifeq (,$(wildcard config.mak))
-MAKE=make
-else
+$(error "config.mak is not present, run configure !")
+endif
 include config.mak
-endif
-include VERSION
 
-DOXYGEN =
+PKGCONFIG_DIR = $(libdir)/pkgconfig
+PKGCONFIG_FILE = libfosfat.pc \
+		 libfosgra.pc \
 
-ifeq ($(DOC),yes)
-  DOXYGEN = doxygen
-endif
+DISTFILE = fosfat-$(VERSION).tar.bz2
 
-all: $(DOXYGEN)
+EXTRADIST = \
+	ChangeLog \
+	configure \
+	COPYING \
+	README \
+	TODO \
+
+SUBDIRS = \
+	DOCS \
+	fosmount \
+	libfosfat \
+	libfosgra \
+	libw32disk \
+	tools \
+
+all: libs fosmount tools docs
+
+config.mak: configure
+	@echo "############################################################"
+	@echo "####### Please run ./configure again - it's changed! #######"
+	@echo "############################################################"
+
+libs:
 	$(MAKE) -C libfosfat
 	$(MAKE) -C libfosgra
-	$(MAKE) -C tools
+
+fosmount: libs
 	$(MAKE) -C fosmount
 
-doxygen:
-ifeq (,$(wildcard DOCS/doxygen))
-	 PROJECT_NUMBER="${VERSION}.${PATCHLEVEL}.${SUBLEVEL}" doxygen DOCS/Doxyfile
-endif
+tools: libs
+	$(MAKE) -C tools
+
+docs:
+	$(MAKE) -C DOCS
+
+docs-clean:
+	$(MAKE) -C DOCS clean
 
 clean:
-	if [ -f config.win32 ]; then \
-	  $(MAKE) -C libw32disk clean; \
-	fi
-	if [ -f libfosfat/Makefile ]; then \
-	  $(MAKE) -C libfosfat clean; \
-	fi
-	if [ -f libfosgra/Makefile ]; then \
-	  $(MAKE) -C libfosgra clean; \
-        fi
-	if [ -f tools/Makefile ]; then \
-	  $(MAKE) -C tools clean; \
-	fi
-	if [ -f config.mak ]; then \
-	  $(MAKE) -C fosmount clean; \
-	fi
+	$(MAKE) -C fosmount clean
+	$(MAKE) -C libfosfat clean
+	$(MAKE) -C libfosgra clean
+	$(MAKE) -C libw32disk clean
+	$(MAKE) -C tools clean
 
-distclean: clean
+distclean: clean docs-clean
 	rm -f config.log
 	rm -f config.mak
-	rm -f config.win32
-	rm -f libfosfat/Makefile
-	rm -f libfosgra/Makefile
-	rm -f tools/Makefile
-	rm -rf DOCS/doxygen
+	rm -f $(DISTFILE)
+	rm -f $(PKGCONFIG_FILE)
 
-install: install-deb install-dev
+install: install-libs install-pkgconfig install-fosmount install-tools install-docs
 
-install-deb:
-	$(MAKE) -C tools install
-	$(MAKE) -C fosmount install
-
-install-lib:
-	$(MAKE) -C libfosfat install-lib
-	$(MAKE) -C libfosgra install-lib
-
-install-dev:
+install-libs:
 	$(MAKE) -C libfosfat install
 	$(MAKE) -C libfosgra install
 
-uninstall:
-	cp -f libfosfat/Makefile.linux libfosfat/Makefile
-	cp -f libfosgra/Makefile.linux libfosgra/Makefile
-	cp -f tools/Makefile.linux tools/Makefile
+install-pkgconfig: $(PKGCONFIG_FILE)
+	$(INSTALL) -d "$(PKGCONFIG_DIR)"
+	$(INSTALL) -m 644 $< "$(PKGCONFIG_DIR)"
+
+install-fosmount: fosmount
+	$(MAKE) -C fosmount install
+
+install-tools: tools
+	$(MAKE) -C tools install
+
+install-docs: docs
+	$(MAKE) -C DOCS install
+
+uninstall: uninstall-libs uninstall-pkgconfig uninstall-fosmount uninstall-tools uninstall-docs
+
+uninstall-libs:
 	$(MAKE) -C libfosfat uninstall
 	$(MAKE) -C libfosgra uninstall
-	$(MAKE) -C tools uninstall
+
+uninstall-pkgconfig:
+	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
+
+uninstall-fosmount:
 	$(MAKE) -C fosmount uninstall
 
-win32-dev:
-	./win32-gen.sh
+uninstall-tools:
+	$(MAKE) -C tools uninstall
 
-win32-build:
-	./win32-gen.sh build
+uninstall-docs:
+	$(MAKE) -C DOCS uninstall
 
-win32-common:
-	cp -f libfosfat/Makefile.win32 libfosfat/Makefile
-	cp -f tools/Makefile.win32 tools/Makefile
-	$(MAKE) -C libw32disk
-	$(MAKE) -C libfosfat
-	$(MAKE) -C tools
+.PHONY: *clean *install* docs fosmount tools
 
-win32: win32-dev win32-common
+dist:
+	-$(RM) $(DISTFILE)
+	dist=$(shell pwd)/fosfat-$(VERSION) && \
+	for subdir in . $(SUBDIRS); do \
+		mkdir -p "$$dist/$$subdir"; \
+		$(MAKE) -C $$subdir dist-all DIST="$$dist/$$subdir"; \
+	done && \
+	tar cjf $(DISTFILE) fosfat-$(VERSION)
+	-$(RM) -rf fosfat-$(VERSION)
 
-win32-zip: win32-build win32-common
+dist-all:
+	cp $(EXTRADIST) Makefile $(DIST)
 
-.PHONY: clean install-deb install-dev uninstall win32-dev win32-build win32-common
-.PHONY: doxygen
+.PHONY: dist dist-all

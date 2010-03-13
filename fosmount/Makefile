@@ -2,62 +2,77 @@ ifeq (,$(wildcard ../config.mak))
 $(error "../config.mak is not present, run configure !")
 endif
 include ../config.mak
-include ../VERSION
 
-TARGETI =
-TARGETB =
-APPNAME = fosmount
-SRCS = fosmount.c
-MANPAGES = fosmount.1
+FOSMOUNT = fosmount
+FOSMOUNT_SRCS = fosmount.c
+FOSMOUTN_MAN = $(FOSMOUNT).1
 
-OPTFLAGS += -I../libfosfat -I../libfosgra -DVERSION=\"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)\"
-OPTLDFLAGS = -L../libfosfat -L../libfosgra -lfosfat -lfosgra
+APPS_CPPFLAGS = -I../libfosfat -I../libfosgra $(CFG_CPPFLAGS) $(CPPFLAGS)
+APPS_LDFLAGS = -L../libfosfat -L../libfosgra -lfosfat -lfosgra $(CFG_LDFLAGS) $(LDFLAGS)
 
-OBJS = $(SRCS:.c=.o)
+MANS = $(FOSMOUTN_MAN)
 
-ifeq ($(FOSMOUNT),yes)
-TARGETI = install-app install-man
-TARGETB = depend $(APPNAME)
+EXTRADIST = \
+	$(MANS)
+
+OBJS = $(FOSMOUNT_SRCS:.c=.o)
+
+ifeq ($(BUILD_STATIC),yes)
+ifeq ($(BUILD_SHARED),no)
+  APPS_LDFLAGS += $(EXTRALIBS)
+endif
 endif
 
 .SUFFIXES: .c .o
 
-all: $(TARGETB)
+all: app
 
 .c.o:
-	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(CPPFLAGS) -o $@ $<
+	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(APPS_CPPFLAGS) -o $@ $<
 
-$(APPNAME): $(OBJS)
-	$(CC) $(OBJS) $(LDFLAGS) $(OPTLDFLAGS) $(EXTRALIBS) -o $(APPNAME)
+$(FOSMOUNT): $(OBJS)
+	$(CC) $(OBJS) $(APPS_LDFLAGS) -o $(FOSMOUNT)
+
+app-dep:
+	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(FOSMOUNT_SRCS) 1>.depend
+
+app: app-dep
+	$(MAKE) $(FOSMOUNT)
 
 clean:
-	rm -f *.o $(APPNAME)
+	rm -f *.o $(FOSMOUNT)
 	rm -f .depend
 
-install: $(TARGETI)
+install: install-app install-man
 
-install-app: $(APPNAME)
+install-app: app
 	$(INSTALL) -d $(bindir)
-	$(INSTALL) $(APPNAME) $(bindir)
-	$(STRIP) $(INSTALLSTRIP) $(bindir)/$(APPNAME)
+	$(INSTALL) -c -m 755 $(FOSMOUNT) $(bindir)
 
-install-man:
-	install -d $(mandir)/man1
-	cp -f $(MANPAGES).man $(MANPAGES)
-	sed -i "s/#VERSION#/$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)$(EXTRA)/" $(MANPAGES)
-	install -m 644 $(MANPAGES) $(mandir)/man1
-	rm -f $(MANPAGES)
+install-man: $(MANS)
+	for m in $(MANS); do \
+	  section=`echo $$m | sed -e 's/^.*\\.//'`; \
+	  $(INSTALL) -d $(mandir)/man$$section; \
+	  $(INSTALL) -m 644 $$m $(mandir)/man$$section; \
+	done
 
-uninstall: uninstall-man
-	rm -f $(bindir)/$(APPNAME)
+uninstall: uninstall-app uninstall-man
+
+uninstall-app:
+	rm -f $(bindir)/$(FOSMOUNT)
 
 uninstall-man:
-	rm -f $(mandir)/man1/$(MANPAGES)
+	for m in $(MANS); do \
+	  section=`echo $$m | sed -e 's/^.*\\.//'`; \
+	  rm -f $(mandir)/man$$section/$$m; \
+	done
 
-depend:
-	$(CC) -MM $(CFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
+.PHONY: *clean *install* app*
 
-.PHONY: clean install-man uninstall-man depend
+dist-all:
+	cp $(EXTRADIST) $(FOSMOUNT_SRCS) Makefile $(DIST)
+
+.PHONY: dist dist-all
 
 #
 # include dependency files if they exist
