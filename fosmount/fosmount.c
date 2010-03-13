@@ -400,7 +400,7 @@ static int
 fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
              off_t offset, struct fuse_file_info *fi)
 {
-  int ret = 0;
+  int ret = -ENOENT;
   char *location;
   fosfat_file_t *files, *first_file;
 
@@ -415,10 +415,7 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
   /* Files and directories */
   files = fosfat_list_dir (fosfat, location);
   if (!files)
-  {
-    ret = -ENOENT;
     goto out;
-  }
 
   first_file = files;
 
@@ -459,6 +456,7 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
   while ((files = files->next_file));
 
   fosfat_free_listdir (first_file);
+  ret = 0;
 
  out:
   if (location)
@@ -507,20 +505,24 @@ static int
 fos_read (const char *path, char *buf, size_t size,
           off_t offset, struct fuse_file_info *fi)
 {
+  int res = -ENOENT;
   int length;
   char *location;
   uint8_t *buf_tmp;
-  fosfat_file_t *file;
+  fosfat_file_t *file = NULL;
 
   (void) fi;
 
   location = trim_fosname (path);
 
   /* Get the stats and test if it is a file */
-  if ((file = fosfat_get_stat (fosfat, location)))
-  {
-    if (!file->att.isdir)
-    {
+  file = fosfat_get_stat (fosfat, location);
+  if (!file)
+    goto out;
+
+  if (file->att.isdir)
+    goto out;
+
       length = get_filesize (file, location);
 
       if (offset < length)
@@ -537,22 +539,21 @@ fos_read (const char *path, char *buf, size_t size,
         {
           memcpy (buf, buf_tmp, size);
           free (buf_tmp);
+          res = size;
         }
         else
-          size = -ENOENT;
+          res = -ENOENT;
       }
       else
-        size = 0;
-    }
-    free (file);
-  }
-  else
-    size = -ENOENT;
+        res = 0;
 
+ out:
+  if (file)
+    free (file);
   if (location)
     free (location);
 
-  return size;
+  return res;
 }
 
 /* Print help. */
