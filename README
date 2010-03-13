@@ -31,7 +31,7 @@ website.
 BUILD
 ~~~~~
 
- * For GNU/Linux (all)
+ * For POSIX
 
    ./configure
    make
@@ -43,33 +43,17 @@ BUILD
 
  * For Window$ (only fosread, fosrec and smascii)
 
-   make win32
+   ./configure --cross-compile --cross-prefix=i586-mingw32msvc-
+   make
 
    It will compile all DLLs and binaries for win32 with MinGW32.
 
 
-The include is fosfat.h.
+The public includes are fosfat.h and fosgra.h.
 For more informations, consult the comments in the sources.
 
 You can found others informations on the website :
 http://home.gna.org/fosfat/
-
-
-PACKAGE (only from trunk)
-~~~~~~~
-
- * For GNU/Linux
-
-   ./package-deb.sh
-
-   It will build a Debian Ubuntu package for your architecture.
-
- * For Window$
-
-   ./package-win32.sh
-
-   It will create an optimised zip package with DLLs and binaries.
-   `zip` is needed.
 
 
 AUTHOR
