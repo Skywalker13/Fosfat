@@ -45,7 +45,7 @@ struct win32disk_s {
  * driver_index to open.
  * return the new device object.
  */
-EXPORT win32disk_t *
+win32disk_t *
 new_w32disk (unsigned int drive_index)
 {
   win32disk_t *disk = NULL;
@@ -62,7 +62,7 @@ new_w32disk (unsigned int drive_index)
  *
  * disk         structure for the wrapper.
  */
-EXPORT void
+void
 free_w32disk (win32disk_t *disk)
 {
   Disk *wdisk;
@@ -86,7 +86,7 @@ free_w32disk (win32disk_t *disk)
  * disk         structure for the wrapper.
  * return the size.
  */
-EXPORT size_t
+size_t
 w32disk_sectorsize (win32disk_t *disk)
 {
   Disk *wdisk;
@@ -110,7 +110,7 @@ w32disk_sectorsize (win32disk_t *disk)
  * csectors     the number of sectors (length).
  * return 0 if error.
  */
-EXPORT int
+int
 w32disk_readsectors (win32disk_t *disk, void *buffer,
                      unsigned long sector_index, size_t csectors)
 {
@@ -133,7 +133,7 @@ w32disk_readsectors (win32disk_t *disk, void *buffer,
  * disk         structure for the wrapper.
  * return the index.
  */
-EXPORT unsigned int
+unsigned int
 w32disk_getdriveindex (win32disk_t *disk)
 {
   Disk *wdisk;
@@ -152,7 +152,7 @@ w32disk_getdriveindex (win32disk_t *disk)
  * disk         structure for the wrapper.
  * return 0 if invalid.
  */
-EXPORT int
+int
 w32disk_valid (win32disk_t *disk)
 {
   Disk *wdisk;

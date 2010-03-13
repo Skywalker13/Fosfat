@@ -22,14 +22,6 @@
 #ifndef W32DISK_H
 #define W32DISK_H
 
-#ifdef BUILD_DLL
-/* dll exports */
-#define EXPORT __declspec(dllexport)
-#else
-/* exe imports */
-#define EXPORT __declspec(dllimport)
-#endif
-
 #include <stdlib.h>
 
 typedef struct win32disk_s win32disk_t;
@@ -38,14 +30,14 @@ typedef struct win32disk_s win32disk_t;
 extern "C" {
 #endif
 
-EXPORT win32disk_t *new_w32disk (unsigned int drive_index);
-EXPORT void free_w32disk (win32disk_t *disk);
+win32disk_t *new_w32disk (unsigned int drive_index);
+void free_w32disk (win32disk_t *disk);
 
-EXPORT size_t w32disk_sectorsize (win32disk_t *disk);
-EXPORT int w32disk_readsectors (win32disk_t *disk, void *buffer,
+size_t w32disk_sectorsize (win32disk_t *disk);
+int w32disk_readsectors (win32disk_t *disk, void *buffer,
                                 unsigned long sector_index, size_t csectors);
-EXPORT unsigned int w32disk_getdriveindex (win32disk_t *disk);
-EXPORT int w32disk_valid (win32disk_t *disk);
+unsigned int w32disk_getdriveindex (win32disk_t *disk);
+int w32disk_valid (win32disk_t *disk);
 
 #ifdef __cplusplus
 }
