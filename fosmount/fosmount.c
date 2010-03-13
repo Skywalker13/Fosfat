@@ -420,43 +420,45 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
     goto out;
   }
 
-    first_file = files;
+  first_file = files;
 
-    do
+  do
+  {
+    char _path[256];
+    struct stat *st;
+    char *name;
+
+    snprintf (_path, sizeof (_path), "%s/%s", location, files->name);
+    st = in_stat (files, _path);
+
+    /* add identification for .IMAGE translated to PBM */
+    if (g_pbm && strstr (files->name, ".image\0")
+        && fosgra_is_image (fosfat, _path))
     {
-      char _path[256];
-      struct stat *st;
-      char *name;
+      name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
+      sprintf (name, "%s." FOSGRAID ".pbm", files->name);
+    }
+    /* add identification for .COLOR translated to XPM */
+    else if (g_xpm && strstr (files->name, ".color\0")
+             && fosgra_is_image (fosfat, _path))
+    {
+      name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
+      sprintf (name, "%s." FOSGRAID ".xpm", files->name);
+    }
+    else
+      name = strdup (files->name);
 
-      snprintf (_path, sizeof (_path), "%s/%s", location, files->name);
-      st = in_stat (files, _path);
+    if (strstr (name, ".dir"))
+      *(name + strlen (name) - 4) = '\0';
 
-      /* add identification for .IMAGE translated to PBM */
-      if (g_pbm && strstr (files->name, ".image\0")
-          && fosgra_is_image (fosfat, _path))
-      {
-        name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
-        sprintf (name, "%s." FOSGRAID ".pbm", files->name);
-      }
-      /* add identification for .COLOR translated to XPM */
-      else if (g_xpm && strstr (files->name, ".color\0")
-               && fosgra_is_image (fosfat, _path))
-      {
-        name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
-        sprintf (name, "%s." FOSGRAID ".xpm", files->name);
-      }
-      else
-        name = strdup (files->name);
+    /* Add entry in the file list */
+    filler (buf, name, st, 0);
+    free (st);
+    free (name);
+  }
+  while ((files = files->next_file));
 
-      if (strstr (name, ".dir"))
-        *(name + strlen (name) - 4) = '\0';
-
-      /* Add entry in the file list */
-      filler (buf, name, st, 0);
-      free (st);
-      free (name);
-    } while ((files = files->next_file));
-    fosfat_free_listdir (first_file);
+  fosfat_free_listdir (first_file);
 
  out:
   if (location)
