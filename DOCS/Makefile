@@ -5,6 +5,8 @@ include ../config.mak
 
 EXTRADIST = \
 	Doxyfile \
+	fosblup_1.0_color.png \
+	fosblup_1.0_color.svg \
 
 all: doxygen
 
