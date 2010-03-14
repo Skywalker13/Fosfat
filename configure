@@ -536,6 +536,8 @@ for opt do
   ;;
   --enable-debug=*) debug="yes"; debuglevel="$optval"
   ;;
+  --enable-debug) debug="yes"
+  ;;
   --disable-debug) debug="no"
   ;;
   --enable-strip) dostrip="yes"
