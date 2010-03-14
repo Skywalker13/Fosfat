@@ -32,7 +32,7 @@
 
 #ifdef _WIN32
 #include <w32disk.h>
-#endif
+#endif /* _WIN32 */
 
 #include "fosfat.h"
 
@@ -175,7 +175,7 @@ struct fosfat_s {
   w32disk_t   *dev;            /* device object                         */
 #else
   FOSFAT_DEV  *dev;            /* physical device                       */
-#endif
+#endif /* !_WIN32 */
   int          fosboot;        /* FOSBOOT address                       */
   uint32_t     foschk;         /* CHK                                   */
   int          viewdel;        /* list deleted files                    */
@@ -226,7 +226,7 @@ blk2add (uint32_t block, int fosboot)
 {
   return ((block + fosboot) * FOSFAT_BLK);
 }
-#endif
+#endif /* !_WIN32 */
 
 #ifdef _WIN32
 /*
@@ -264,7 +264,7 @@ sec_offset (uint32_t block, int fosboot)
   /* FIXME: modulo by 2 only right if the sector size is 512 */
   return (((block + fosboot) % 2) ? FOSFAT_BLK : 0);
 }
-#endif
+#endif /* _WIN32 */
 
 /*
  * Convert char table to an integer.
@@ -368,7 +368,7 @@ my_strcasestr (const char *s1, const char *s2)
   return res;
 #else
   return strcasestr (s1, s2);
-#endif
+#endif /* !_WIN32 */
 }
 
 static inline char *
@@ -383,7 +383,7 @@ my_strndup (const char *src, size_t n)
   return dst;
 #else
   return strndup (src, n);
-#endif
+#endif /* !_WIN32 */
 }
 
 /*
@@ -668,7 +668,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
 #ifdef _WIN32
   size_t ssize, csector;
   int8_t *buffer;
-#endif
+#endif /* _WIN32 */
 
   if (!fosfat || !fosfat->dev)
     return NULL;
@@ -688,7 +688,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
   /* Move the pointer on the block */
   if (fseek (fosfat->dev, blk2add (block, fosfat->fosboot), SEEK_SET))
     return NULL;
-#endif
+#endif /* !_WIN32 */
 
   switch (type)
   {
@@ -711,7 +711,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
     if (fread ((fosfat_b0_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
         == (size_t) FOSFAT_BLK)
     {
-#endif
+#endif /* !_WIN32 */
       return blk;
     }
     free (blk);
@@ -737,7 +737,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
     if (fread ((fosfat_bl_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
         == (size_t)FOSFAT_BLK)
     {
-#endif
+#endif /* !_WIN32 */
       blk->next_bl = NULL;
 
       /* Check the CHK value */
@@ -771,7 +771,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
     if (fread ((fosfat_bd_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
         == (size_t) FOSFAT_BLK)
     {
-#endif
+#endif /* !_WIN32 */
       blk->next_bd = NULL;
       blk->first_bl = NULL;
 
@@ -806,7 +806,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
     if (fread ((fosfat_data_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
         == (size_t) FOSFAT_BLK)
     {
-#endif
+#endif /* !_WIN32 */
       blk->next_data = NULL;
       return blk;
     }
@@ -818,7 +818,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
 #ifdef _WIN32
   if (buffer)
     free (buffer);
-#endif
+#endif /* _WIN32 */
 
   return NULL;
 }
@@ -2150,7 +2150,7 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
   fosfat->dev = w32disk_new (*dev - 'a');
 #else
   fosfat->dev = fopen (dev, "r");
-#endif
+#endif /* !_WIN32 */
   if (!fosfat->dev)
     goto err_dev;
 
@@ -2205,7 +2205,7 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
   w32disk_free (fosfat->dev);
 #else
   fclose (fosfat->dev);
-#endif
+#endif /* !_WIN32 */
  err_dev:
   free (fosfat);
   return NULL;
@@ -2239,7 +2239,7 @@ fosfat_close (fosfat_t *fosfat)
     w32disk_free (fosfat->dev);
 #else
     fclose (fosfat->dev);
-#endif
+#endif /* !_WIN32 */
 
   free (fosfat);
 }
