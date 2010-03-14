@@ -50,14 +50,26 @@
 static int
 run_conv (const char *input, const char *output, newline_t newline)
 {
-  int res = 1;
+  int res = -1;
   FILE *in = NULL, *out = NULL;
   char buffer[BUFFER_SIZE];
   size_t lng;
 
-  if ((in = fopen (input, "r")) && (out = fopen (output, "w")))
+  in = fopen (input, "rb");
+  if (!in)
   {
-    while ((lng = fread ((char *) buffer, 1, (size_t) BUFFER_SIZE, in)))
+    fprintf (stderr, "Reading error!\n");
+    goto out;
+  }
+
+  out = fopen (output, "wb");
+  if (!out)
+  {
+    fprintf (stderr, "Writing error!\n");
+    goto out;
+  }
+
+    while ((lng = fread (buffer, 1, sizeof (buffer), in)))
     {
       size_t size;
       if (sma2iso8859 (buffer, (unsigned int) lng, newline))
@@ -66,24 +78,19 @@ run_conv (const char *input, const char *output, newline_t newline)
         if (size != lng)
         {
           fprintf (stderr, "Conversion error, bad size!\n");
-          res = 0;
+          goto out;
         }
       }
       else
       {
         fprintf (stderr, "Conversion error!\n");
-        res = 0;
+        goto out;
       }
     }
-    if (res)
-      printf ("File %s successfully converted to %s!\n", input, output);
-  }
-  else
-  {
-    fprintf (stderr, "Reading or writing error!\n");
-    res = 0;
-  }
 
+      printf ("File %s successfully converted to %s!\n", input, output);
+
+ out:
   if (in)
     fclose (in);
   if (out)
