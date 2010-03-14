@@ -31,6 +31,6 @@ typedef enum newline {
   ASCII_LF = 0x0A        /*!< Line Feed       (Unix)      */
 } newline_t;
 
-char *sma2iso8859 (char *buffer, unsigned int size, newline_t ret);
+char *fos_sma2iso8859 (char *buffer, unsigned int size, newline_t ret);
 
 #endif /* ASCII_H */
