@@ -75,7 +75,7 @@ typedef struct ginfo {
  * fosfat the main structure
  * return info
  */
-global_info_t *
+static global_info_t *
 get_ginfo (fosfat_t *fosfat)
 {
   global_info_t *ginfo;
@@ -102,7 +102,7 @@ get_ginfo (fosfat_t *fosfat)
  *
  * time date and hour
  */
-void
+static void
 print_date (fosfat_time_t *time)
 {
   printf (" %4i-%02i-%02i %02i:%02i", time->year, time->month,
@@ -114,7 +114,7 @@ print_date (fosfat_time_t *time)
  *
  * file description
  */
-void
+static void
 print_file (fosfat_file_t *file)
 {
   char filename[FOSFAT_NAMELGT];
@@ -149,7 +149,7 @@ print_file (fosfat_file_t *file)
  * path         where in the tree
  * return true if it is ok
  */
-int
+static int
 list_dir (fosfat_t *fosfat, const char *loc)
 {
   char *path;
@@ -197,7 +197,7 @@ list_dir (fosfat_t *fosfat, const char *loc)
  * dst          where in local
  * return true if it is ok
  */
-int
+static int
 get_file (fosfat_t *fosfat, const char *path, const char *dst)
 {
   int res = 0;
@@ -228,14 +228,14 @@ get_file (fosfat_t *fosfat, const char *path, const char *dst)
 }
 
 /* Print help. */
-void
+static void
 print_info (void)
 {
   printf (HELP_TEXT);
 }
 
 /* Print version. */
-void
+static void
 print_version (void)
 {
   printf (VERSION_TEXT);

@@ -47,7 +47,7 @@
  * output       ISO-8859-1 text file
  * return 1 for success and 0 for error
  */
-int
+static int
 run_conv (const char *input, const char *output, newline_t newline)
 {
   int res = 1;
@@ -93,7 +93,7 @@ run_conv (const char *input, const char *output, newline_t newline)
 }
 
 /* Print help. */
-void
+static void
 print_help (void)
 {
   printf (HELP_TEXT);

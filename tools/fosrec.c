@@ -88,14 +88,14 @@ search_deleted (fosfat_t *fosfat, const char *location, const char *dest)
 }
 
 /* Print help. */
-void
+static void
 print_info (void)
 {
   printf (HELP_TEXT);
 }
 
 /* Print version. */
-void
+static void
 print_version (void)
 {
   printf (VERSION_TEXT);
