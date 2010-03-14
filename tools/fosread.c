@@ -81,7 +81,8 @@ get_ginfo (fosfat_t *fosfat)
   global_info_t *ginfo;
   char *name;
 
-  if ((name = fosfat_diskname (fosfat)))
+  name = fosfat_diskname (fosfat);
+  if (name)
   {
     ginfo = malloc (sizeof (global_info_t));
     strncpy (ginfo->name, name, FOSFAT_NAMELGT - 1);
