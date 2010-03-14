@@ -24,7 +24,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>   /* strdup */
+#include <string.h>
 
 #include "ascii.h"
 
@@ -99,7 +99,6 @@ run_conv (const char *input, const char *output, newline_t newline)
   return res;
 }
 
-/* Print help. */
 static void
 print_help (void)
 {
@@ -109,7 +108,6 @@ print_help (void)
 int
 main (int argc, char **argv)
 {
-  int res = 0;
   newline_t newline = ASCII_CR;
 
   if (argc < 3)
@@ -118,10 +116,8 @@ main (int argc, char **argv)
     return -1;
   }
 
-    if (argc == 4 && !strcmp (argv[3], "--unix"))
-      newline = ASCII_LF;
+  if (argc == 4 && !strcmp (argv[3], "--unix"))
+    newline = ASCII_LF;
 
-    res = run_conv (argv[1], argv[2], newline);
-
-  return res;
+  return run_conv (argv[1], argv[2], newline);
 }
