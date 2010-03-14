@@ -62,7 +62,7 @@ typedef struct ginfo {
 " node                  the tree with the file (or folder)" \
 " for 'get' or 'list'\n" \
 "                       example: foo/bar/toto.text\n" \
-" path                  you can specify a path for save" \
+" path                  you can specify a path to save" \
 " the file (with get mode)\n" \
 "\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
 
