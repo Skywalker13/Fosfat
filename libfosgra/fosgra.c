@@ -126,10 +126,10 @@ typedef struct fosgra_color_map_s {
  *
  *  0x17      : index byte -> 0b00010111
  *              '1' is coded and '0' is normal
- *  0xBB 0x00 : first coded object where 0xBB is repeated 187 times      (1)
+ *  0xBB 0x00 : first coded object where 0x00 is repeated 187 times      (1)
  *  0x00 0x02 : coded where 0x02 is repeated 256 times                   (1)
  *              0x00 is equal to 256
- *  0xAA 0x00 : coded where 0x00 is repeated 170 times                   (1)
+ *  0xAA 0x50 : coded where 0x50 is repeated 170 times                   (1)
  *  0xB3      : normal, this object is single                            (0)
  *  0x00 0x00 : coded where 0x00 is repeated 256 times                   (1)
  *  0xF2      : normal                                                   (0)
