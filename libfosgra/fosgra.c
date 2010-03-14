@@ -116,8 +116,8 @@ typedef struct fosgra_color_map_s {
  * ~~~~~~~~~~~~~~~~~~~~~~
  * The images are decoded from the bottom to the top. In order to limit
  * the size of an image, when a pattern of pixels is repeated consecutively,
- * this group is coded into 16 bits where the first byte is the pattern and
- * the next byte is the value to repeat.
+ * this group is coded into 16 bits where the first byte is the number of
+ * time where the next byte (the pattern) must be repeated.
  * For each eight objects, a byte describes where are the coded objects and
  * where are the objects to read "as is" (normal).
  * (the first is always at the bottom|right)
