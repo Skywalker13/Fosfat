@@ -110,27 +110,18 @@ int
 main (int argc, char **argv)
 {
   int res = 0;
-  char *input_file;
-  char *output_file;
   newline_t newline = ASCII_CR;
 
-  if (argc >= 3)
+  if (argc < 3)
   {
-    input_file = strdup (argv[1]);
-    output_file = strdup (argv[2]);
+    print_help ();
+    return -1;
+  }
 
     if (argc == 4 && !strcmp (argv[3], "--unix"))
       newline = ASCII_LF;
 
-    res = run_conv (input_file, output_file, newline);
-
-    if (input_file)
-      free (input_file);
-    if (output_file)
-      free (output_file);
-  }
-  else
-    print_help ();
+    res = run_conv (argv[1], argv[2], newline);
 
   return res;
 }
