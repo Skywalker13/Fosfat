@@ -89,6 +89,7 @@ run_conv (const char *input, const char *output, newline_t newline)
   }
 
   printf ("File %s successfully converted to %s!\n", input, output);
+  res = 0;
 
  out:
   if (in)
