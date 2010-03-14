@@ -69,26 +69,26 @@ run_conv (const char *input, const char *output, newline_t newline)
     goto out;
   }
 
-    while ((lng = fread (buffer, 1, sizeof (buffer), in)))
+  while ((lng = fread (buffer, 1, sizeof (buffer), in)))
+  {
+    size_t size;
+    if (sma2iso8859 (buffer, (unsigned int) lng, newline))
     {
-      size_t size;
-      if (sma2iso8859 (buffer, (unsigned int) lng, newline))
+      size = fwrite (buffer, 1, lng, out);
+      if (size != lng)
       {
-        size = fwrite ((char *) buffer, 1, lng, out);
-        if (size != lng)
-        {
-          fprintf (stderr, "Conversion error, bad size!\n");
-          goto out;
-        }
-      }
-      else
-      {
-        fprintf (stderr, "Conversion error!\n");
+        fprintf (stderr, "Conversion error, bad size!\n");
         goto out;
       }
     }
+    else
+    {
+      fprintf (stderr, "Conversion error!\n");
+      goto out;
+    }
+  }
 
-      printf ("File %s successfully converted to %s!\n", input, output);
+  printf ("File %s successfully converted to %s!\n", input, output);
 
  out:
   if (in)
