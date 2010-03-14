@@ -1,6 +1,6 @@
 /*
  * FOS libfosfat: API for Smaky file system
- * Copyright (C) 2006-2009 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * Copyright (C) 2006-2010 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
  *
  * Thanks to Pierre Arnaud for his help and the documentation
  *    And to Epsitec SA for the Smaky computers
