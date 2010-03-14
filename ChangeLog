@@ -11,7 +11,7 @@
 
 	* libfosgra: add support for the decoding of .COLOR files.
 
-	* fosmount: add the convertion on the fly of .COLOR files to .XPM files.
+	* fosmount: add the conversion on the fly of .COLOR files to .XPM files.
 	  Note that the XPM files use the version 2 of X PixMap. It needs a real
 	  application like The Gimp in order to read the files. Or the tool SXPM
 	  from the X11 (X.Org) project.
