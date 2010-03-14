@@ -74,8 +74,10 @@ install-libs:
 	$(MAKE) -C libfosgra install
 
 install-pkgconfig: $(PKGCONFIG_FILE)
-	$(INSTALL) -d "$(PKGCONFIG_DIR)"
-	$(INSTALL) -m 644 $< "$(PKGCONFIG_DIR)"
+	for m in $(PKGCONFIG_FILE); do \
+	  $(INSTALL) -d "$(PKGCONFIG_DIR)"; \
+	  $(INSTALL) -m 644 $$m "$(PKGCONFIG_DIR)"; \
+	done
 
 install-fosmount: fosmount
 	$(MAKE) -C fosmount install
@@ -93,7 +95,9 @@ uninstall-libs:
 	$(MAKE) -C libfosgra uninstall
 
 uninstall-pkgconfig:
-	rm -f $(PKGCONFIG_DIR)/$(PKGCONFIG_FILE)
+	for m in $(PKGCONFIG_FILE); do \
+	  rm -f $(PKGCONFIG_DIR)/$$m; \
+	done
 
 uninstall-fosmount:
 	$(MAKE) -C fosmount uninstall
