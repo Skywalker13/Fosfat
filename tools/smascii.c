@@ -122,8 +122,7 @@ main (int argc, char **argv)
     if (argc == 4 && !strcmp (argv[3], "--unix"))
       newline = ASCII_LF;
 
-    if (!run_conv (input_file, output_file, newline))
-      res = -1;
+    res = run_conv (input_file, output_file, newline);
 
     if (input_file)
       free (input_file);
