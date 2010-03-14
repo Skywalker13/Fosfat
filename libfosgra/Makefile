@@ -76,6 +76,7 @@ install: $(BUILD_RULES)
 	    $(LN) -sf $(SHARED_LIBNAME_VERSION) $(libdir)/$(SHARED_LIBNAME_MAJOR); \
 	    $(LN) -sf $(SHARED_LIBNAME_MAJOR) $(libdir)/$(SHARED_LIBNAME); \
 	  else \
+	    $(INSTALL) -d $(bindir); \
 	    $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(bindir); \
 	    $(INSTALL) -c $(LIBNAME).dll.a $(libdir); \
 	  fi \

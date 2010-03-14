@@ -70,6 +70,9 @@ distclean: clean docs-clean
 install: install-libs install-pkgconfig install-fosmount install-tools install-docs
 
 install-libs:
+ifeq ($(BUILD_MINGW32),yes)
+	$(MAKE) -C libw32disk install
+endif
 	$(MAKE) -C libfosfat install
 	$(MAKE) -C libfosgra install
 
@@ -80,7 +83,9 @@ install-pkgconfig: $(PKGCONFIG_FILE)
 	done
 
 install-fosmount: fosmount
+ifeq ($(FOSMOUNT),yes)
 	$(MAKE) -C fosmount install
+endif
 
 install-tools: tools
 	$(MAKE) -C tools install

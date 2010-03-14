@@ -53,6 +53,7 @@ install: $(BUILD_RULES)
 	$(INSTALL) -d $(libdir)
 	[ $(BUILD_STATIC) = yes ] && $(INSTALL) -c $(STATIC_LIBNAME) $(libdir); \
 	if [ $(BUILD_SHARED) = yes ]; then \
+	  $(INSTALL) -d $(bindir); \
 	  $(INSTALL) -c $(SHARED_LIBNAME_VERSION) $(bindir); \
 	  $(INSTALL) -c $(LIBNAME).dll.a $(libdir); \
 	fi
