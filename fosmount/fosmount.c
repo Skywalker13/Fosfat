@@ -229,6 +229,7 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
               buf, size - (strlen (head) - offset));
     free (buf);
   }
+
   return dec;
 }
 
@@ -637,7 +638,8 @@ main (int argc, char **argv)
     case -1:            /* end */
       break ;
     }
-  } while (next_option != -1);
+  }
+  while (next_option != -1);
 
   if (argc < optind + 2)
   {
@@ -666,7 +668,8 @@ main (int argc, char **argv)
     return -1;
 
   /* Open the floppy disk (or hard disk) */
-  if (!(fosfat = fosfat_open (device, type, 0)))
+  fosfat = fosfat_open (device, type, 0);
+  if (!fosfat)
   {
     fprintf (stderr, "Could not open %s for mounting!\n", device);
     res = -1;
