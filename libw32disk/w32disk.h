@@ -22,13 +22,13 @@
 #ifndef W32DISK_H
 #define W32DISK_H
 
-#include <stdlib.h>
-
-typedef struct w32disk_s w32disk_t;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#include <stdlib.h>
+
+typedef struct w32disk_s w32disk_t;
 
 w32disk_t *w32disk_new (unsigned int drive_index);
 void w32disk_free (w32disk_t *disk);
