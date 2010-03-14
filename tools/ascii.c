@@ -32,7 +32,7 @@
  * Index : Smaky
  * Value : ISO-8859-1
  */
-static unsigned char smaky2iso8859_charset[] = {
+static const unsigned char smaky2iso8859_charset[] = {
      0,    1,    2,    3,    4,    5,    6,    7,
      8,    9,   10,   11,   12,   13,   14, 0xFC,
   0xE0, 0xE2, 0xE9, 0xE8, 0xEB, 0xEA, 0xEF, 0xEE,
