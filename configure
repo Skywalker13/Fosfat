@@ -40,7 +40,7 @@ show_help(){
   echo "  --enable-shared             build shared libraries [default=yes]"
   echo "  --disable-shared            do not build shared libraries [default=no]"
   echo "  --enable-tools              build fosread, fosrec and smascii tools"
-  echo "  --disable-tools             do not build fosread, fosrec ans smascii tools"
+  echo "  --disable-tools             do not build fosread, fosrec and smascii tools"
   echo "  --enable-fosmount           build fosmount FUSE extension"
   echo "  --disable-fosmount          do not build fosmount FUSE extension"
   echo "  --with-fuse-dir=DIR         check for libfuse installed in DIR"
