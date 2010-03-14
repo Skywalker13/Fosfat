@@ -19,21 +19,19 @@ ifeq ($(BUILD_SHARED),yes)
   BUILD_RULES += lib_shared
 endif
 
-SRCS =  Disk.cxx \
-	wrapper.cxx \
+SRCS =  w32disk.c \
 
 EXTRADIST = \
-	Disk.h \
 	w32disk.h \
 
-OBJS = $(SRCS:.cxx=.o)
+OBJS = $(SRCS:.c=.o)
 
-.SUFFIXES: .cxx .o
+.SUFFIXES: .c .o
 
 all: depend $(BUILD_RULES)
 
 .cxx.o:
-	$(CXX) -c $(OPTFLAGS) $(CXXFLAGS) $(CFG_CPPFLAGS) $(CPPFLAGS) -o $@ $<
+	$(CC) -c $(OPTFLAGS) $(CFLAGS) $(CFG_CPPFLAGS) $(CPPFLAGS) -o $@ $<
 
 lib_static: $(STATIC_LIBNAME)
 
@@ -44,7 +42,7 @@ $(STATIC_LIBNAME): $(OBJS)
 	$(RANLIB) $(STATIC_LIBNAME)
 
 $(SHARED_LIBNAME): $(OBJS)
-	$(CXX) $(SHARED_LIBNAME_FLAGS) \
+	$(CC) $(SHARED_LIBNAME_FLAGS) \
 	  $(OBJS) $(CFG_LDFLAGS) $(EXTRALIBS) $(LDFLAGS) -o $(SHARED_LIBNAME_VERSION)
 
 clean:
@@ -69,7 +67,7 @@ uninstall:
 	rm -f $(includedir)/fosfat.h
 
 depend:
-	$(CXX) -MM $(CFLAGS) $(CFG_CPPFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(CFG_CPPFLAGS) $(CPPFLAGS) $(SRCS) 1>.depend
 
 .PHONY: clean depend
 .PHONY: uninstall

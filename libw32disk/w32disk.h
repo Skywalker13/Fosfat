@@ -1,6 +1,6 @@
 /*
- * libw32disk: C wrapper for Disk C++ Class (Window$ DLL)
- * Copyright (C) 2007-2008 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * libw32disk: Win95 and WinNT low level disk access.
+ * Copyright (C) 2007-2010 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
  *
  * This file is part of Fosfat.
  *
@@ -24,20 +24,20 @@
 
 #include <stdlib.h>
 
-typedef struct win32disk_s win32disk_t;
+typedef struct w32disk_s w32disk_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-win32disk_t *new_w32disk (unsigned int drive_index);
-void free_w32disk (win32disk_t *disk);
+w32disk_t *w32disk_new (unsigned int drive_index);
+void w32disk_free (w32disk_t *disk);
 
-size_t w32disk_sectorsize (win32disk_t *disk);
-int w32disk_readsectors (win32disk_t *disk, void *buffer,
+size_t w32disk_sectorsize (w32disk_t *disk);
+int w32disk_readsectors (w32disk_t *disk, void *buffer,
                          unsigned long sector_index, size_t csectors);
-unsigned int w32disk_getdriveindex (win32disk_t *disk);
-int w32disk_valid (win32disk_t *disk);
+unsigned int w32disk_getdriveindex (w32disk_t *disk);
+int w32disk_valid (w32disk_t *disk);
 
 #ifdef __cplusplus
 }

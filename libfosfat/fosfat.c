@@ -172,7 +172,7 @@ typedef struct cache_list_s {
 /* Main fosfat structure */
 struct fosfat_s {
 #ifdef _WIN32
-  win32disk_t *dev;            /* device object                         */
+  w32disk_t   *dev;            /* device object                         */
 #else
   FOSFAT_DEV  *dev;            /* physical device                       */
 #endif
@@ -2147,7 +2147,7 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
   fosfat->cachelist = NULL;
 
 #ifdef _WIN32
-  fosfat->dev = new_w32disk (*dev - 'a');
+  fosfat->dev = w32disk_new (*dev - 'a');
 #else
   fosfat->dev = fopen (dev, "r");
 #endif
@@ -2202,7 +2202,7 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
 
  err:
 #ifdef _WIN32
-  free_w32disk (fosfat->dev);
+  w32disk_free (fosfat->dev);
 #else
   fclose (fosfat->dev);
 #endif
@@ -2236,7 +2236,7 @@ fosfat_close (fosfat_t *fosfat)
 
   if (fosfat->dev)
 #ifdef _WIN32
-    free_w32disk (fosfat->dev);
+    w32disk_free (fosfat->dev);
 #else
     fclose (fosfat->dev);
 #endif
