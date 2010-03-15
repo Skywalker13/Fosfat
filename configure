@@ -999,8 +999,8 @@ echolog "Creating libfosfat.pc ..."
 pkgconfig_generate libfosfat \
                    "API for Smaky file system" \
                    "$VERSION" \
-                   "$pkgconfig_libs" \
-                   "$pkgconfig_requires" \
+                   "" \
+                   "" \
                    ""
 
 echolog "Creating libfosgra.pc ..."

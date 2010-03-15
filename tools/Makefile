@@ -35,12 +35,6 @@ EXTRADIST = \
 	ascii.h \
 	$(MANS)
 
-ifeq ($(BUILD_STATIC),yes)
-ifeq ($(BUILD_SHARED),no)
-  APPS_LDFLAGS += $(EXTRALIBS)
-endif
-endif
-
 .SUFFIXES: .c .o
 
 all: apps
