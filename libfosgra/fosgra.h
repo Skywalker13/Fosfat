@@ -67,6 +67,7 @@ uint8_t *fosgra_get_buffer (fosfat_t *fosfat,
  * \param[in] path       location on the FOS disk.
  * \param[out] x         image width.
  * \param[out] y         image height.
+ * \param[out] bpp       bits per pixel.
  */
 void fosgra_get_info (fosfat_t *fosfat,
                       const char *path, uint16_t *x, uint16_t *y, uint8_t *bpp);
