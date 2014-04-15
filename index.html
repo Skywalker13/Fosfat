@@ -4,11 +4,11 @@
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Fosfat : Fosfat is a library written in C for accessing in read-only to an Smaky formatted disk (compatible hard disk and floppy disk). A tool and a FUSE extension are available for reading a Smaky FOS disk. For Window$, some features are not supported, like the images conversions and the FUSE extension. " />
+    <meta name="description" content="Fosfat: library and FUSE extension  : Smaky FOS on GNU/Linux &amp; Window$" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-    <title>Fosfat</title>
+    <title>Fosfat: library and FUSE extension </title>
   </head>
 
   <body>
@@ -18,8 +18,8 @@
         <header class="inner">
           <a id="forkme_banner" href="https://github.com/Skywalker13/Fosfat">View on GitHub</a>
 
-          <h1 id="project_title">Fosfat</h1>
-          <h2 id="project_tagline">Fosfat is a library written in C for accessing in read-only to an Smaky formatted disk (compatible hard disk and floppy disk). A tool and a FUSE extension are available for reading a Smaky FOS disk. For Window$, some features are not supported, like the images conversions and the FUSE extension. </h2>
+          <h1 id="project_title">Fosfat: library and FUSE extension </h1>
+          <h2 id="project_tagline">Smaky FOS on GNU/Linux &amp; Window$</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/Skywalker13/Fosfat/zipball/master">Download this project as a .zip file</a>
@@ -31,44 +31,206 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+        <h1>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h1>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>Fosfat is a library written in C for accessing in read-only to an Smaky formatted disk (compatible hard disk and floppy disk). A tool and a FUSE extension are available for reading a Smaky FOS disk. For Window$, some features are not supported, like the images conversions and the FUSE extension.</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<p><img src="http://home.gna.org/fosfat/fosblup_1.0_color.png" alt="FosBlup copyright Mathieu Schroeter, 2007"></p>
+
+<p>It is a free software - it is licensed under the terms of the <a href="http://www.gnu.org/licenses/gpl.html">GNU General Public License</a> (GNU/GPL) version 3.</p>
+
+<h1>
+<a name="copyright-and-license" class="anchor" href="#copyright-and-license"><span class="octicon octicon-link"></span></a>Copyright and License</h1>
+
+<p>Fosfat is copyright (C) 2006-2010 Mathieu Schroeter.</p>
+
+<p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
+
+<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU General Public License along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+
+<h1>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h1>
+
+<p>The following programs are required to build fosfat for GNU/Linux:</p>
+
+<ul>
+<li>FUSE, 2.6 or later.
+FUSE can be downloaded from <a href="http://fuse.sourceforge.net/">http://fuse.sourceforge.net/</a>.</li>
+</ul><h1>
+<a name="building-and-installation-for-gnulinux" class="anchor" href="#building-and-installation-for-gnulinux"><span class="octicon octicon-link"></span></a>Building and Installation for GNU/Linux</h1>
+
+<p>Compile libfosfat, libfosgra, fosread, fosrec, fosmount and smascii by running:</p>
+
+<pre><code>./configure
+make
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>This should produce four executables fosread, fosrec and smascii (in ./tools/), fosmount (in ./fosmount/) and two libraries libfosfat.a/.so (in ./libfosfat/) and libfosgra.a/.so (in ./libfosgra/). No extra files need to be installed. You can change some options for configure, look ./configure --help for more informations.</p>
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+<p>If you want to install Fosfat on your system, run:</p>
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+<pre><code>make install
+</code></pre>
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+<p>The binaries are copied into their appropriate directories (/usr/local/bin and /usr/local/lib), and the header into /usr/local/include in this example. Change the --prefix for an other target directory.</p>
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+<h1>
+<a name="building-for-window-9xnt" class="anchor" href="#building-for-window-9xnt"><span class="octicon octicon-link"></span></a>Building for Window$ 9x/NT</h1>
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<p>Compile libfosfat, fosread, fosrec and smascii by running:</p>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<pre><code>./configure --cross-compile --cross-prefix=i586-mingw32msvc-
+make
+</code></pre>
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<p>This should produce three executables fosread, fosrec and smascii (in ./tools/), and three libraries libfosfat-0.dll (in ./libfosfat/), libw32disk-0.dll (in ./libw32disk/) and libfosgra-0.dll (in ./libfosgra/). No extra files need to be installed. You can change some options for configure, look in the ./configure --help script for more informations.</p>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<h1>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<p>You can found a doxygen documentation of the library <a href="http://home.gna.org/fosfat/doxygen/html/index.html">link</a>.</p>
+
+<h2>
+<a name="fosmount-only-gnulinux" class="anchor" href="#fosmount-only-gnulinux"><span class="octicon octicon-link"></span></a>Fosmount (only GNU/Linux)</h2>
+
+<p>The fosmount tool uses FUSE to mount the FOS in your tree.</p>
+
+<pre><code>Usage: fosmount [options] device mountpoint
+
+-h --help             this help
+-v --version          version
+-a --harddisk         force an hard disk (default autodetect)
+-f --floppydisk       force a floppy disk (default autodetect)
+-l --fos-logger       that will turn on the FOS logger
+-d --fuse-debugger    that will turn on the FUSE debugger
+-i --image-pbm        convert on the fly .IMAGE to .PBM
+-j --image-xpm        convert on the fly .COLOR to .XPM (ver. 2)
+
+device                /dev/fd0 : floppy disk
+                      /dev/sda : hard disk, etc
+mountpoint            for example, /mnt/smaky
+</code></pre>
+
+<p>Example:</p>
+
+<ul>
+<li>fosmount /dev/sda /mnt/smaky</li>
+</ul><h2>
+<a name="fosread-gnulinux--window" class="anchor" href="#fosread-gnulinux--window"><span class="octicon octicon-link"></span></a>Fosread (GNU/Linux &amp; Window$)</h2>
+
+<p>The fosread tool can be used only from the console. It can be used with two modes. One to list all files in a directory, and the second to copy a file in a local directory.</p>
+
+<pre><code>Usage: fosread [options] device mode [node] [path]
+
+-h --help             this help
+-v --version          version
+-a --harddisk         force an hard disk (default autodetect)
+-f --floppydisk       force a floppy disk (default autodetect)
+-l --fos-logger       that will turn on the FOS logger
+-u --undelete         enable the undelete mode, even deleted files will
+                      be listed and sometimes restorable with 'get' mode.
+
+device                /dev/fd0 : floppy disk
+                      /dev/sda : hard disk, etc
+mode
+  list                list the content of a node
+  get                 copy a file from the Smaky's disk in a local directory
+node                  the tree with the file (or folder) for 'get' or 'list'
+                      example: foo/bar/toto.text
+path                  you can specify a path for save the file (with get mode)
+</code></pre>
+
+<p>Examples <strong>GNU/Linux</strong>:</p>
+
+<ul>
+<li>fosread /dev/sda list /systeme</li>
+<li>fosread /dev/fd0 get /foo/bar.text /bar/bar.txt</li>
+</ul><p>Examples <strong>Window$</strong>:</p>
+
+<ul>
+<li>fosread d list /systeme</li>
+<li>fosread a get /foo/bar.text bar.txt</li>
+</ul><h2>
+<a name="fosrec-gnulinux--window" class="anchor" href="#fosrec-gnulinux--window"><span class="octicon octicon-link"></span></a>Fosrec (GNU/Linux &amp; Window$)</h2>
+
+<p>The fosrec tool can be used only from the console. This tool can retrieve the deleted files.</p>
+
+<pre><code>Usage: fosrec [options] device destination
+
+-h --help             this help
+-v --version          version
+-a --harddisk         force an hard disk (default autodetect)
+-f --floppydisk       force a floppy disk (default autodetect)
+-l --fos-logger       that will turn on the FOS logger
+</code></pre>
+
+<p>Examples <strong>GNU/Linux</strong>:</p>
+
+<ul>
+<li>fosrec /dev/sda ./dest</li>
+<li>fosrec ./disk.di ./dest</li>
+</ul><p>Examples <strong>Window$</strong>:</p>
+
+<ul>
+<li>fosrec d ./dest</li>
+<li>fosrec a ./test</li>
+</ul><h2>
+<a name="smascii" class="anchor" href="#smascii"><span class="octicon octicon-link"></span></a>Smascii</h2>
+
+<p>The smascii tool can be used to convert Smaky text file to Extended ASCII (ISO-8859-1).</p>
+
+<pre><code>Usage: smascii smaky_file converted_file [--unix]
+
+smaky_file            the smaky text file
+converted_file        the file converted
+--unix                the Carriage Return (Old Mac) will be
+                      converted to Line Feed (unix)
+</code></pre>
+
+<p>Example:</p>
+
+<ul>
+<li>smascii /local/folder/bar.txt /bar/bar.unix.txt --unix</li>
+</ul><h1>
+<a name="download" class="anchor" href="#download"><span class="octicon octicon-link"></span></a>Download</h1>
+
+<p>The last release (0.4.0), is available to <a href="http://download.gna.org/fosfat/">http://download.gna.org/fosfat/</a></p>
+
+<ul>
+<li>Sources : <a href="http://download.gna.org/fosfat/fosfat-0.4.0.tar.bz2">fosfat-0.4.0.tar.bz2</a>
+</li>
+<li>Debian : Fosfat is now packaged in Debian and will be available for Debian Squeeze.</li>
+<li>Window$ 9x/NT: <a href="http://download.gna.org/fosfat/fosfat-0.4.0-win32.zip">fosfat-0.4.0-win32.zip</a> (only fosread, fosrec and smascii)</li>
+</ul><h1>
+<a name="feedback" class="anchor" href="#feedback"><span class="octicon octicon-link"></span></a>Feedback</h1>
+
+<p>The author of fosfat and this document, Mathieu Schroeter, can be contacted by <a href="mailto:mathieu.schroeter@gamesover.ch">e-mail</a>.</p>
+
+<p>Please send bug reports, suggestions, ideas, comments or patches to : <a href="mailto:fosfat-devel@gamesover.ch">fosfat-devel@gamesover.ch</a></p>
+
+<h1>
+<a name="links" class="anchor" href="#links"><span class="octicon octicon-link"></span></a>Links</h1>
+
+<ul>
+<li><a href="http://freshmeat.net/projects/fosfat/">Fosfat on Freshmeat</a></li>
+<li><a href="http://www.epsitec.ch/">Epsitec SA</a></li>
+<li><a href="http://www.smaky.ch/">A History of Computing in Switzerland</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Smaky">Smaky on Wikipedia</a></li>
+</ul><h1>
+<a name="thanks" class="anchor" href="#thanks"><span class="octicon octicon-link"></span></a>Thanks</h1>
+
+<p>Many thanks to Pierre Arnaud for his help and the FOS's documentation
+and to GitHub for the hosting! </p>
       </section>
     </div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">Fosfat maintained by <a href="https://github.com/Skywalker13">Skywalker13</a></p>
+        <p class="copyright">Fosfat: library and FUSE extension  maintained by <a href="https://github.com/Skywalker13">Skywalker13</a></p>
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
