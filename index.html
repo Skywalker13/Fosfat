@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Fosfat: library and FUSE extension  : Smaky FOS on GNU/Linux &amp; Window$" />
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Fosfat: library and FUSE extension </title>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Fosfat: library and FUSE extension  by Skywalker13</title>
   </head>
 
   <body>
+    <div id="container">
+      <div class="inner">
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/Skywalker13/Fosfat">View on GitHub</a>
-
-          <h1 id="project_title">Fosfat: library and FUSE extension </h1>
-          <h2 id="project_tagline">Smaky FOS on GNU/Linux &amp; Window$</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/Skywalker13/Fosfat/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/Skywalker13/Fosfat/tarball/master">Download this project as a tar.gz file</a>
-            </section>
+        <header>
+          <h1>Fosfat: library and FUSE extension </h1>
+          <h2>Smaky FOS on GNU/Linux &amp; Window$</h2>
         </header>
-    </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/Skywalker13/Fosfat/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/Skywalker13/Fosfat/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/Skywalker13/Fosfat" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
 <a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h1>
 
 <p>Fosfat is a library written in C for accessing in read-only to an Smaky formatted disk (compatible hard disk and floppy disk). A tool and a FUSE extension are available for reading a Smaky FOS disk. For Window$, some features are not supported, like the images conversions and the FUSE extension.</p>
@@ -68,14 +68,14 @@ FUSE can be downloaded from <a href="http://fuse.sourceforge.net/">http://fuse.s
 make
 </code></pre>
 
-<p>This should produce four executables fosread, fosrec and smascii (in ./tools/), fosmount (in ./fosmount/) and two libraries libfosfat.a/.so (in ./libfosfat/) and libfosgra.a/.so (in ./libfosgra/). No extra files need to be installed. You can change some options for configure, look ./configure --help for more informations.</p>
+<p>This should produce four executables fosread, fosrec and smascii (in <code>./tools/</code>), fosmount (in <code>./fosmount/</code>) and two libraries libfosfat.a/.so (in <code>./libfosfat/</code>) and libfosgra.a/.so (in <code>./libfosgra/</code>). No extra files need to be installed. You can change some options for configure, look <code>./configure --help</code> for more informations.</p>
 
 <p>If you want to install Fosfat on your system, run:</p>
 
 <pre><code>make install
 </code></pre>
 
-<p>The binaries are copied into their appropriate directories (/usr/local/bin and /usr/local/lib), and the header into /usr/local/include in this example. Change the --prefix for an other target directory.</p>
+<p>The binaries are copied into their appropriate directories (<code>/usr/local/bin</code> and <code>/usr/local/lib</code>), and the header into <code>/usr/local/include</code> in this example. Change the <code>--prefix</code> for an other target directory.</p>
 
 <h1>
 <a name="building-for-window-9xnt" class="anchor" href="#building-for-window-9xnt"><span class="octicon octicon-link"></span></a>Building for Window$ 9x/NT</h1>
@@ -86,7 +86,7 @@ make
 make
 </code></pre>
 
-<p>This should produce three executables fosread, fosrec and smascii (in ./tools/), and three libraries libfosfat-0.dll (in ./libfosfat/), libw32disk-0.dll (in ./libw32disk/) and libfosgra-0.dll (in ./libfosgra/). No extra files need to be installed. You can change some options for configure, look in the ./configure --help script for more informations.</p>
+<p>This should produce three executables fosread, fosrec and smascii (in <code>./tools/</code>), and three libraries libfosfat-0.dll (in <code>./libfosfat/</code>), libw32disk-0.dll (in <code>./libw32disk/</code>) and libfosgra-0.dll (in <code>./libfosgra/</code>). No extra files need to be installed. You can change some options for configure, look in the <code>./configure --help</code> script for more informations.</p>
 
 <h1>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h1>
@@ -117,7 +117,7 @@ mountpoint            for example, /mnt/smaky
 <p>Example:</p>
 
 <ul>
-<li>fosmount /dev/sda /mnt/smaky</li>
+<li><code>fosmount /dev/sda /mnt/smaky</code></li>
 </ul><h2>
 <a name="fosread-gnulinux--window" class="anchor" href="#fosread-gnulinux--window"><span class="octicon octicon-link"></span></a>Fosread (GNU/Linux &amp; Window$)</h2>
 
@@ -146,13 +146,13 @@ path                  you can specify a path for save the file (with get mode)
 <p>Examples <strong>GNU/Linux</strong>:</p>
 
 <ul>
-<li>fosread /dev/sda list /systeme</li>
-<li>fosread /dev/fd0 get /foo/bar.text /bar/bar.txt</li>
+<li><code>fosread /dev/sda list /systeme</code></li>
+<li><code>fosread /dev/fd0 get /foo/bar.text /bar/bar.txt</code></li>
 </ul><p>Examples <strong>Window$</strong>:</p>
 
 <ul>
-<li>fosread d list /systeme</li>
-<li>fosread a get /foo/bar.text bar.txt</li>
+<li><code>fosread d list /systeme</code></li>
+<li><code>fosread a get /foo/bar.text bar.txt</code></li>
 </ul><h2>
 <a name="fosrec-gnulinux--window" class="anchor" href="#fosrec-gnulinux--window"><span class="octicon octicon-link"></span></a>Fosrec (GNU/Linux &amp; Window$)</h2>
 
@@ -170,13 +170,13 @@ path                  you can specify a path for save the file (with get mode)
 <p>Examples <strong>GNU/Linux</strong>:</p>
 
 <ul>
-<li>fosrec /dev/sda ./dest</li>
-<li>fosrec ./disk.di ./dest</li>
+<li><code>fosrec /dev/sda ./dest</code></li>
+<li><code>fosrec ./disk.di ./dest</code></li>
 </ul><p>Examples <strong>Window$</strong>:</p>
 
 <ul>
-<li>fosrec d ./dest</li>
-<li>fosrec a ./test</li>
+<li><code>fosrec d ./dest</code></li>
+<li><code>fosrec a ./test</code></li>
 </ul><h2>
 <a name="smascii" class="anchor" href="#smascii"><span class="octicon octicon-link"></span></a>Smascii</h2>
 
@@ -193,7 +193,7 @@ converted_file        the file converted
 <p>Example:</p>
 
 <ul>
-<li>smascii /local/folder/bar.txt /bar/bar.unix.txt --unix</li>
+<li><code>smascii /local/folder/bar.txt /bar/bar.unix.txt --unix</code></li>
 </ul><h1>
 <a name="download" class="anchor" href="#download"><span class="octicon octicon-link"></span></a>Download</h1>
 
@@ -224,18 +224,15 @@ converted_file        the file converted
 
 <p>Many thanks to Pierre Arnaud for his help and the FOS's documentation
 and to GitHub for the hosting! </p>
-      </section>
+        </section>
+
+        <footer>
+          Fosfat: library and FUSE extension  is maintained by <a href="https://github.com/Skywalker13">Skywalker13</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
     </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Fosfat: library and FUSE extension  maintained by <a href="https://github.com/Skywalker13">Skywalker13</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
   </body>
 </html>
