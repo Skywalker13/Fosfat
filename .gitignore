@@ -1,0 +1,12 @@
+*.o
+*.a
+*.so
+*.pc
+*.depend
+config.log
+config.mak
+fosmount/fosmount
+tools/fosread
+tools/fosrec
+tools/smascii
+DOCS/doxygen
