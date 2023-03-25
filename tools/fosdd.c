@@ -64,15 +64,17 @@ dd (fosfat_t *fosfat, fosfat_disk_t type, const char *output_file)
   if (!f_out)
     return -1;
 
+  size_t offset = 0x10;
+
   /* The source is a floppy and the destination a disk */
   if (type == FOSFAT_FD)
   {
-    /* Add padding of 0x10 */
+    /* Add padding of offset */
     char buffer[FOSFAT_BLK] = {0};
     size_t read = 0;
-    while (read < (0x10 * FOSFAT_BLK))
+    while (read < (offset * FOSFAT_BLK))
     {
-      size_t to_write = (0x10 * FOSFAT_BLK) - read;
+      size_t to_write = (offset * FOSFAT_BLK) - read;
       if (to_write > FOSFAT_BLK)
         to_write = FOSFAT_BLK;
       fwrite (buffer, 1, to_write, f_out);
@@ -80,7 +82,7 @@ dd (fosfat_t *fosfat, fosfat_disk_t type, const char *output_file)
     }
   }
 
-  for (int blk = -0x10;; ++blk)
+  for (int blk = -offset;; ++blk)
   {
     fosfat_data_t *read_buffer = fosfat_read_d (fosfat, blk);
     if (!read_buffer)
