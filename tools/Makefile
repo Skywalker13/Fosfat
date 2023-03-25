@@ -15,6 +15,10 @@ FOSREC = fosrec
 FOSREC_SRCS = fosrec.c
 FOSREC_OBJS = $(FOSREC_SRCS:.c=.o)
 FOSREC_MAN = $(FOSREC).1
+FOSDD = fosdd
+FOSDD_SRCS = fosdd.c
+FOSDD_OBJS = $(FOSDD_SRCS:.c=.o)
+FOSDD_MAN = $(FOSDD).1
 
 APPS_CPPFLAGS = -I../libfosfat $(CFG_CPPFLAGS) $(CPPFLAGS)
 ifeq ($(BUILD_MINGW32),yes)
@@ -29,7 +33,7 @@ else
   APPS_LDFLAGS = -L../libfosfat -lfosfat $(CFG_LDFLAGS) $(LDFLAGS)
 endif
 
-MANS = $(FOSREAD_MAN) $(SMASCII_MAN) $(FOSREC_MAN)
+MANS = $(FOSREAD_MAN) $(SMASCII_MAN) $(FOSREC_MAN) $(FOSDD_MAN)
 
 EXTRADIST = \
 	ascii.h \
@@ -48,13 +52,16 @@ $(SMASCII): $(SMASCII_OBJS)
 	$(CC) $(SMASCII_OBJS) $(APPS_LDFLAGS) -o $(SMASCII)
 $(FOSREC): $(FOSREC_OBJS)
 	$(CC) $(FOSREC_OBJS) $(APPS_LDFLAGS) -o $(FOSREC)
+$(FOSDD): $(FOSDD_OBJS)
+	$(CC) $(FOSDD_OBJS) $(APPS_LDFLAGS) -o $(FOSDD)
 
 apps-dep:
 	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(FOSREAD_SRCS) 1>.depend
 	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(SMASCII_SRCS) 1>>.depend
 	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(FOSREC_SRCS) 1>>.depend
+	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(FOSDD_SRCS) 1>>.depend
 
-apps-all: $(FOSREAD) $(SMASCII) $(FOSREC)
+apps-all: $(FOSREAD) $(SMASCII) $(FOSREC) $(FOSDD)
 
 apps: apps-dep
 	$(MAKE) apps-all
@@ -64,6 +71,7 @@ clean:
 	rm -f $(FOSREAD)
 	rm -f $(SMASCII)
 	rm -f $(FOSREC)
+	rm -f $(FOSDD)
 	rm -f .depend
 
 install: install-apps install-man
@@ -73,6 +81,7 @@ install-apps: apps
 	$(INSTALL) -c -m 755 $(FOSREAD) $(bindir)
 	$(INSTALL) -c -m 755 $(SMASCII) $(bindir)
 	$(INSTALL) -c -m 755 $(FOSREC) $(bindir)
+	$(INSTALL) -c -m 755 $(FOSDD) $(bindir)
 
 install-man: $(MANS)
 	for m in $(MANS); do \
@@ -87,6 +96,7 @@ uninstall-apps:
 	rm -f $(bindir)/$(FOSREAD)
 	rm -f $(bindir)/$(SMASCII)
 	rm -f $(bindir)/$(FOSREC)
+	rm -f $(bindir)/$(FOSDD)
 
 uninstall-man:
 	for m in $(MANS); do \
@@ -97,7 +107,7 @@ uninstall-man:
 .PHONY: *clean *install* apps*
 
 dist-all:
-	cp $(EXTRADIST) $(FOSREAD_SRCS) $(SMASCII_SRCS) $(FOSREC_SRCS) Makefile $(DIST)
+	cp $(EXTRADIST) $(FOSREAD_SRCS) $(SMASCII_SRCS) $(FOSREC_SRCS) $(FOSDD_SRCS) Makefile $(DIST)
 
 .PHONY: dist dist-all
 

@@ -35,11 +35,9 @@
 #endif /* _WIN32 */
 
 #include "fosfat.h"
+#include "fosfat_internal.h"
 
 #define MAX_SPLIT             64
-
-/* Block size (256 bytes) */
-#define FOSFAT_BLK            256
 
 #define FOSFAT_NBL            4
 #define FOSFAT_Y2K            70
@@ -81,13 +79,6 @@ typedef enum foslog {
   FOSLOG_WARNING,              /* Warning log                           */
   FOSLOG_NOTICE                /* Notice log                            */
 } foslog_t;
-
-/* Data Block (256 bytes) */
-typedef struct block_data_s {
-  uint8_t data[256];           /* Data                                  */
-  /* Linked list */
-  struct  block_data_s *next_data;
-} fosfat_data_t;
 
 /* Block 0 (256 bytes) */
 typedef struct block_0_s {
@@ -850,7 +841,7 @@ fosfat_read_b0 (fosfat_t *fosfat, uint32_t block)
  * block        block position
  * return the data or NULL if broken
  */
-static inline fosfat_data_t *
+inline fosfat_data_t *
 fosfat_read_d (fosfat_t *fosfat, uint32_t block)
 {
   return (fosfat
@@ -1414,6 +1405,30 @@ fosfat_search_insys (fosfat_t *fosfat, const char *location,
   foslog (FOSLOG_WARNING, "file or directory \"%s\" not found", location);
 
   return NULL;
+}
+
+/*
+ * Return the device or image type.
+ *
+ * This function uses a string location.
+ *
+ * fosfat       handle
+ * return the type
+ */
+fosfat_disk_t fosfat_type (fosfat_t *fosfat)
+{
+  if (!fosfat)
+    return FOSFAT_ED;
+
+  switch (fosfat->fosboot)
+  {
+  case FOSBOOT_FD:
+    return FOSFAT_FD;
+  case FOSBOOT_HD:
+    return FOSFAT_HD;
+  default:
+    return FOSFAT_ED;
+  }
 }
 
 /*

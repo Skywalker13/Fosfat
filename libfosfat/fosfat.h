@@ -170,6 +170,17 @@ fosfat_file_t *fosfat_list_dir (fosfat_t *fosfat, const char *location);
 void fosfat_free_listdir (fosfat_file_t *var);
 
 /**
+ * \brief Get the disk type.
+ *
+ * FOSFAT_FD for floppy disk
+ * FOSFAT_HD for hard disk
+ *
+ * \param[in] fosfat     disk handle.
+ * \return the type.
+ */
+fosfat_disk_t fosfat_type (fosfat_t *fosfat);
+
+/**
  * \brief Get boolean information on a specific file or folder.
  *
  * Test if the location is a directory.
