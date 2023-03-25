@@ -135,15 +135,15 @@ main (int argc, char **argv)
       return -1;
     case 'a':           /* -a or --harddisk */
       type = FOSFAT_HD;
-      break ;
+      break;
     case 'f':           /* -f or --floppydisk */
       type = FOSFAT_FD;
       break ;
     case 'l':           /* -l or --fos-logger */
       fosfat_logger (1);
-      break ;
+      break;
     case -1:            /* end */
-      break ;
+      break;
     }
   } while (next_option != -1);
 
