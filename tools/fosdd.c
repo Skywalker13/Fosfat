@@ -35,6 +35,7 @@
 "Usage: fosdd [options] if of\n\n" \
 " -h --help             this help\n" \
 " -v --version          version\n" \
+" -l --fos-logger       that will turn on the FOS logger\n" \
 "\n" \
 "\nPlease, report bugs to <mathieu@schroetersa.ch>.\n"
 
@@ -102,12 +103,13 @@ main (int argc, char **argv)
   const char *input_file;
   const char *output_file;
 
-  const char *const short_options = "hv"; 
+  const char *const short_options = "hlv";
 
   const struct option long_options[] = {
-    { "help",    no_argument, NULL, 'h' },
-    { "version", no_argument, NULL, 'v' },
-    { NULL,      0,           NULL,  0  }
+    { "help",       no_argument, NULL, 'h' },
+    { "fos-logger", no_argument, NULL, 'l' },
+    { "version",    no_argument, NULL, 'v' },
+    { NULL,         0,           NULL,  0  }
   };
 
   /* check options */
@@ -124,6 +126,9 @@ main (int argc, char **argv)
     case 'v':           /* -v or --version */
       print_version ();
       return -1;
+    case 'l':           /* -l or --fos-logger */
+      fosfat_logger (1);
+      break;
     case -1:            /* end */
       break ;
     }
