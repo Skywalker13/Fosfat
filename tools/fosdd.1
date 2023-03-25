@@ -1,0 +1,37 @@
+.\" 
+.TH "FOSDD" "1" "Mars 2023" "fosdd" "User Commands"
+.SH "NAME"
+fosdd \- FOS dd
+.SH "SYNOPSIS"
+.B fosdd
+[\fIoptions\fR] \fIdevice \fIdestination
+.SH "DESCRIPTION"
+Tool to convert floppy image to disk image and vice-versa.
+.TP 
+\fB\-h\fR \fB\-\-help\fR
+Display help message.
+.TP 
+\fB\-v\fR \fB\-\-version\fR
+Show version.
+.TP 
+\fB\-l\fR \fB\-\-fos\-logger\fR
+Turn ON the FOS logger.
+.TP 
+\fBdevice\fR
+/dev/fd0 for floppy disk
+.br 
+/dev/sda for hard disk, etc, ...
+.br 
+image.di for a floppy or disk image
+.TP 
+\fBdestination\fR
+The destination to save the image.
+.SH "AUTHOR"
+Written by Mathieu Schroeter <mathieu@schroetersa.ch>.
+.SH "REPORTING BUGS"
+Report bugs to <\fImathieu@schroetersa.ch\fP>.
+.SH "COPYRIGHT"
+Copyright \(co 2023 Mathieu Schroeter
+
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
