@@ -99,7 +99,7 @@ dd (fosfat_t *fosfat, fosfat_disk_t type, const char *output_file)
 int
 main (int argc, char **argv)
 {
-  fosfat_t *fosfat; 
+  fosfat_t *fosfat;
   int res = 0, next_option;
   fosfat_disk_t type = FOSFAT_AD;
   const char *input_file;
