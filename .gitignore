@@ -6,6 +6,7 @@
 config.log
 config.mak
 fosmount/fosmount
+tools/fosdd
 tools/fosread
 tools/fosrec
 tools/smascii
