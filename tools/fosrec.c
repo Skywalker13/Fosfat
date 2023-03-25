@@ -1,6 +1,6 @@
 /*
  * FOS fosrec: tool to undelete files on a Smaky file system
- * Copyright (C) 2008-2009 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * Copyright (C) 2008-2009 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * Thanks to Pierre Arnaud for his help and the documentation
  *    And to Epsitec SA for the Smaky computers
@@ -38,7 +38,7 @@
 " -f --floppydisk       force a floppy disk (default autodetect)\n" \
 " -l --fos-logger       that will turn on the FOS logger\n" \
 "\n" \
-"\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
+"\nPlease, report bugs to <mathieu@schroetersa.ch>.\n"
 
 #define VERSION_TEXT "fosrec-" LIBFOSFAT_VERSION_STR "\n"
 

@@ -1,6 +1,6 @@
 /*
  * FOS fosmount: FUSE extension in read-only for Smaky file system
- * Copyright (C) 2006-2010 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * Copyright (C) 2006-2010 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * Thanks to Pierre Arnaud for his help and the documentation
  *    And to Epsitec SA for the Smaky computers
@@ -52,7 +52,7 @@
 " device                /dev/fd0 : floppy disk\n" \
 "                       /dev/sda : hard disk, etc\n" \
 " mountpoint            for example, /mnt/smaky\n" \
-"\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
+"\nPlease, report bugs to <mathieu@schroetersa.ch>.\n"
 
 #define VERSION_TEXT "fosmount-" LIBFOSFAT_VERSION_STR "\n"
 

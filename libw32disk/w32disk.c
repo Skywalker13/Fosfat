@@ -1,6 +1,6 @@
 /*
  * libw32disk: Win95 and WinNT low level disk access.
- * Copyright (C) 2007-2010 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * Copyright (C) 2007-2010 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * This file is part of Fosfat.
  *

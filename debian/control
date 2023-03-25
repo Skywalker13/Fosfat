@@ -1,7 +1,7 @@
 Source: fosfat
 Section: misc
 Priority: optional
-Maintainer: Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+Maintainer: Mathieu Schroeter <mathieu@schroetersa.ch>
 Build-Depends: cdbs, debhelper (>= 5), pkg-config (>= 0.20), libfuse-dev (>= 2.6)
 Standards-Version: 3.8.0
 

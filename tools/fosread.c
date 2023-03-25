@@ -1,6 +1,6 @@
 /*
  * FOS fosread: tool in read-only for Smaky file system
- * Copyright (C) 2006-2008 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * Copyright (C) 2006-2008 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * Thanks to Pierre Arnaud for his help and the documentation
  *    And to Epsitec SA for the Smaky computers
@@ -64,7 +64,7 @@ typedef struct ginfo {
 "                       example: foo/bar/toto.text\n" \
 " path                  you can specify a path to save" \
 " the file (with get mode)\n" \
-"\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
+"\nPlease, report bugs to <mathieu@schroetersa.ch>.\n"
 
 #define VERSION_TEXT "fosread-" LIBFOSFAT_VERSION_STR "\n"
 

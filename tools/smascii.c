@@ -1,6 +1,6 @@
 /*
  * FOS smascii: Smaky's ASCII to Extended ASCII (ISO-8859-1) converter
- * Copyright (C) 2007-2010 Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
+ * Copyright (C) 2007-2010 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * Thanks to Pierre Arnaud for his help and the documentation
  *    And to Epsitec SA for the Smaky computers
@@ -38,7 +38,7 @@
 " converted_file        the file converted\n" \
 " --unix                the Carriage Return (Old Mac) will be\n" \
 "                       converted to Line Feed (unix)\n" \
-"\nPlease, report bugs to <fosfat-devel@gamesover.ch>.\n"
+"\nPlease, report bugs to <mathieu@schroetersa.ch>.\n"
 
 /*
  * Run the text conversion.
