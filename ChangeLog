@@ -1,3 +1,12 @@
+2023-03-26  Mathieu Schroeter <mathieu@schroetersa.ch>
+
+	* Release 1.0.0
+
+	* fosdd: new tool that can be used in order to convert floppy device
+	  or image into hard disk image and vice-versa.
+
+	* fosmount: the PBM and XPM images use a shorter filename.
+
 2010-03-14  Mathieu Schroeter <mathieu.schroeter@gamesover.ch>
 
 	* Release 0.4.0

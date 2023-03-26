@@ -37,11 +37,11 @@ BUILD
    make
    make install
 
-   It will install 'fosread', 'fosmount', 'fosrec', 'smascii', libfosgra
-   and libfosfat in your local directory.
+   It will install 'fosdd', 'fosread', 'fosmount', 'fosrec', 'smascii',
+   libfosgra and libfosfat in your local directory.
    Use `./configure --help` for more informations.
 
- * For Window$ (only fosread, fosrec and smascii)
+ * For Window$ (only fosdd, fosread, fosrec and smascii)
 
    # 32 bit
    ./configure --cross-compile --cross-prefix=i686-w64-mingw32-
