@@ -49,7 +49,7 @@ extern "C" {
 uint32_t fosgra_color_get (fosfat_t *fosfat, const char *path, uint8_t idx);
 
 /**
- * \brief Get decoded .IMAGE buffer.
+ * \brief Get decoded .IMAGE|.COLOR buffer.
  *
  * \param[in] fosfat     disk handle.
  * \param[in] path       location on the FOS disk.
@@ -61,7 +61,7 @@ uint8_t *fosgra_get_buffer (fosfat_t *fosfat,
                             const char *path, int offset, int size);
 
 /**
- * \brief Get informations on the .IMAGE.
+ * \brief Get informations on the .IMAGE|.COLOR.
  *
  * \param[in] fosfat     disk handle.
  * \param[in] path       location on the FOS disk.
@@ -73,7 +73,7 @@ void fosgra_get_info (fosfat_t *fosfat,
                       const char *path, uint16_t *x, uint16_t *y, uint8_t *bpp);
 
 /**
- * \brief Test if the file is a .IMAGE.
+ * \brief Test if the file is a .IMAGE|.COLOR.
  *
  * \param[in] fosfat     disk handle.
  * \param[in] path       location on the FOS disk.
