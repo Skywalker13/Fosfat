@@ -3,6 +3,7 @@
 *.so
 *.pc
 *.depend
+*.exe
 config.log
 config.mak
 fosmount/fosmount
