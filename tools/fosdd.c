@@ -26,15 +26,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <unistd.h>
 
 #include "fosfat.h"
 #include "fosfat_internal.h"
 
 #define HELP_TEXT \
 "Tool to convert floppy image to disk image and vice-versa. fosfat-" LIBFOSFAT_VERSION_STR "\n\n" \
-"Usage: fosdd [options] if of\n\n" \
+"Usage: fosdd [options] device destination\n\n" \
 " -h --help             this help\n" \
 " -v --version          version\n" \
+" -f --force            overwrite the destination if exists\n" \
 " -l --fos-logger       that will turn on the FOS logger\n" \
 "\n" \
 "\nPlease, report bugs to <mathieu@schroetersa.ch>.\n"
@@ -136,15 +138,16 @@ int
 main (int argc, char **argv)
 {
   fosfat_t *fosfat;
-  int res = 0, next_option;
+  int res = 0, force = 0, next_option;
   fosfat_disk_t type = FOSFAT_AD;
   const char *input_file;
   const char *output_file;
 
-  const char *const short_options = "hlv";
+  const char *const short_options = "hflv";
 
   const struct option long_options[] = {
     { "help",       no_argument, NULL, 'h' },
+    { "force",      no_argument, NULL, 'f' },
     { "fos-logger", no_argument, NULL, 'l' },
     { "version",    no_argument, NULL, 'v' },
     { NULL,         0,           NULL,  0  }
@@ -164,6 +167,9 @@ main (int argc, char **argv)
     case 'v':           /* -v or --version */
       print_version ();
       return -1;
+    case 'f':
+      force = 1;
+      break;
     case 'l':           /* -l or --fos-logger */
       fosfat_logger (1);
       break;
@@ -180,6 +186,13 @@ main (int argc, char **argv)
 
   input_file  = argv[optind + 0];
   output_file = argv[optind + 1];
+
+  if (!force && !access (output_file, F_OK)) {
+    fprintf (stderr,
+             "The output file \"%s\" already exists, use --force to overwrite\n",
+             output_file);
+    return -1;
+  }
 
   fosfat = fosfat_open (input_file, FOSFAT_AD, 0);
   if (!fosfat)
