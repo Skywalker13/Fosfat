@@ -43,7 +43,10 @@ BUILD
 
  * For Window$ (only fosread, fosrec and smascii)
 
-   ./configure --cross-compile --cross-prefix=i586-mingw32msvc-
+   # 32 bit
+   ./configure --cross-compile --cross-prefix=i686-w64-mingw32-
+   # 64 bit
+   ./configure --cross-compile --cross-prefix=x86_64-w64-mingw32-
    make
 
    It will compile all DLLs and binaries for win32 with MinGW32.
