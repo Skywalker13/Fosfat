@@ -978,8 +978,7 @@ fosfat_read_file (fosfat_t *fosfat, uint32_t block)
   first_bd = file_desc;
 
   /* Go to the next BD if exists (create the linked list for BD) */
-  while (file_desc && file_desc->next
-         && (next = c2l (file_desc->next, sizeof (file_desc->next))))
+  while (file_desc && (next = c2l (file_desc->next, sizeof (file_desc->next))))
   {
     file_desc->next_bd = fosfat_read_bd (fosfat, next);
     file_desc = file_desc->next_bd;
