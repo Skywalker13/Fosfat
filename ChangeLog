@@ -1,3 +1,9 @@
+2024-10-08  Mathieu Schroeter <mathieu@schroetersa.ch>
+
+	* Release 1.0.1
+
+	* fosmount: move to fuse3. Thanks to Jakob Haufe from Debian.
+
 2023-03-26  Mathieu Schroeter <mathieu@schroetersa.ch>
 
 	* Release 1.0.0
