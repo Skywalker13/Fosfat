@@ -20,7 +20,7 @@ tool 'fosread' can work directly with your device but it is limited for an
 console use.
 The tool 'fosmount' uses FUSE to mount in read-only your device in your
 tree. And you can convert the smaky's text files with smascii. You can
-compile 'fosmount' with >=fuse-2.6.x.
+compile 'fosmount' with >=fuse-3.x.
 'fosrec' can be used to restore all deleted files. To restore only one file,
 this action must be performed by 'fosread'.
 

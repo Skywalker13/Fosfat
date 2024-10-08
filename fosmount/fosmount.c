@@ -359,7 +359,7 @@ fos_readlink (const char *path, char *dst, size_t size)
  * return 0 for success
  */
 static int
-fos_getattr (const char *path, struct stat *stbuf)
+fos_getattr (const char *path, struct stat *stbuf, struct fuse_file_info *fi)
 {
   int ret = 0;
   char *location;
@@ -399,7 +399,7 @@ fos_getattr (const char *path, struct stat *stbuf)
  */
 static int
 fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
-             off_t offset, struct fuse_file_info *fi)
+             off_t offset, struct fuse_file_info *fi, enum fuse_readdir_flags flags)
 {
   int ret = -ENOENT;
   char *location;
@@ -411,7 +411,7 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
   location = trim_fosname (path);
 
   /* First entries */
-  filler (buf, "..", NULL, 0);
+  filler (buf, "..", NULL, 0, 0);
 
   /* Files and directories */
   files = fosfat_list_dir (fosfat, location);
@@ -450,7 +450,7 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
       *(name + strlen (name) - 4) = '\0';
 
     /* Add entry in the file list */
-    filler (buf, name, st, 0);
+    filler (buf, name, st, 0, 0);
     free (st);
     free (name);
   }
