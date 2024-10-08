@@ -365,6 +365,8 @@ fos_getattr (const char *path, struct stat *stbuf, struct fuse_file_info *fi)
   char *location;
   struct stat *st;
 
+  (void) fi;
+
   /* Root directory */
   if (!strcmp (path, "/"))
     location = strdup ("/sys_list");
@@ -407,6 +409,7 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
 
   (void) offset;
   (void) fi;
+  (void) flags;
 
   location = trim_fosname (path);
 
