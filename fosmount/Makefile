@@ -8,7 +8,7 @@ FOSMOUNT_SRCS = fosmount.c
 FOSMOUTN_MAN = $(FOSMOUNT).1
 
 APPS_CPPFLAGS = -I../libfosfat -I../libfosgra $(CFG_CPPFLAGS) $(CPPFLAGS)
-APPS_LDFLAGS = -L../libfosfat -L../libfosgra -lfosfat -lfosgra -lfuse $(CFG_LDFLAGS) $(LDFLAGS)
+APPS_LDFLAGS = -L../libfosfat -L../libfosgra -lfosfat -lfosgra -lfuse3 $(CFG_LDFLAGS) $(LDFLAGS)
 
 MANS = $(FOSMOUTN_MAN)
 

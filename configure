@@ -43,7 +43,7 @@ show_help(){
   echo "  --disable-tools             do not build fosread, fosrec and smascii tools"
   echo "  --enable-fosmount           build fosmount FUSE extension"
   echo "  --disable-fosmount          do not build fosmount FUSE extension"
-  echo "  --with-fuse-dir=DIR         check for libfuse installed in DIR"
+  echo "  --with-fuse-dir=DIR         check for libfuse3 installed in DIR"
   echo ""
   echo "Advanced options (experts only):"
   echo "  --arch=ARCH                 force architecture"
@@ -863,7 +863,7 @@ fi
 echolog "Checking for Blupi ..."
 
 #################################################
-#   check for libfuse
+#   check for libfuse3
 #################################################
 if test "$fosmount" = "yes"; then
   if [ -n "$libfusedir" ]; then
@@ -871,10 +871,10 @@ if test "$fosmount" = "yes"; then
     check_ldflags -L$libfusedir
   fi
 
-  add_cppflags -DFUSE_USE_VERSION=26
+  add_cppflags -DFUSE_USE_VERSION=30
 
-  echolog "Checking for libfuse ..."
-  check_lib_pkgcfg fuse fuse.h fuse_main -lfuse || die "Error, can't find libfuse !"
+  echolog "Checking for libfuse3 ..."
+  check_lib_pkgcfg fuse3 fuse.h fuse_main_real -lfuse3 || die "Error, can't find libfuse !"
 fi
 
 #################################################
