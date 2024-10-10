@@ -365,10 +365,10 @@ check_pkgconfig(){
     ccflags="${3:---cflags}"
     clibs="${4:---libs}"
     err=1
-    if `which pkg-config 1>/dev/null 2>&1`; then
-      cflags=`pkg-config $pkg $ccflags`
+    if `which $pkgconfig 1>/dev/null 2>&1`; then
+      cflags=`$pkgconfig $pkg $ccflags`
       [ -n "$cflags" ] && check_cflags "$cflags"
-      libs=`pkg-config $pkg $clibs`
+      libs=`$pkgconfig $pkg $clibs`
       if [ -n "$libs" ]; then
         temp_extralibs "$libs"
         check_func $func
@@ -409,7 +409,7 @@ check_lib_version() {
     local min_ver toobig_ver
     min_ver="$2"
     toobig_ver="$3"
-    check_cmd pkg-config --print-errors --exists "$1 >= $min_ver $1 < $toobig_ver" 2>>$logfile
+    check_cmd $pkgconfig --print-errors --exists "$1 >= $min_ver $1 < $toobig_ver" 2>>$logfile
     err=$?
     return $err
 }
@@ -445,9 +445,9 @@ EOF
 }
 
 add_pkgconfig_deps() {
-    if `which pkg-config 1>/dev/null 2>&1`; then
-      add_cflags `pkg-config "$1" --cflags 2>>$logfile`
-      add_extralibs `pkg-config "$1" --libs 2>>$logfile`
+    if `which $pkgconfig 1>/dev/null 2>&1`; then
+      add_cflags `$pkgconfig "$1" --cflags 2>>$logfile`
+      add_extralibs `$pkgconfig "$1" --libs 2>>$logfile`
     fi
 }
 
@@ -480,6 +480,7 @@ docdir='${PREFIX}/share/doc'
 mandir='$(PREFIX)/share/man'
 static="yes"
 shared="yes"
+pkgconfig="pkg-config"
 cc="gcc"
 host_cc="gcc"
 ar="ar"
@@ -594,6 +595,7 @@ fi
 
 if [ -n "$cross_prefix" ]; then
   cross_compile="yes"
+  pkgconfig="${cross_prefix}${pkgconfig}"
   cc="${cross_prefix}${cc}"
   ar="${cross_prefix}${ar}"
   ranlib="${cross_prefix}${ranlib}"
@@ -903,7 +905,7 @@ if enabled doc; then
 fi
 
 # Add all extralibs provided by the pkgconfig files
-[ -n "$pkgconfig_requires" ] && add_extralibs `pkg-config $pkgconfig_requires --libs`
+[ -n "$pkgconfig_requires" ] && add_extralibs `$pkgconfig $pkgconfig_requires --libs`
 
 
 #################################################
@@ -914,6 +916,7 @@ echolog "Blupi says: configure is OK"
 echolog "  version            $VERSION"
 echolog "configuration:"
 echolog "  install prefix     $PREFIX"
+echolog "  pkg-config         $pkgconfig"
 echolog "  C compiler         $cc"
 echolog "  AR                 $ar"
 echolog "  RANLIB             $ranlib"
