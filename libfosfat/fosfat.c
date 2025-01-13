@@ -706,7 +706,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
 #endif /* _WIN32 */
     {
       read = fread ((fosfat_b0_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
-            == (size_t) FOSFAT_BLK;
+             == (size_t) FOSFAT_BLK;
     }
 
     if (read)
@@ -830,7 +830,7 @@ fosfat_read_b (fosfat_t *fosfat, uint32_t block, fosfat_type_t type)
 #endif /* _WIN32 */
     {
       read = fread ((fosfat_data_t *) blk, 1, (size_t) FOSFAT_BLK, fosfat->dev)
-            == (size_t) FOSFAT_BLK;
+             == (size_t) FOSFAT_BLK;
     }
 
     if (read)
