@@ -1943,7 +1943,8 @@ fosfat_diskname (fosfat_t *fosfat)
   block0 = fosfat_read_b0 (fosfat, FOSFAT_BLOCK0);
   if (block0)
   {
-    name = strdup ((char *) block0->nlo);
+    const char *nlo = (char *) block0->nlo;
+    name = strdup (nlo[0] == (char) 0xFF ? "" : nlo);
     free (block0);
   }
 
