@@ -35,12 +35,14 @@ typedef struct ginfo {
 
 #ifdef _WIN32
 #define HELP_DEVICE \
-"a : floppy disk\n" \
-"                       c : hard disk, etc\n"
+"file.di : disk image\n" \
+"                       a       : floppy disk\n" \
+"                       c       : hard disk, etc\n"
 #else
 #undef HELP_DEVICE
 #define HELP_DEVICE \
-"/dev/fd0 : floppy disk\n" \
+"file.di  : disk image\n" \
+"                       /dev/fd0 : floppy disk\n" \
 "                       /dev/sda : hard disk, etc\n"
 #endif
 
