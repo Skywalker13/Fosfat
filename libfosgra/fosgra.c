@@ -293,9 +293,10 @@ fosgra_color_get (fosfat_t *fosfat, const char *path, uint8_t idx)
     return 0;
 
   map = (fosgra_color_map_t *) buffer;
-  color =   map->map[idx].red[0]   << 16
+  color =   map->map[idx].red[0]   << 0
           | map->map[idx].green[0] << 8
-          | map->map[idx].blue[0]  << 0;
+          | map->map[idx].blue[0]  << 16
+          | 0xFF                   << 24;
 
   free (buffer);
   return color;
