@@ -89,34 +89,34 @@ trim_fosname (const char *path)
 
 // Structure de l'en-tête du fichier BMP
 typedef struct {
-    uint16_t bfType;
-    uint32_t bfSize;
-    uint16_t bfReserved1;
-    uint16_t bfReserved2;
-    uint32_t bfOffBits;
+  uint16_t bfType;
+  uint32_t bfSize;
+  uint16_t bfReserved1;
+  uint16_t bfReserved2;
+  uint32_t bfOffBits;
 } __attribute__((packed)) BITMAPFILEHEADER;
 
 // Structure de l'en-tête DIB (Device Independent Bitmap)
 typedef struct {
-    uint32_t biSize;
-    int32_t biWidth;
-    int32_t biHeight;
-    uint16_t biPlanes;
-    uint16_t biBitCount;
-    uint32_t biCompression;
-    uint32_t biSizeImage;
-    int32_t biXPelsPerMeter;
-    int32_t biYPelsPerMeter;
-    uint32_t biClrUsed;
-    uint32_t biClrImportant;
+  uint32_t biSize;
+  int32_t  biWidth;
+  int32_t  biHeight;
+  uint16_t biPlanes;
+  uint16_t biBitCount;
+  uint32_t biCompression;
+  uint32_t biSizeImage;
+  int32_t  biXPelsPerMeter;
+  int32_t  biYPelsPerMeter;
+  uint32_t biClrUsed;
+  uint32_t biClrImportant;
 } __attribute__((packed)) BITMAPINFOHEADER;
 
 // Structure de la palette de couleurs pour le format 1 bit par pixel
 typedef struct {
-    uint8_t rgbBlue;
-    uint8_t rgbGreen;
-    uint8_t rgbRed;
-    uint8_t rgbReserved;
+  uint8_t rgbBlue;
+  uint8_t rgbGreen;
+  uint8_t rgbRed;
+  uint8_t rgbReserved;
 } __attribute__((packed)) RGBQUAD;
 
 static size_t
@@ -124,66 +124,61 @@ get_bmp1_size (int width, int height, int *bytes_per_row, int *padded_bytes_per_
 {
   *bytes_per_row = (width + 7) / 8; // Nombre de bytes par ligne
   *padded_bytes_per_row = (*bytes_per_row + 3) / 4 * 4; // Alignement sur 4 bytes
-  // Calcul de la taille totale du buffer BMP
   return sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD) + *padded_bytes_per_row * height;
 }
 
 // Fonction pour créer un buffer BMP monochrome
-static void create_bmp1_buffer(const uint8_t *input, int width, int height, uint8_t **output, size_t *output_size) {
-    int bytes_per_row;
-    int padded_bytes_per_row;
+static void
+create_bmp1_buffer(const uint8_t *input, int width, int height, uint8_t **output, size_t *output_size)
+{
+  int bytes_per_row;
+  int padded_bytes_per_row;
 
-    // Calcul de la taille totale du buffer BMP
-    size_t bmp_size = get_bmp1_size (width, height, &bytes_per_row, &padded_bytes_per_row);
+  size_t bmp_size = get_bmp1_size (width, height, &bytes_per_row, &padded_bytes_per_row);
 
-    // Allocation du buffer BMP
-    *output = (uint8_t *)malloc(bmp_size);
-    if (*output == NULL) {
-        perror("malloc");
-        exit(EXIT_FAILURE);
-    }
+  // Allocation du buffer BMP
+  *output = (uint8_t *)malloc(bmp_size);
+  *output_size = bmp_size;
 
-    // Remplissage de l'en-tête du fichier BMP
-    BITMAPFILEHEADER *bfh = (BITMAPFILEHEADER *)(*output);
-    bfh->bfType = 0x4D42; // 'BM'
-    bfh->bfSize = bmp_size;
-    bfh->bfReserved1 = 0;
-    bfh->bfReserved2 = 0;
-    bfh->bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD);
+  // Remplissage de l'en-tête du fichier BMP
+  BITMAPFILEHEADER *bfh = (BITMAPFILEHEADER *)(*output);
+  bfh->bfType = 0x4D42; // 'BM'
+  bfh->bfSize = bmp_size;
+  bfh->bfReserved1 = 0;
+  bfh->bfReserved2 = 0;
+  bfh->bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD);
 
-    // Remplissage de l'en-tête DIB
-    BITMAPINFOHEADER *bih = (BITMAPINFOHEADER *)(*output + sizeof(BITMAPFILEHEADER));
-    bih->biSize = sizeof(BITMAPINFOHEADER);
-    bih->biWidth = width;
-    bih->biHeight = -height;
-    bih->biPlanes = 1;
-    bih->biBitCount = 1;
-    bih->biCompression = 0;
-    bih->biSizeImage = 0;
-    bih->biXPelsPerMeter = 0;
-    bih->biYPelsPerMeter = 0;
-    bih->biClrUsed = 0;
-    bih->biClrImportant = 0;
+  // Remplissage de l'en-tête DIB
+  BITMAPINFOHEADER *bih = (BITMAPINFOHEADER *)(*output + sizeof(BITMAPFILEHEADER));
+  bih->biSize = sizeof(BITMAPINFOHEADER);
+  bih->biWidth = width;
+  bih->biHeight = -height;
+  bih->biPlanes = 1;
+  bih->biBitCount = 1;
+  bih->biCompression = 0;
+  bih->biSizeImage = 0;
+  bih->biXPelsPerMeter = 0;
+  bih->biYPelsPerMeter = 0;
+  bih->biClrUsed = 0;
+  bih->biClrImportant = 0;
 
-    // Remplissage de la palette de couleurs
-    RGBQUAD *palette = (RGBQUAD *)(*output + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER));
-    palette[0].rgbBlue = 255;
-    palette[0].rgbGreen = 255;
-    palette[0].rgbRed = 255;
-    palette[0].rgbReserved = 0;
-    palette[1].rgbBlue = 0;
-    palette[1].rgbGreen = 0;
-    palette[1].rgbRed = 0;
-    palette[1].rgbReserved = 0;
+  // Remplissage de la palette de couleurs
+  RGBQUAD *palette = (RGBQUAD *)(*output + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER));
+  palette[0].rgbBlue = 255;
+  palette[0].rgbGreen = 255;
+  palette[0].rgbRed = 255;
+  palette[0].rgbReserved = 0;
+  palette[1].rgbBlue = 0;
+  palette[1].rgbGreen = 0;
+  palette[1].rgbRed = 0;
+  palette[1].rgbReserved = 0;
 
-    // Copie des données de l'image
-    uint8_t *image_data = *output + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD);
-    for (int y = 0; y < height; y++) {
-        memcpy(image_data + y * padded_bytes_per_row, input + y * bytes_per_row, bytes_per_row);
-        memset(image_data + y * padded_bytes_per_row + bytes_per_row, 0, padded_bytes_per_row - bytes_per_row);
-    }
-
-    *output_size = bmp_size;
+  // Copie des données de l'image
+  uint8_t *image_data = *output + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD);
+  for (int y = 0; y < height; y++) {
+    memcpy(image_data + y * padded_bytes_per_row, input + y * bytes_per_row, bytes_per_row);
+    memset(image_data + y * padded_bytes_per_row + bytes_per_row, 0, padded_bytes_per_row - bytes_per_row);
+  }
 }
 
 static size_t
@@ -197,55 +192,58 @@ get_bmp4_size (int width, int height, int *bytes_per_row, int *image_size, int *
 }
 
 // Fonction pour créer un buffer BMP
-static void create_bmp4_buffer(const uint8_t *input, const uint32_t *pal, int width, int height, uint8_t **output, size_t *output_size) {
-    int bytes_per_row;
-    int image_size;
-    int header_size;
-    int total_size = get_bmp4_size (width, height, &bytes_per_row, &image_size, &header_size);
+static void
+create_bmp4_buffer(const uint8_t *input, const uint32_t *pal, int width, int height, uint8_t **output, size_t *output_size)
+{
+  int bytes_per_row;
+  int image_size;
+  int header_size;
 
-    // Allouer de la mémoire pour le buffer de sortie
-    *output = (uint8_t *)malloc(total_size);
-    *output_size = total_size;
+  size_t total_size = get_bmp4_size (width, height, &bytes_per_row, &image_size, &header_size);
 
-    // Remplir l'en-tête de fichier BMP
-    BITMAPFILEHEADER *file_header = (BITMAPFILEHEADER *)(*output);
-    file_header->bfType = 0x4D42; // 'BM'
-    file_header->bfSize = total_size;
-    file_header->bfReserved1 = 0;
-    file_header->bfReserved2 = 0;
-    file_header->bfOffBits = header_size;
+  // Allouer de la mémoire pour le buffer de sortie
+  *output = (uint8_t *)malloc(total_size);
+  *output_size = total_size;
 
-    // Remplir l'en-tête DIB
-    BITMAPINFOHEADER *info_header = (BITMAPINFOHEADER *)(*output + sizeof(BITMAPFILEHEADER));
-    info_header->biSize = sizeof(BITMAPINFOHEADER);
-    info_header->biWidth = width;
-    info_header->biHeight = -height;
-    info_header->biPlanes = 1;
-    info_header->biBitCount = 4;
-    info_header->biCompression = 0;
-    info_header->biSizeImage = image_size;
-    info_header->biXPelsPerMeter = 0;
-    info_header->biYPelsPerMeter = 0;
-    info_header->biClrUsed = 16;
-    info_header->biClrImportant = 0;
+  // Remplir l'en-tête de fichier BMP
+  BITMAPFILEHEADER *file_header = (BITMAPFILEHEADER *)(*output);
+  file_header->bfType = 0x4D42; // 'BM'
+  file_header->bfSize = total_size;
+  file_header->bfReserved1 = 0;
+  file_header->bfReserved2 = 0;
+  file_header->bfOffBits = header_size;
 
-    // Remplir la palette
-    RGBQUAD *palette = (RGBQUAD *)(*output + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER));
-    for (int i = 0; i < 16; i++) {
-        palette[i].rgbBlue  = pal[i] >> 16 & 0xFF;
-        palette[i].rgbGreen = pal[i] >>  8 & 0xFF;
-        palette[i].rgbRed   = pal[i] >>  0 & 0xFF;
-        palette[i].rgbReserved = 0;
+  // Remplir l'en-tête DIB
+  BITMAPINFOHEADER *info_header = (BITMAPINFOHEADER *)(*output + sizeof(BITMAPFILEHEADER));
+  info_header->biSize = sizeof(BITMAPINFOHEADER);
+  info_header->biWidth = width;
+  info_header->biHeight = -height;
+  info_header->biPlanes = 1;
+  info_header->biBitCount = 4;
+  info_header->biCompression = 0;
+  info_header->biSizeImage = image_size;
+  info_header->biXPelsPerMeter = 0;
+  info_header->biYPelsPerMeter = 0;
+  info_header->biClrUsed = 16;
+  info_header->biClrImportant = 0;
+
+  // Remplir la palette
+  RGBQUAD *palette = (RGBQUAD *)(*output + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER));
+  for (int i = 0; i < 16; i++) {
+    palette[i].rgbBlue  = pal[i] >> 16 & 0xFF;
+    palette[i].rgbGreen = pal[i] >>  8 & 0xFF;
+    palette[i].rgbRed   = pal[i] >>  0 & 0xFF;
+    palette[i].rgbReserved = 0;
+  }
+
+  // Copier les données de l'image
+  uint8_t *image_data = *output + header_size;
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x += 2) {
+      uint8_t byte = input[y * bytes_per_row + x / 2];
+      image_data[y * bytes_per_row + x / 2] = byte;
     }
-
-    // Copier les données de l'image
-    uint8_t *image_data = *output + header_size;
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x += 2) {
-            uint8_t byte = input[y * bytes_per_row + x / 2];
-            image_data[y * bytes_per_row + x / 2] = byte;
-        }
-    }
+  }
 }
 
 static uint8_t *
