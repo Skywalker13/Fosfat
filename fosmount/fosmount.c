@@ -295,7 +295,7 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
 {
   char *it = NULL;
   uint8_t *dec;
-  const uint8_t *image_buffer;
+  uint8_t *image_buffer;
 
   if (g_bmp)
     it = strstr (file->name, ".image\0") || strstr (file->name, ".color\0");
