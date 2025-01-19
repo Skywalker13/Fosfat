@@ -119,13 +119,22 @@ typedef struct {
     uint8_t rgbReserved;
 } __attribute__((packed)) RGBQUAD;
 
+static size_t
+get_bmp1_size (int width, int height)
+{
+  int bytes_per_row = (width + 7) / 8; // Nombre de bytes par ligne
+  int padded_bytes_per_row = (bytes_per_row + 3) / 4 * 4; // Alignement sur 4 bytes
+  // Calcul de la taille totale du buffer BMP
+  return sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD) + padded_bytes_per_row * height;
+}
+
 // Fonction pour créer un buffer BMP monochrome
 static void create_bmp1_buffer(const uint8_t *input, int width, int height, uint8_t **output, size_t *output_size) {
     int bytes_per_row = (width + 7) / 8; // Nombre de bytes par ligne
     int padded_bytes_per_row = (bytes_per_row + 3) / 4 * 4; // Alignement sur 4 bytes
 
     // Calcul de la taille totale du buffer BMP
-    size_t bmp_size = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD) + padded_bytes_per_row * height;
+    size_t bmp_size = get_bmp1_size (width, height);
 
     // Allocation du buffer BMP
     *output = (uint8_t *)malloc(bmp_size);
@@ -177,13 +186,23 @@ static void create_bmp1_buffer(const uint8_t *input, int width, int height, uint
     *output_size = bmp_size;
 }
 
+static size_t
+get_bmp4_size (int width, int height)
+{
+  int bytes_per_row = (width + 1) / 2; // Nombre de bytes par ligne
+  int image_size = bytes_per_row * height; // Taille de l'image en bytes
+  int palette_size = 16 * sizeof(RGBQUAD); // Taille de la palette
+  int header_size = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + palette_size;
+  return header_size + image_size; // Taille totale du fichier BMP
+}
+
 // Fonction pour créer un buffer BMP
 static void create_bmp4_buffer(const uint8_t *input, const uint32_t *pal, int width, int height, uint8_t **output, size_t *output_size) {
     int bytes_per_row = (width + 1) / 2; // Nombre de bytes par ligne
     int image_size = bytes_per_row * height; // Taille de l'image en bytes
     int palette_size = 16 * sizeof(RGBQUAD); // Taille de la palette
     int header_size = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + palette_size;
-    int total_size = header_size + image_size; // Taille totale du fichier BMP
+    int total_size = get_bmp4_size (width, height);
 
     // Allouer de la mémoire pour le buffer de sortie
     *output = (uint8_t *)malloc(total_size);
@@ -269,7 +288,8 @@ static size_t
 get_filesize (fosfat_file_t *file, const char *path)
 {
   char *it = NULL;
-  size_t image_size = 0;
+  uint8_t bpp = 0;
+  uint16_t w = 0, h = 0;
 
   if (g_bmp)
     it = strstr (file->name, ".image\0") || strstr (file->name, ".color\0");
@@ -278,8 +298,8 @@ get_filesize (fosfat_file_t *file, const char *path)
       || !fosgra_is_image (fosfat, path))
     return file->size;
 
-  load_image (path, &image_size);
-  return image_size;
+  fosgra_get_info (fosfat, path, &w, &h, &bpp);
+  return bpp == 1 ? get_bmp1_size (w, h) : get_bmp4_size (w, h);
 }
 
 static uint8_t *
