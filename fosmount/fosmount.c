@@ -109,21 +109,22 @@ typedef struct {
 } __attribute__((packed)) RGBQUAD;
 
 static size_t
-get_bmp1_size (int width, int height, int *bytes_per_row, int *padded_bytes_per_row)
+get_bmp1_size (int width, int height, int *bpr, int *pbpr)
 {
-  *bytes_per_row = (width + 7) / 8; // Nombre de bytes par ligne
-  *padded_bytes_per_row = (*bytes_per_row + 3) / 4 * 4; // Alignement sur 4 bytes
-  return sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD) + *padded_bytes_per_row * height;
+  *bpr  = (width + 7) / 8;    /* Number of bytes per row */
+  *pbpr = (*bpr + 3) / 4 * 4; /* Alignment on 4 bytes */
+  return sizeof(BITMAPFILEHEADER)
+       + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD) + *pbpr * height;
 }
 
-// Fonction pour créer un buffer BMP monochrome
 static void
-create_bmp1_buffer(const uint8_t *input, int width, int height, uint8_t **output, size_t *output_size)
+create_bmp1_buffer(const uint8_t *input,
+                   int width, int height, uint8_t **output, size_t *output_size)
 {
-  int bytes_per_row;
-  int padded_bytes_per_row;
+  int bpr;
+  int pbpr;
 
-  size_t bmp_size = get_bmp1_size (width, height, &bytes_per_row, &padded_bytes_per_row);
+  size_t bmp_size = get_bmp1_size (width, height, &bpr, &pbpr);
 
   // Allocation du buffer BMP
   *output = (uint8_t *)malloc(bmp_size);
@@ -163,32 +164,34 @@ create_bmp1_buffer(const uint8_t *input, int width, int height, uint8_t **output
   palette[1].rgbReserved = 0;
 
   // Copie des données de l'image
-  uint8_t *image_data = *output + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD);
+  uint8_t *image_data = *output + sizeof(BITMAPFILEHEADER)
+                      + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD);
   for (int y = 0; y < height; y++) {
-    memcpy(image_data + y * padded_bytes_per_row, input + y * bytes_per_row, bytes_per_row);
-    memset(image_data + y * padded_bytes_per_row + bytes_per_row, 0, padded_bytes_per_row - bytes_per_row);
+    memcpy(image_data + y * pbpr, input + y * bpr, bpr);
+    memset(image_data + y * pbpr + bpr, 0, pbpr - bpr);
   }
 }
 
 static size_t
-get_bmp4_size (int width, int height, int *bytes_per_row, int *image_size, int *header_size)
+get_bmp4_size (int width, int height, int *bpr, int *image_size, int *header_size)
 {
-  *bytes_per_row = (width + 1) / 2; // Nombre de bytes par ligne
-  *image_size = *bytes_per_row * height; // Taille de l'image en bytes
-  int palette_size = 16 * sizeof(RGBQUAD); // Taille de la palette
+  *bpr        = (width + 1) / 2; /* Number of bytes per row */
+  *image_size = *bpr * height; /* Image size in bytes */
+  int palette_size = 16 * sizeof(RGBQUAD); /* Palette size */
   *header_size = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + palette_size;
-  return *header_size + *image_size; // Taille totale du fichier BMP
+  return *header_size + *image_size;
 }
 
-// Fonction pour créer un buffer BMP
 static void
-create_bmp4_buffer(const uint8_t *input, const uint32_t *pal, int width, int height, uint8_t **output, size_t *output_size)
+create_bmp4_buffer(const uint8_t *input, const uint32_t *pal,
+                   int width, int height, uint8_t **output, size_t *output_size)
 {
-  int bytes_per_row;
+  int bpr;
   int image_size;
   int header_size;
 
-  size_t total_size = get_bmp4_size (width, height, &bytes_per_row, &image_size, &header_size);
+  size_t total_size =
+    get_bmp4_size (width, height, &bpr, &image_size, &header_size);
 
   // Allouer de la mémoire pour le buffer de sortie
   *output = (uint8_t *)malloc(total_size);
@@ -229,8 +232,8 @@ create_bmp4_buffer(const uint8_t *input, const uint32_t *pal, int width, int hei
   uint8_t *image_data = *output + header_size;
   for (int y = 0; y < height; y++) {
     for (int x = 0; x < width; x += 2) {
-      uint8_t byte = input[y * bytes_per_row + x / 2];
-      image_data[y * bytes_per_row + x / 2] = byte;
+      uint8_t byte = input[y * bpr + x / 2];
+      image_data[y * bpr + x / 2] = byte;
     }
   }
 }
