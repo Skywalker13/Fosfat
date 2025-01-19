@@ -78,34 +78,34 @@ trim_fosname (const char *path)
 
 // Structure de l'en-tête du fichier BMP
 typedef struct {
-  uint16_t bfType;
-  uint32_t bfSize;
-  uint16_t bfReserved1;
-  uint16_t bfReserved2;
-  uint32_t bfOffBits;
+  uint16_t type;
+  uint32_t size;
+  uint16_t reserved1;
+  uint16_t reserved2;
+  uint32_t off_bits;
 } __attribute__ ((packed)) bmp_file_header_t;
 
 // Structure de l'en-tête DIB (Device Independent Bitmap)
 typedef struct {
-  uint32_t biSize;
-  int32_t  biWidth;
-  int32_t  biHeight;
-  uint16_t biPlanes;
-  uint16_t biBitCount;
-  uint32_t biCompression;
-  uint32_t biSizeImage;
-  int32_t  biXPelsPerMeter;
-  int32_t  biYPelsPerMeter;
-  uint32_t biClrUsed;
-  uint32_t biClrImportant;
+  uint32_t size;
+  int32_t  width;
+  int32_t  height;
+  uint16_t planes;
+  uint16_t bit_count;
+  uint32_t compression;
+  uint32_t size_image;
+  int32_t  x_pels_per_meter;
+  int32_t  y_pels_per_meter;
+  uint32_t clr_used;
+  uint32_t clr_important;
 } __attribute__ ((packed)) bmp_info_header_t;
 
 // Structure de la palette de couleurs pour le format 1 bit par pixel
 typedef struct {
-  uint8_t rgbBlue;
-  uint8_t rgbGreen;
-  uint8_t rgbRed;
-  uint8_t rgbReserved;
+  uint8_t blue;
+  uint8_t green;
+  uint8_t red;
+  uint8_t reserved;
 } __attribute__ ((packed)) rgb_quad_t;
 
 static size_t
@@ -132,36 +132,36 @@ create_bmp1_buffer(const uint8_t *input,
 
   // Remplissage de l'en-tête du fichier BMP
   bmp_file_header_t *bfh = (bmp_file_header_t *)(*output);
-  bfh->bfType = 0x4D42; // 'BM'
-  bfh->bfSize = bmp_size;
-  bfh->bfReserved1 = 0;
-  bfh->bfReserved2 = 0;
-  bfh->bfOffBits = sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t) + 2 * sizeof(rgb_quad_t);
+  bfh->type = 0x4D42; // 'BM'
+  bfh->size = bmp_size;
+  bfh->reserved1 = 0;
+  bfh->reserved2 = 0;
+  bfh->off_bits = sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t) + 2 * sizeof(rgb_quad_t);
 
   // Remplissage de l'en-tête DIB
   bmp_info_header_t *bih = (bmp_info_header_t *)(*output + sizeof(bmp_file_header_t));
-  bih->biSize = sizeof(bmp_info_header_t);
-  bih->biWidth = width;
-  bih->biHeight = -height;
-  bih->biPlanes = 1;
-  bih->biBitCount = 1;
-  bih->biCompression = 0;
-  bih->biSizeImage = 0;
-  bih->biXPelsPerMeter = 0;
-  bih->biYPelsPerMeter = 0;
-  bih->biClrUsed = 0;
-  bih->biClrImportant = 0;
+  bih->size = sizeof(bmp_info_header_t);
+  bih->width = width;
+  bih->height = -height;
+  bih->planes = 1;
+  bih->bit_count = 1;
+  bih->compression = 0;
+  bih->size_image = 0;
+  bih->x_pels_per_meter = 0;
+  bih->y_pels_per_meter = 0;
+  bih->clr_used = 0;
+  bih->clr_important = 0;
 
   // Remplissage de la palette de couleurs
   rgb_quad_t *palette = (rgb_quad_t *)(*output + sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t));
-  palette[0].rgbBlue = 255;
-  palette[0].rgbGreen = 255;
-  palette[0].rgbRed = 255;
-  palette[0].rgbReserved = 0;
-  palette[1].rgbBlue = 0;
-  palette[1].rgbGreen = 0;
-  palette[1].rgbRed = 0;
-  palette[1].rgbReserved = 0;
+  palette[0].blue = 255;
+  palette[0].green = 255;
+  palette[0].red = 255;
+  palette[0].reserved = 0;
+  palette[1].blue = 0;
+  palette[1].green = 0;
+  palette[1].red = 0;
+  palette[1].reserved = 0;
 
   // Copie des données de l'image
   uint8_t *image_data = *output + sizeof(bmp_file_header_t)
@@ -199,33 +199,33 @@ create_bmp4_buffer(const uint8_t *input, const uint32_t *pal,
 
   // Remplir l'en-tête de fichier BMP
   bmp_file_header_t *file_header = (bmp_file_header_t *)(*output);
-  file_header->bfType = 0x4D42; // 'BM'
-  file_header->bfSize = total_size;
-  file_header->bfReserved1 = 0;
-  file_header->bfReserved2 = 0;
-  file_header->bfOffBits = header_size;
+  file_header->type = 0x4D42; // 'BM'
+  file_header->size = total_size;
+  file_header->reserved1 = 0;
+  file_header->reserved2 = 0;
+  file_header->off_bits = header_size;
 
   // Remplir l'en-tête DIB
   bmp_info_header_t *info_header = (bmp_info_header_t *)(*output + sizeof(bmp_file_header_t));
-  info_header->biSize = sizeof(bmp_info_header_t);
-  info_header->biWidth = width;
-  info_header->biHeight = -height;
-  info_header->biPlanes = 1;
-  info_header->biBitCount = 4;
-  info_header->biCompression = 0;
-  info_header->biSizeImage = image_size;
-  info_header->biXPelsPerMeter = 0;
-  info_header->biYPelsPerMeter = 0;
-  info_header->biClrUsed = 16;
-  info_header->biClrImportant = 0;
+  info_header->size = sizeof(bmp_info_header_t);
+  info_header->width = width;
+  info_header->height = -height;
+  info_header->planes = 1;
+  info_header->bit_count = 4;
+  info_header->compression = 0;
+  info_header->size_image = image_size;
+  info_header->x_pels_per_meter = 0;
+  info_header->y_pels_per_meter = 0;
+  info_header->clr_used = 16;
+  info_header->clr_important = 0;
 
   // Remplir la palette
   rgb_quad_t *palette = (rgb_quad_t *)(*output + sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t));
   for (int i = 0; i < 16; i++) {
-    palette[i].rgbBlue  = pal[i] >> 16 & 0xFF;
-    palette[i].rgbGreen = pal[i] >>  8 & 0xFF;
-    palette[i].rgbRed   = pal[i] >>  0 & 0xFF;
-    palette[i].rgbReserved = 0;
+    palette[i].blue  = pal[i] >> 16 & 0xFF;
+    palette[i].green = pal[i] >>  8 & 0xFF;
+    palette[i].red   = pal[i] >>  0 & 0xFF;
+    palette[i].reserved = 0;
   }
 
   // Copier les données de l'image
