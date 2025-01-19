@@ -2315,13 +2315,13 @@ fosfat_ftype (const char *name)
 {
   char *it = NULL;
 
-  it = strstr (name, ".image\0");
+  it =   strstr (name, ".image\0");
   if (!it)
     it = strstr (name, ".color\0");
   if (it)
     return FOSFAT_FTYPE_IMAGE;
 
-  it = strstr (name, ".news\0");
+  it =   strstr (name, ".news\0");
   if (!it)
     it = strstr (name, ".a-lire\0");
   if (!it)
