@@ -66,20 +66,30 @@ fosgra_bmp1_sizes (int width, int height, int *bpr, int *pbpr, int *header_size)
 }
 
 static void
+bmp_fill_header (bmp_file_header_t *bfh, size_t bmp_size, int header_size)
+{
+  bfh->type      = 0x4D42; // 'BM'
+  bfh->size      = bmp_size;
+  bfh->reserved1 = 0;
+  bfh->reserved2 = 0;
+  bfh->off_bits  = header_size;
+}
+
+static void
 bmp_fill_dib_header (bmp_info_header_t *bih,
                      int bpp, int width, int height, int image_size)
 {
-  bih->size = sizeof(bmp_info_header_t);
-  bih->width = width;
-  bih->height = -height;
-  bih->planes = 1;
-  bih->bit_count = bpp;
-  bih->compression = 0;
-  bih->size_image = bpp == 1 ? 0 : image_size;
+  bih->size             = sizeof (bmp_info_header_t);
+  bih->width            = width;
+  bih->height           = -height;
+  bih->planes           = 1;
+  bih->bit_count        = bpp;
+  bih->compression      = 0;
+  bih->size_image       = bpp == 1 ? 0 : image_size;
   bih->x_pels_per_meter = 0;
   bih->y_pels_per_meter = 0;
-  bih->clr_used = bpp == 1 ? 0 : 16;
-  bih->clr_important = 0;
+  bih->clr_used         = bpp == 1 ? 0 : 16;
+  bih->clr_important    = 0;
 }
 
 void
@@ -98,11 +108,7 @@ fosgra_bmp1_buffer(const uint8_t *input,
 
   // Remplissage de l'en-tête du fichier BMP
   bmp_file_header_t *bfh = (bmp_file_header_t *)(*output);
-  bfh->type = 0x4D42; // 'BM'
-  bfh->size = bmp_size;
-  bfh->reserved1 = 0;
-  bfh->reserved2 = 0;
-  bfh->off_bits = header_size;
+  bmp_fill_header (bfh, bmp_size, header_size);
 
   // Remplissage de l'en-tête DIB
   bmp_info_header_t *bih = (bmp_info_header_t *)(*output + sizeof(bmp_file_header_t));
@@ -156,11 +162,7 @@ fosgra_bmp4_buffer(const uint8_t *input, const uint32_t *pal,
 
   // Remplir l'en-tête de fichier BMP
   bmp_file_header_t *bfh = (bmp_file_header_t *)(*output);
-  bfh->type = 0x4D42; // 'BM'
-  bfh->size = bmp_size;
-  bfh->reserved1 = 0;
-  bfh->reserved2 = 0;
-  bfh->off_bits = header_size;
+  bmp_fill_header (bfh, bmp_size, header_size);
 
   // Remplir l'en-tête DIB
   bmp_info_header_t *bih = (bmp_info_header_t *)(*output + sizeof(bmp_file_header_t));
