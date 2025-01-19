@@ -372,6 +372,24 @@ my_strndup (const char *src, size_t n)
 #endif /* !_WIN32 */
 }
 
+#ifdef _WIN32
+void *
+memmem (const void *haystack, size_t haystack_len,
+        const void *const needle, const size_t needle_len)
+{
+  if (!haystack || !haystack_len || !needle || !needle_len)
+    return NULL;
+
+  for (const char *h = haystack;
+       haystack_len >= needle_len;
+       ++h, --haystack_len)
+    if (!memcmp(h, needle, needle_len))
+      return (void *) h;
+
+  return NULL;
+}
+#endif /* _WIN32 */
+
 /*
  * Enable or disable the internal FOS logger.
  */
