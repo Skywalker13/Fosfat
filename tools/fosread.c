@@ -26,9 +26,19 @@
 #include <stdlib.h>
 #include <string.h> /* strcmp strcpy */
 #include <getopt.h>
-#include <sys/stat.h>
+#include <sys/stat.h> /* mkdir */
 
 #include "fosfat.h"
+
+static inline int
+my_mkdir (const char *pathname)
+{
+#ifdef _WIN32
+  return mkdir (pathname);
+#else
+  return mkdir (pathname, 0755);
+#endif /* !_WIN32 */
+}
 
 typedef struct ginfo {
   char name[FOSFAT_NAMELGT];
@@ -264,7 +274,7 @@ get_dir (fosfat_t *fosfat, const char *loc, const char *dst)
         char *it = strrchr (out, '.');
         if (it)
           *it = '\0'; /* drop .dir from the name */
-        mkdir (out, 0755);
+        my_mkdir (out);
         get_dir (fosfat, in, out);
       }
       else
