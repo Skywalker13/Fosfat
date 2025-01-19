@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Structure de l'en-tête du fichier BMP
+/* Main BMP file header structure */
 typedef struct {
   uint16_t type;
   uint32_t size;
@@ -32,7 +32,7 @@ typedef struct {
   uint32_t off_bits;
 } __attribute__ ((packed)) bmp_file_header_t;
 
-// Structure de l'en-tête DIB (Device Independent Bitmap)
+/* DIB header structure (Device Independent Bitmap) */
 typedef struct {
   uint32_t size;
   int32_t  width;
@@ -47,7 +47,7 @@ typedef struct {
   uint32_t clr_important;
 } __attribute__ ((packed)) bmp_info_header_t;
 
-// Structure de la palette de couleurs pour le format 1 bit par pixel
+/* Color palette structure */
 typedef struct {
   uint8_t blue;
   uint8_t green;
