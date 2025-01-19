@@ -7,7 +7,7 @@
 
 	* fosmount: replace the -i and -j options by only the -i option with the
 	  major difference that BMP files are produced for .IMAGE and .COLOR
-	  files instead of PBM and XPMv2 which are not supported on Windows.
+	  files instead of PBM and XPM2 which are not supported on Windows.
 
 	* fosmount: add a new -t option useful to convert some text files to
 	  the ISO-8859-1 charset.
