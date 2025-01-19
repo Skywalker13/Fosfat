@@ -248,15 +248,14 @@ static void create_bmp4_buffer(const uint8_t *input, const uint32_t *pal, int wi
     }
 }
 
-static const uint8_t *
+static uint8_t *
 load_image (const char *path, size_t *size)
 {
   uint8_t bpp = 0;
   uint16_t w = 0, h = 0;
   size_t raw_size = 0;
-  static uint8_t *img_buffer = NULL;
-  static uint8_t *out_buffer = NULL;
-  static size_t out_length = 0;
+  uint8_t *img_buffer = NULL;
+  uint8_t *out_buffer = NULL;
 
   *size = 0;
 
@@ -267,7 +266,7 @@ load_image (const char *path, size_t *size)
   img_buffer = fosgra_get_buffer (fosfat, path, 0, raw_size);
 
   if (bpp == 1)
-    create_bmp1_buffer (img_buffer, w, h, &out_buffer, &out_length);
+    create_bmp1_buffer (img_buffer, w, h, &out_buffer, size);
 
   if (bpp == 4)
   {
@@ -276,10 +275,9 @@ load_image (const char *path, size_t *size)
     for (int idx = 0; idx < 16; ++idx)
       pal[idx] = fosgra_color_get (fosfat, path, idx);
 
-    create_bmp4_buffer (img_buffer, pal, w, h, &out_buffer, &out_length);
+    create_bmp4_buffer (img_buffer, pal, w, h, &out_buffer, size);
   }
 
-  *size = out_length;
   return out_buffer;
 }
 
