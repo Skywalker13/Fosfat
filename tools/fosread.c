@@ -30,15 +30,6 @@
 
 #include "fosfat.h"
 
-static inline int
-my_mkdir (const char *pathname)
-{
-#ifdef _WIN32
-  return mkdir (pathname);
-#else
-  return mkdir (pathname, 0755);
-#endif /* !_WIN32 */
-}
 
 typedef struct ginfo {
   char name[FOSFAT_NAMELGT];
@@ -81,6 +72,16 @@ typedef struct ginfo {
 
 #define VERSION_TEXT "fosread-" LIBFOSFAT_VERSION_STR "\n"
 
+
+static inline int
+my_mkdir (const char *pathname)
+{
+#ifdef _WIN32
+  return mkdir (pathname);
+#else
+  return mkdir (pathname, 0755);
+#endif /* !_WIN32 */
+}
 
 /*
  * Get info from the disk.
