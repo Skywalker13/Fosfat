@@ -34,11 +34,6 @@
 #include "fosfat.h"
 #include "fosgra.h"
 
-#define STBI_WRITE_NO_STDIO
-#define STB_IMAGE_WRITE_STATIC
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
 /* Rights */
 #define FOS_DIR             0555
 #define FOS_FILE            0444
@@ -52,7 +47,7 @@
 " -f --floppydisk       force a floppy disk (default autodetect)\n" \
 " -l --fos-logger       that will turn on the FOS logger\n" \
 " -d --fuse-debugger    that will turn on the FUSE debugger\n" \
-" -p --image-png        convert on the fly .IMAGE and .COLOR to .PNG\n" \
+" -i --image-bmp        convert on the fly .IMAGE and .COLOR to .BMP\n" \
 " device                /dev/fd0 : floppy disk\n" \
 "                       /dev/sda : hard disk, etc\n" \
 " mountpoint            for example, /mnt/smaky\n" \
@@ -65,7 +60,7 @@ static fosfat_t *fosfat;
 
 #define FOSGRAID "@"
 
-static int g_png = 0;
+static int g_bmp = 0;
 
 
 static int
@@ -92,107 +87,182 @@ trim_fosname (const char *path)
   return strdup (res);
 }
 
-typedef struct image_cache_s {
-  size_t length;
-  uint8_t *buffer;
-} image_cache_t;
+// Structure de l'en-tête du fichier BMP
+typedef struct {
+    uint16_t bfType;
+    uint32_t bfSize;
+    uint16_t bfReserved1;
+    uint16_t bfReserved2;
+    uint32_t bfOffBits;
+} __attribute__((packed)) BITMAPFILEHEADER;
 
-static void
-image_buffer_write(void *context, void *data, int len)
-{
-  image_cache_t *ctx = (image_cache_t *) context;
-  ctx->buffer = realloc (ctx->buffer, ctx->length + len);
-  ctx->length += len;
-  memcpy(ctx->buffer, data, len);
+// Structure de l'en-tête DIB (Device Independent Bitmap)
+typedef struct {
+    uint32_t biSize;
+    int32_t biWidth;
+    int32_t biHeight;
+    uint16_t biPlanes;
+    uint16_t biBitCount;
+    uint32_t biCompression;
+    uint32_t biSizeImage;
+    int32_t biXPelsPerMeter;
+    int32_t biYPelsPerMeter;
+    uint32_t biClrUsed;
+    uint32_t biClrImportant;
+} __attribute__((packed)) BITMAPINFOHEADER;
+
+// Structure de la palette de couleurs pour le format 1 bit par pixel
+typedef struct {
+    uint8_t rgbBlue;
+    uint8_t rgbGreen;
+    uint8_t rgbRed;
+    uint8_t rgbReserved;
+} __attribute__((packed)) RGBQUAD;
+
+// Fonction pour créer un buffer BMP monochrome
+static void create_bmp1_buffer(const uint8_t *input, int width, int height, uint8_t **output, size_t *output_size) {
+    int bytes_per_row = (width + 7) / 8; // Nombre de bytes par ligne
+    int padded_bytes_per_row = (bytes_per_row + 3) / 4 * 4; // Alignement sur 4 bytes
+
+    // Calcul de la taille totale du buffer BMP
+    size_t bmp_size = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD) + padded_bytes_per_row * height;
+
+    // Allocation du buffer BMP
+    *output = (uint8_t *)malloc(bmp_size);
+    if (*output == NULL) {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+
+    // Remplissage de l'en-tête du fichier BMP
+    BITMAPFILEHEADER *bfh = (BITMAPFILEHEADER *)(*output);
+    bfh->bfType = 0x4D42; // 'BM'
+    bfh->bfSize = bmp_size;
+    bfh->bfReserved1 = 0;
+    bfh->bfReserved2 = 0;
+    bfh->bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD);
+
+    // Remplissage de l'en-tête DIB
+    BITMAPINFOHEADER *bih = (BITMAPINFOHEADER *)(*output + sizeof(BITMAPFILEHEADER));
+    bih->biSize = sizeof(BITMAPINFOHEADER);
+    bih->biWidth = width;
+    bih->biHeight = -height;
+    bih->biPlanes = 1;
+    bih->biBitCount = 1;
+    bih->biCompression = 0;
+    bih->biSizeImage = 0;
+    bih->biXPelsPerMeter = 0;
+    bih->biYPelsPerMeter = 0;
+    bih->biClrUsed = 0;
+    bih->biClrImportant = 0;
+
+    // Remplissage de la palette de couleurs
+    RGBQUAD *palette = (RGBQUAD *)(*output + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER));
+    palette[0].rgbBlue = 255;
+    palette[0].rgbGreen = 255;
+    palette[0].rgbRed = 255;
+    palette[0].rgbReserved = 0;
+    palette[1].rgbBlue = 0;
+    palette[1].rgbGreen = 0;
+    palette[1].rgbRed = 0;
+    palette[1].rgbReserved = 0;
+
+    // Copie des données de l'image
+    uint8_t *image_data = *output + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + 2 * sizeof(RGBQUAD);
+    for (int y = 0; y < height; y++) {
+        memcpy(image_data + y * padded_bytes_per_row, input + y * bytes_per_row, bytes_per_row);
+        memset(image_data + y * padded_bytes_per_row + bytes_per_row, 0, padded_bytes_per_row - bytes_per_row);
+    }
+
+    *output_size = bmp_size;
 }
 
-static inline uint8_t rotr8 (uint8_t value, unsigned int count) {
-    return (value >> count) | (value << (8 - count));
+// Fonction pour créer un buffer BMP
+static void create_bmp4_buffer(const uint8_t *input, const uint32_t *pal, int width, int height, uint8_t **output, size_t *output_size) {
+    int bytes_per_row = (width + 1) / 2; // Nombre de bytes par ligne
+    int image_size = bytes_per_row * height; // Taille de l'image en bytes
+    int palette_size = 16 * sizeof(RGBQUAD); // Taille de la palette
+    int header_size = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + palette_size;
+    int total_size = header_size + image_size; // Taille totale du fichier BMP
+
+    // Allouer de la mémoire pour le buffer de sortie
+    *output = (uint8_t *)malloc(total_size);
+    *output_size = total_size;
+
+    // Remplir l'en-tête de fichier BMP
+    BITMAPFILEHEADER *file_header = (BITMAPFILEHEADER *)(*output);
+    file_header->bfType = 0x4D42; // 'BM'
+    file_header->bfSize = total_size;
+    file_header->bfReserved1 = 0;
+    file_header->bfReserved2 = 0;
+    file_header->bfOffBits = header_size;
+
+    // Remplir l'en-tête DIB
+    BITMAPINFOHEADER *info_header = (BITMAPINFOHEADER *)(*output + sizeof(BITMAPFILEHEADER));
+    info_header->biSize = sizeof(BITMAPINFOHEADER);
+    info_header->biWidth = width;
+    info_header->biHeight = -height;
+    info_header->biPlanes = 1;
+    info_header->biBitCount = 4;
+    info_header->biCompression = 0;
+    info_header->biSizeImage = image_size;
+    info_header->biXPelsPerMeter = 0;
+    info_header->biYPelsPerMeter = 0;
+    info_header->biClrUsed = 16;
+    info_header->biClrImportant = 0;
+
+    // Remplir la palette
+    RGBQUAD *palette = (RGBQUAD *)(*output + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER));
+    for (int i = 0; i < 16; i++) {
+        palette[i].rgbBlue  = pal[i] >> 16 & 0xFF;
+        palette[i].rgbGreen = pal[i] >>  8 & 0xFF;
+        palette[i].rgbRed   = pal[i] >>  0 & 0xFF;
+        palette[i].rgbReserved = 0;
+    }
+
+    // Copier les données de l'image
+    uint8_t *image_data = *output + header_size;
+    for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x += 2) {
+            uint8_t byte = input[y * bytes_per_row + x / 2];
+            image_data[y * bytes_per_row + x / 2] = byte;
+        }
+    }
 }
 
 static const uint8_t *
-load_image_in_cache (fosfat_file_t *file, const char *path, size_t *size)
+load_image (const char *path, size_t *size)
 {
-  static char *image_path = NULL;
-  static uint8_t *image_cache = NULL;
-  static uint8_t *png_cache = NULL;
-  static size_t png_length = 0;
   uint8_t bpp = 0;
   uint16_t w = 0, h = 0;
   size_t raw_size = 0;
+  static uint8_t *img_buffer = NULL;
+  static uint8_t *out_buffer = NULL;
+  static size_t out_length = 0;
 
   *size = 0;
 
   fosgra_get_info (fosfat, path, &w, &h, &bpp);
 
-  /* Try to reuse the image cache */
-  if (image_path)
-  {
-    const size_t len0 = strlen (image_path);
-    const size_t len1 = strlen (path);
-    if (len0 && len0 == len1 && !strncmp(image_path, path, len0))
-    {
-      *size = png_length;
-      return png_cache;
-    }
-
-    free (image_path);
-    image_path = NULL;
-    free (image_cache);
-    image_cache = NULL;
-    free (png_cache);
-    png_cache = NULL;
-    png_length = 0;
-  }
   /* Load the image in the cache */
-  if (!image_cache)
-  {
-    image_path = strdup (path);
-    raw_size = bpp == 1 ? w * h / 8 : /* bpp == 4 */ w * h / 2;
-    image_cache = fosgra_get_buffer (fosfat, path, 0, raw_size);
-  }
-
-  image_cache_t ctx;
-  ctx.length = 0;
-  ctx.buffer = NULL;
-
+  raw_size = bpp == 1 ? w * h / 8 : /* bpp == 4 */ w * h / 2;
+  img_buffer = fosgra_get_buffer (fosfat, path, 0, raw_size);
 
   if (bpp == 1)
-  {
-    uint8_t mask = 1 << 7;
-    uint8_t *buffer_for_png = NULL;
-
-    buffer_for_png = calloc (sizeof (*buffer_for_png), w * h);
-
-    for (int i = 0; i < w * h; ++i, mask = rotr8(mask, 1))
-      buffer_for_png[i] = image_cache[i / 8] & mask ? 0x00 : 0xFF;
-
-    stbi_write_png_to_func (image_buffer_write, &ctx, w, h, 1, buffer_for_png, w * 1);
-    free (buffer_for_png);
-  }
+    create_bmp1_buffer (img_buffer, w, h, &out_buffer, &out_length);
 
   if (bpp == 4)
   {
-    uint32_t map[16];
-    uint32_t *buffer_for_png = NULL;
-
-    buffer_for_png = calloc (sizeof (*buffer_for_png), w * h);
+    uint32_t pal[16];
 
     for (int idx = 0; idx < 16; ++idx)
-      map[idx] = fosgra_color_get (fosfat, path, idx);
+      pal[idx] = fosgra_color_get (fosfat, path, idx);
 
-    for (int i = 0, j = 0; i < w * h; ++i, j = !j)
-      buffer_for_png[i] = map[(image_cache[i / 2] & (0xF0 >> 4 * j)) >> (4 * !j)];
-
-    stbi_write_png_to_func (image_buffer_write, &ctx, w, h, 4, buffer_for_png, w * 4);
-    free (buffer_for_png);
+    create_bmp4_buffer (img_buffer, pal, w, h, &out_buffer, &out_length);
   }
 
-
-  png_cache = ctx.buffer;
-  png_length = ctx.length;
-  *size = png_length;
-  return png_cache;
+  *size = out_length;
+  return out_buffer;
 }
 
 static size_t
@@ -201,14 +271,14 @@ get_filesize (fosfat_file_t *file, const char *path)
   char *it = NULL;
   size_t image_size = 0;
 
-  if (g_png)
+  if (g_bmp)
     it = strstr (file->name, ".image\0") || strstr (file->name, ".color\0");
 
   if (!it || file->att.isdir || file->att.islink || file->att.isencoded
       || !fosgra_is_image (fosfat, path))
     return file->size;
 
-  load_image_in_cache (file, path, &image_size);
+  load_image (path, &image_size);
   return image_size;
 }
 
@@ -219,7 +289,7 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
   uint8_t *dec;
   const uint8_t *image_buffer;
 
-  if (g_png)
+  if (g_bmp)
     it = strstr (file->name, ".image\0") || strstr (file->name, ".color\0");
 
   if (!it || file->att.isdir || file->att.islink || file->att.isencoded
@@ -227,7 +297,7 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
     return fosfat_get_buffer (fosfat, path, offset, size);
 
   size_t image_size = 0;
-  image_buffer = load_image_in_cache (file, path, &image_size);
+  image_buffer = load_image (path, &image_size);
 
   dec = calloc (1, size);
   memcpy (dec, image_buffer + offset, size);
@@ -433,14 +503,14 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
     snprintf (_path, sizeof (_path), "%s/%s", location, files->name);
     st = in_stat (files, _path);
 
-    /* add identification for .IMAGE and .COLOR translated to PNG */
-    if (g_png
+    /* add identification for .IMAGE and .COLOR translated to BMP */
+    if (g_bmp
         && (   strstr (files->name, ".image\0")
             || strstr (files->name, ".color\0"))
         && fosgra_is_image (fosfat, _path))
     {
       name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
-      sprintf (name, "%s." FOSGRAID ".png", files->name);
+      sprintf (name, "%s." FOSGRAID ".bmp", files->name);
     }
     else
       name = strdup (files->name);
@@ -587,7 +657,7 @@ main (int argc, char **argv)
   char **arg;
   fosfat_disk_t type = FOSFAT_AD;
 
-  const char *const short_options = "adfhlpv";
+  const char *const short_options = "adfhliv";
 
   const struct option long_options[] = {
     { "harddisk",      no_argument, NULL, 'a' },
@@ -595,7 +665,7 @@ main (int argc, char **argv)
     { "floppydisk",    no_argument, NULL, 'f' },
     { "help",          no_argument, NULL, 'h' },
     { "fos-logger",    no_argument, NULL, 'l' },
-    { "image-png",     no_argument, NULL, 'p' },
+    { "image-bmp",     no_argument, NULL, 'i' },
     { "version",       no_argument, NULL, 'v' },
     { NULL,            0,           NULL,  0  }
   };
@@ -627,8 +697,8 @@ main (int argc, char **argv)
       foslog = 1;
       fosfat_logger (1);
       break;
-    case 'p':           /* -p or --image-png */
-      g_png = 1;
+    case 'i':           /* -i or --image-bmp */
+      g_bmp = 1;
       break ;
     case -1:            /* end */
       break ;
