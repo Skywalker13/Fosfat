@@ -2,6 +2,9 @@
 
 	* Release 2.0.0
 
+	* The Windows version supports binary files (dumps, like with Linux)
+	  and not just physical devices.
+
 	* fosmount: replace the -i and -j options by only the -i option with the
 	  major difference that BMP files are produced for .IMAGE and .COLOR
 	  files instead of PBM and XPMv2 which are not supported on Windows.
