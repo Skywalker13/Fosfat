@@ -42,9 +42,9 @@ extern "C" {
 #define FF_VERSION_DOT(a, b, c) a ##.## b ##.## c
 #define FF_VERSION(a, b, c) FF_VERSION_DOT(a, b, c)
 
-#define LIBFOSFAT_VERSION_MAJOR  1
+#define LIBFOSFAT_VERSION_MAJOR  2
 #define LIBFOSFAT_VERSION_MINOR  0
-#define LIBFOSFAT_VERSION_MICRO  1
+#define LIBFOSFAT_VERSION_MICRO  0
 
 #define LIBFOSFAT_VERSION_INT FF_VERSION_INT(LIBFOSFAT_VERSION_MAJOR, \
                                              LIBFOSFAT_VERSION_MINOR, \
