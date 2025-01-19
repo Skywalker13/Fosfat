@@ -337,8 +337,8 @@ fosgra_get_buffer (fosfat_t *fosfat,
     return NULL;
 
   ucod_size = header.bip == 4
-              ? header.dlx / 2 * header.dly  /* 2 pixels / byte */
-              : header.dlx / 8 * header.dly; /* 8 pixels / byte */
+            ? header.dlx / 2 * header.dly  /* 2 pixels / byte */
+            : header.dlx / 8 * header.dly; /* 8 pixels / byte */
 
   /* fix max size */
   if (offset + size > ucod_size)
