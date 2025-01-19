@@ -64,6 +64,23 @@ get_bmp1_size (int width, int height, int *bpr, int *pbpr)
        + sizeof(bmp_info_header_t) + 2 * sizeof(rgb_quad_t) + *pbpr * height;
 }
 
+static void
+bmp_fill_dib_header (bmp_info_header_t *bih,
+                     int bpp, int width, int height, int image_size)
+{
+  bih->size = sizeof(bmp_info_header_t);
+  bih->width = width;
+  bih->height = -height;
+  bih->planes = 1;
+  bih->bit_count = bpp;
+  bih->compression = 0;
+  bih->size_image = bpp == 1 ? 0 : image_size;
+  bih->x_pels_per_meter = 0;
+  bih->y_pels_per_meter = 0;
+  bih->clr_used = bpp == 1 ? 0 : 16;
+  bih->clr_important = 0;
+}
+
 void
 create_bmp1_buffer(const uint8_t *input,
                    int width, int height, uint8_t **output, size_t *output_size)
@@ -87,17 +104,7 @@ create_bmp1_buffer(const uint8_t *input,
 
   // Remplissage de l'en-tête DIB
   bmp_info_header_t *bih = (bmp_info_header_t *)(*output + sizeof(bmp_file_header_t));
-  bih->size = sizeof(bmp_info_header_t);
-  bih->width = width;
-  bih->height = -height;
-  bih->planes = 1;
-  bih->bit_count = 1;
-  bih->compression = 0;
-  bih->size_image = 0;
-  bih->x_pels_per_meter = 0;
-  bih->y_pels_per_meter = 0;
-  bih->clr_used = 0;
-  bih->clr_important = 0;
+  bmp_fill_dib_header (bih, 1, width, height, 0);
 
   // Remplissage de la palette de couleurs
   rgb_quad_t *palette = (rgb_quad_t *)(*output + sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t));
@@ -154,17 +161,7 @@ create_bmp4_buffer(const uint8_t *input, const uint32_t *pal,
 
   // Remplir l'en-tête DIB
   bmp_info_header_t *bih = (bmp_info_header_t *)(*output + sizeof(bmp_file_header_t));
-  bih->size = sizeof(bmp_info_header_t);
-  bih->width = width;
-  bih->height = -height;
-  bih->planes = 1;
-  bih->bit_count = 4;
-  bih->compression = 0;
-  bih->size_image = image_size;
-  bih->x_pels_per_meter = 0;
-  bih->y_pels_per_meter = 0;
-  bih->clr_used = 16;
-  bih->clr_important = 0;
+  bmp_fill_dib_header (bih, 4, width, height, image_size);
 
   // Remplir la palette
   rgb_quad_t *palette = (rgb_quad_t *)(*output + sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t));
