@@ -83,9 +83,8 @@ fos_sma2iso8859 (char *buffer, unsigned int size, newline_t newline)
   {
     for (i = 0; i < size; i++)
       *(buffer + i) = char_sma2iso8859 (*(buffer + i), newline);
+    return buffer;
   }
-  else
-    return NULL;
 
-  return buffer;
+  return NULL;
 }
