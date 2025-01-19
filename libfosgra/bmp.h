@@ -33,10 +33,9 @@ size_t fosgra_bmp1_sizes (int width, int height,
 size_t fosgra_bmp4_sizes (int width, int height,
                           int *bpr, int *image_size, int *header_size);
 
-void fosgra_bmp1_buffer (const uint8_t *input, int width, int height,
-                         uint8_t **output, size_t *output_size);
-void fosgra_bmp4_buffer (const uint8_t *input, const uint32_t *pal,
-                         int width, int height,
-                         uint8_t **output, size_t *output_size);
+uint8_t *fosgra_bmp1_buffer (const uint8_t *input,
+                             int width, int height, size_t *output_size);
+uint8_t *fosgra_bmp4_buffer (const uint8_t *input, const uint32_t *pal,
+                             int width, int height, size_t *output_size);
 
 #endif /* FOSGRA_BMP_H */
