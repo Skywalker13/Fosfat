@@ -198,26 +198,26 @@ create_bmp4_buffer(const uint8_t *input, const uint32_t *pal,
   *output_size = total_size;
 
   // Remplir l'en-tête de fichier BMP
-  bmp_file_header_t *file_header = (bmp_file_header_t *)(*output);
-  file_header->type = 0x4D42; // 'BM'
-  file_header->size = total_size;
-  file_header->reserved1 = 0;
-  file_header->reserved2 = 0;
-  file_header->off_bits = header_size;
+  bmp_file_header_t *bfh = (bmp_file_header_t *)(*output);
+  bfh->type = 0x4D42; // 'BM'
+  bfh->size = total_size;
+  bfh->reserved1 = 0;
+  bfh->reserved2 = 0;
+  bfh->off_bits = header_size;
 
   // Remplir l'en-tête DIB
-  bmp_info_header_t *info_header = (bmp_info_header_t *)(*output + sizeof(bmp_file_header_t));
-  info_header->size = sizeof(bmp_info_header_t);
-  info_header->width = width;
-  info_header->height = -height;
-  info_header->planes = 1;
-  info_header->bit_count = 4;
-  info_header->compression = 0;
-  info_header->size_image = image_size;
-  info_header->x_pels_per_meter = 0;
-  info_header->y_pels_per_meter = 0;
-  info_header->clr_used = 16;
-  info_header->clr_important = 0;
+  bmp_info_header_t *bih = (bmp_info_header_t *)(*output + sizeof(bmp_file_header_t));
+  bih->size = sizeof(bmp_info_header_t);
+  bih->width = width;
+  bih->height = -height;
+  bih->planes = 1;
+  bih->bit_count = 4;
+  bih->compression = 0;
+  bih->size_image = image_size;
+  bih->x_pels_per_meter = 0;
+  bih->y_pels_per_meter = 0;
+  bih->clr_used = 16;
+  bih->clr_important = 0;
 
   // Remplir la palette
   rgb_quad_t *palette = (rgb_quad_t *)(*output + sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t));
