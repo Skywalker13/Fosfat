@@ -48,7 +48,7 @@
  * return 1 for success and 0 for error
  */
 static int
-run_conv (const char *input, const char *output, newline_t newline)
+run_conv (const char *input, const char *output, fosfat_newline_t newline)
 {
   int res = -1;
   FILE *in = NULL, *out = NULL;
@@ -109,7 +109,7 @@ print_help (void)
 int
 main (int argc, char **argv)
 {
-  newline_t newline = ASCII_CR;
+  fosfat_newline_t newline = FOSFAT_ASCII_CR;
 
   if (argc < 3)
   {
@@ -118,7 +118,7 @@ main (int argc, char **argv)
   }
 
   if (argc == 4 && !strcmp (argv[3], "--unix"))
-    newline = ASCII_LF;
+    newline = FOSFAT_ASCII_LF;
 
   return run_conv (argv[1], argv[2], newline);
 }

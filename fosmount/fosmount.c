@@ -48,6 +48,7 @@
 " -l --fos-logger       that will turn on the FOS logger\n" \
 " -d --fuse-debugger    that will turn on the FUSE debugger\n" \
 " -i --image-bmp        convert on the fly .IMAGE and .COLOR to .BMP\n" \
+" -t --text             convert on the fly .NEWS and .A-LIRE to .TXT\n" \
 " device                /dev/fd0 : floppy disk\n" \
 "                       /dev/sda : hard disk, etc\n" \
 " mountpoint            for example, /mnt/smaky\n" \
@@ -61,6 +62,7 @@ static fosfat_t *fosfat;
 #define FOSGRAID "@"
 
 static int g_bmp = 0;
+static int g_txt = 0;
 
 
 static char *
@@ -81,41 +83,71 @@ get_filesize (fosfat_file_t *file, const char *path)
 {
   char *it = NULL;
 
+  if (file->att.isdir || file->att.islink || file->att.isencoded)
+    return file->size;
+
   if (g_bmp)
     it = strstr (file->name, ".image\0");
   if (g_bmp && !it)
     it = strstr (file->name, ".color\0");
 
-  if (!it || file->att.isdir || file->att.islink || file->att.isencoded
-      || !fosgra_is_image (fosfat, path))
+  if (!it)
     return file->size;
 
-  return fosgra_bmp_get_size (fosfat, path);
+  if (fosgra_is_image (fosfat, path))
+    return fosgra_bmp_get_size (fosfat, path);
+
+  return file->size;
 }
 
 static uint8_t *
 get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
 {
   char *it = NULL;
-  uint8_t *dec;
-  uint8_t *image_buffer;
+  int is_image = 0;
+  int is_text = 0;
+
+  if (file->att.isdir || file->att.islink || file->att.isencoded)
+    goto std;
 
   if (g_bmp)
     it = strstr (file->name, ".image\0");
   if (g_bmp && !it)
     it = strstr (file->name, ".color\0");
+  if (it)
+    is_image = 1;
 
-  if (!it || file->att.isdir || file->att.islink || file->att.isencoded
-      || !fosgra_is_image (fosfat, path))
-    return fosfat_get_buffer (fosfat, path, offset, size);
+  if (!is_image)
+  {
+    if (g_txt)
+      it = strstr (file->name, ".news\0");
+    if (g_txt && !it)
+      it = strstr (file->name, ".a-lire\0");
+    is_text = 1;
+  }
 
-  size_t image_size = 0;
-  image_buffer = fosgra_bmp_get_buffer (fosfat, path, &image_size);
+  if (!it)
+    goto std;
 
-  dec = calloc (1, size);
-  memcpy (dec, image_buffer + offset, size);
-  free (image_buffer);
-  return dec;
+  if (is_image && fosgra_is_image (fosfat, path))
+  {
+    size_t image_size = 0;
+    uint8_t *image_buffer = fosgra_bmp_get_buffer (fosfat, path, &image_size);
+    uint8_t *dec = calloc (1, size);
+    memcpy (dec, image_buffer + offset, size);
+    free (image_buffer);
+    return dec;
+  }
+
+  if (is_text)
+  {
+    uint8_t *text_buffer = fosfat_get_buffer (fosfat, path, offset, size);
+    fosfat_sma2iso8859 ((char *) text_buffer, size, FOSFAT_ASCII_LF);
+    return text_buffer;
+  }
+
+std:
+  return fosfat_get_buffer (fosfat, path, offset, size);
 }
 
 /*
@@ -326,6 +358,13 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
       name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
       sprintf (name, "%s." FOSGRAID ".bmp", files->name);
     }
+    else if (g_txt
+             && (strstr (files->name, ".news\0")
+               || strstr (files->name, ".a-lire\0")))
+    {
+      name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
+      sprintf (name, "%s." FOSGRAID ".txt", files->name);
+    }
     else
       name = strdup (files->name);
 
@@ -471,7 +510,7 @@ main (int argc, char **argv)
   char **arg;
   fosfat_disk_t type = FOSFAT_AD;
 
-  const char *const short_options = "adfhliv";
+  const char *const short_options = "adfhlitv";
 
   const struct option long_options[] = {
     { "harddisk",      no_argument, NULL, 'a' },
@@ -480,6 +519,7 @@ main (int argc, char **argv)
     { "help",          no_argument, NULL, 'h' },
     { "fos-logger",    no_argument, NULL, 'l' },
     { "image-bmp",     no_argument, NULL, 'i' },
+    { "text",          no_argument, NULL, 't' },
     { "version",       no_argument, NULL, 'v' },
     { NULL,            0,           NULL,  0  }
   };
@@ -514,6 +554,9 @@ main (int argc, char **argv)
     case 'i':           /* -i or --image-bmp */
       g_bmp = 1;
       break ;
+    case 't':           /* -t or --text */
+      g_txt = 1;
+      break;
     case -1:            /* end */
       break ;
     }

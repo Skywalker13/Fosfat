@@ -60,7 +60,7 @@ static const unsigned char smaky2iso8859_charset[] = {
  * return the new char
  */
 static inline unsigned char
-char_sma2iso8859 (unsigned char value, newline_t newline)
+char_sma2iso8859 (unsigned char value, fosfat_newline_t newline)
 {
   return (value > 127 ? 0
           : (value == 13 ? newline : smaky2iso8859_charset[value]));
@@ -75,7 +75,7 @@ char_sma2iso8859 (unsigned char value, newline_t newline)
  * return the buffer
  */
 char *
-fosfat_sma2iso8859 (char *buffer, unsigned int size, newline_t newline)
+fosfat_sma2iso8859 (char *buffer, unsigned int size, fosfat_newline_t newline)
 {
   unsigned int i = 0;
 
