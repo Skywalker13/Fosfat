@@ -59,7 +59,7 @@
 
 static fosfat_t *fosfat;
 
-#define FOSGRAID "@"
+#define FLYID "@"
 
 static int g_bmp = 0;
 static int g_txt = 0;
@@ -71,7 +71,7 @@ trim_fosname (const char *path)
   char *it, res[256];
 
   snprintf (res, sizeof (res), "%s", path);
-  it = strstr (res, "." FOSGRAID ".");
+  it = strstr (res, "." FLYID ".");
   if (it)
     *it = '\0';
 
@@ -330,14 +330,14 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
     /* add identification for .IMAGE and .COLOR translated to BMP */
     if (g_bmp && ftype == FOSFAT_FTYPE_IMAGE && fosgra_is_image (fosfat, _path))
     {
-      name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
-      sprintf (name, "%s." FOSGRAID ".bmp", files->name);
+      name = calloc (1, strlen (files->name) + strlen (FLYID) + 6);
+      sprintf (name, "%s." FLYID ".bmp", files->name);
     }
     /* add identification for text files translated to ISO-8859-1 */
     else if (g_txt && ftype == FOSFAT_FTYPE_TEXT)
     {
-      name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
-      sprintf (name, "%s." FOSGRAID ".txt", files->name);
+      name = calloc (1, strlen (files->name) + strlen (FLYID) + 6);
+      sprintf (name, "%s." FLYID ".txt", files->name);
     }
     else
       name = strdup (files->name);
