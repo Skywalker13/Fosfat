@@ -118,17 +118,16 @@ fosgra_bmp1_buffer (const uint8_t *input,
     (bmp_info_header_t *) (output + sizeof(bmp_file_header_t));
   bmp_fill_dib_header (bih, 1, width, height, 0);
 
-  /* Monochrome palette */
+  /* Monochrome palette (black and white) */
   rgb_quad_t *palette = (rgb_quad_t *) (output + sizeof(bmp_file_header_t)
                                                + sizeof(bmp_info_header_t));
-  palette[0].blue = 255;
-  palette[0].green = 255;
-  palette[0].red = 255;
-  palette[0].reserved = 0;
-  palette[1].blue = 0;
-  palette[1].green = 0;
-  palette[1].red = 0;
-  palette[1].reserved = 0;
+  for (int i = 0; i < 2; ++i)
+  {
+    palette[i].blue  = 0xFF * !i;
+    palette[i].green = 0xFF * !i;
+    palette[i].red   = 0xFF * !i;
+    palette[i].reserved = 0;
+  }
 
   uint8_t *image_data = output + sizeof (bmp_file_header_t)
                       + sizeof (bmp_info_header_t) + 2 * sizeof (rgb_quad_t);
