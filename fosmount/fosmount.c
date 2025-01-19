@@ -321,6 +321,7 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
 
   dec = calloc (1, size);
   memcpy (dec, image_buffer + offset, size);
+  free (image_buffer);
   return dec;
 }
 
