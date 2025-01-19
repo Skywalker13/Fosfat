@@ -38,6 +38,11 @@
 #define FOS_DIR             0555
 #define FOS_FILE            0444
 
+#define HELP_DEVICE \
+"file.di  : disk image\n" \
+"                       /dev/fd0 : floppy disk\n" \
+"                       /dev/sda : hard disk, etc\n"
+
 #define HELP_TEXT \
 "FUSE extension for a read-only access on Smaky FOS. fosfat-" LIBFOSFAT_VERSION_STR "\n\n" \
 "Usage: fosmount [options] device mountpoint\n\n" \
@@ -49,8 +54,7 @@
 " -d --fuse-debugger    that will turn on the FUSE debugger\n" \
 " -i --image-bmp        convert on the fly .IMAGE and .COLOR to .BMP\n" \
 " -t --text             convert on the fly some text files to .TXT\n" \
-" device                /dev/fd0 : floppy disk\n" \
-"                       /dev/sda : hard disk, etc\n" \
+" device                " HELP_DEVICE \
 " mountpoint            for example, /mnt/smaky\n" \
 "\nPlease, report bugs to <mathieu@schroetersa.ch>.\n"
 
