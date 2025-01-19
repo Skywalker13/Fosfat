@@ -28,7 +28,7 @@
  * bmp internal header.
  */
 
-size_t get_bmp1_size (int width, int height, int *bpr, int *pbpr);
+size_t get_bmp1_size (int width, int height, int *bpr, int *pbpr, int *header_size);
 size_t get_bmp4_size (int width, int height, int *bpr, int *image_size, int *header_size);
 
 void

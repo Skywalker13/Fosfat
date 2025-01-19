@@ -393,7 +393,7 @@ fosgra_get_bmp_size (fosfat_t *fosfat, const char *path)
   fosgra_get_info (fosfat, path, &w, &h, &bpp);
 
   if (bpp == 1)
-    return get_bmp1_size (w, h, &bpr, &pbpr);
+    return get_bmp1_size (w, h, &bpr, &pbpr, &hs);
   if (bpp == 4)
     return get_bmp4_size (w, h, &bpr, &is, &hs);
   return 0;

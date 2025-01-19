@@ -56,12 +56,13 @@ typedef struct {
 } __attribute__ ((packed)) rgb_quad_t;
 
 size_t
-get_bmp1_size (int width, int height, int *bpr, int *pbpr)
+get_bmp1_size (int width, int height, int *bpr, int *pbpr, int *header_size)
 {
   *bpr  = (width + 7) / 8;    /* Number of bytes per row */
   *pbpr = (*bpr + 3) / 4 * 4; /* Alignment on 4 bytes */
-  return sizeof(bmp_file_header_t)
-       + sizeof(bmp_info_header_t) + 2 * sizeof(rgb_quad_t) + *pbpr * height;
+  *header_size = sizeof(bmp_file_header_t)
+               + sizeof(bmp_info_header_t) + 2 * sizeof(rgb_quad_t);
+  return *header_size + *pbpr * height;
 }
 
 static void
@@ -87,8 +88,9 @@ create_bmp1_buffer(const uint8_t *input,
 {
   int bpr;
   int pbpr;
+  int header_size;
 
-  size_t bmp_size = get_bmp1_size (width, height, &bpr, &pbpr);
+  size_t bmp_size = get_bmp1_size (width, height, &bpr, &pbpr, &header_size);
 
   // Allocation du buffer BMP
   *output = (uint8_t *)malloc(bmp_size);
@@ -100,7 +102,7 @@ create_bmp1_buffer(const uint8_t *input,
   bfh->size = bmp_size;
   bfh->reserved1 = 0;
   bfh->reserved2 = 0;
-  bfh->off_bits = sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t) + 2 * sizeof(rgb_quad_t);
+  bfh->off_bits = header_size;
 
   // Remplissage de l'en-tête DIB
   bmp_info_header_t *bih = (bmp_info_header_t *)(*output + sizeof(bmp_file_header_t));
@@ -132,7 +134,8 @@ get_bmp4_size (int width, int height, int *bpr, int *image_size, int *header_siz
   *bpr        = (width + 1) / 2; /* Number of bytes per row */
   *image_size = *bpr * height; /* Image size in bytes */
   int palette_size = 16 * sizeof(rgb_quad_t); /* Palette size */
-  *header_size = sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t) + palette_size;
+  *header_size = sizeof(bmp_file_header_t)
+               + sizeof(bmp_info_header_t) + palette_size;
   return *header_size + *image_size;
 }
 
@@ -144,17 +147,17 @@ create_bmp4_buffer(const uint8_t *input, const uint32_t *pal,
   int image_size;
   int header_size;
 
-  size_t total_size =
+  size_t bmp_size =
     get_bmp4_size (width, height, &bpr, &image_size, &header_size);
 
   // Allouer de la mémoire pour le buffer de sortie
-  *output = (uint8_t *)malloc(total_size);
-  *output_size = total_size;
+  *output = (uint8_t *)malloc(bmp_size);
+  *output_size = bmp_size;
 
   // Remplir l'en-tête de fichier BMP
   bmp_file_header_t *bfh = (bmp_file_header_t *)(*output);
   bfh->type = 0x4D42; // 'BM'
-  bfh->size = total_size;
+  bfh->size = bmp_size;
   bfh->reserved1 = 0;
   bfh->reserved2 = 0;
   bfh->off_bits = header_size;
