@@ -2307,3 +2307,33 @@ fosfat_close (fosfat_t *fosfat)
 
   free (fosfat);
 }
+
+/******************************************************************************/
+
+fosfat_ftype_t
+fosfat_ftype (const char *name)
+{
+  char *it = NULL;
+
+  it = strstr (name, ".image\0");
+  if (!it)
+    it = strstr (name, ".color\0");
+  if (it)
+    return FOSFAT_FTYPE_IMAGE;
+
+  it = strstr (name, ".news\0");
+  if (!it)
+    it = strstr (name, ".a-lire\0");
+  if (!it)
+    it = strstr (name, ".c\0");
+  if (!it)
+    it = strstr (name, ".h\0");
+  if (!it)
+    it = strstr (name, ".asc\0");
+  if (!it)
+    it = strstr (name, ".asi\0");
+  if (it)
+    return FOSFAT_FTYPE_TEXT;
+
+  return FOSFAT_FTYPE_OTHER;
+}

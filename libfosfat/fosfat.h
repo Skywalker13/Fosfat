@@ -295,13 +295,21 @@ uint8_t *fosfat_get_buffer (fosfat_t *fosfat,
 /******************************************************************************/
 
 /** New line */
-typedef enum newline {
+typedef enum fostfat_newline {
   FOSFAT_ASCII_CR = 0x0D,       /*!< Carriage Return (Old Mac)   */
-  FOSFAT_ASCII_LF = 0x0A        /*!< Line Feed       (Unix)      */
+  FOSFAT_ASCII_LF = 0x0A,       /*!< Line Feed       (Unix)      */
 } fosfat_newline_t;
 
 char *fosfat_sma2iso8859 (char *buffer,
                           unsigned int size, fosfat_newline_t ret);
+
+typedef enum fosfat_ftype {
+  FOSFAT_FTYPE_OTHER = 0,
+  FOSFAT_FTYPE_IMAGE = 1,
+  FOSFAT_FTYPE_TEXT  = 2,
+} fosfat_ftype_t;
+
+fosfat_ftype_t fosfat_ftype (const char *name);
 
 #ifdef __cplusplus
 }
