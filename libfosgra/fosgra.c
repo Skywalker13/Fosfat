@@ -351,7 +351,7 @@ fosgra_get_buffer (fosfat_t *fosfat,
 }
 
 uint8_t *
-fosgra_get_bmp_buffer (fosfat_t *fosfat, const char *path, size_t *size)
+fosgra_bmp_get_buffer (fosfat_t *fosfat, const char *path, size_t *size)
 {
   uint8_t bpp = 0;
   uint16_t w = 0, h = 0;
@@ -384,7 +384,7 @@ fosgra_get_bmp_buffer (fosfat_t *fosfat, const char *path, size_t *size)
 }
 
 size_t
-fosgra_get_bmp_size (fosfat_t *fosfat, const char *path)
+fosgra_bmp_get_size (fosfat_t *fosfat, const char *path)
 {
   uint8_t bpp = 0;
   uint16_t w = 0, h = 0;

@@ -88,7 +88,7 @@ get_filesize (fosfat_file_t *file, const char *path)
       || !fosgra_is_image (fosfat, path))
     return file->size;
 
-  return fosgra_get_bmp_size (fosfat, path);
+  return fosgra_bmp_get_size (fosfat, path);
 }
 
 static uint8_t *
@@ -106,7 +106,7 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
     return fosfat_get_buffer (fosfat, path, offset, size);
 
   size_t image_size = 0;
-  image_buffer = fosgra_get_bmp_buffer (fosfat, path, &image_size);
+  image_buffer = fosgra_bmp_get_buffer (fosfat, path, &image_size);
 
   dec = calloc (1, size);
   memcpy (dec, image_buffer + offset, size);

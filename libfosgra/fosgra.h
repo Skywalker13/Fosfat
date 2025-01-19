@@ -68,7 +68,7 @@ uint8_t *fosgra_get_buffer (fosfat_t *fosfat,
  * \param[out] size      buffer length.
  * \return NULL if error or return the buffer.
  */
-uint8_t *fosgra_get_bmp_buffer (fosfat_t *fosfat,
+uint8_t *fosgra_bmp_get_buffer (fosfat_t *fosfat,
                                 const char *path, size_t *size);
 
 /**
@@ -78,7 +78,7 @@ uint8_t *fosgra_get_bmp_buffer (fosfat_t *fosfat,
  * \param[in] path       location on the FOS disk.
  * \return image size.
  */
-size_t fosgra_get_bmp_size (fosfat_t *fosfat, const char *path);
+size_t fosgra_bmp_get_size (fosfat_t *fosfat, const char *path);
 
 /**
  * \brief Get informations on the .IMAGE|.COLOR.
