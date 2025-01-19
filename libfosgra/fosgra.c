@@ -28,6 +28,7 @@
 #include <inttypes.h>
 
 #include "fosgra.h"
+#include "bmp.h"
 
 #define FOSGRA_IMAGE_HEADER_LENGTH      32
 #define FOSGRA_IMAGE_HEADER_LENGTH_BIN  256
@@ -347,6 +348,55 @@ fosgra_get_buffer (fosfat_t *fosfat,
                             offset, size, ucod_size);
   free (buffer);
   return dec;
+}
+
+uint8_t *
+fosgra_get_bmp_buffer (fosfat_t *fosfat, const char *path, size_t *size)
+{
+  uint8_t bpp = 0;
+  uint16_t w = 0, h = 0;
+  size_t raw_size = 0;
+  uint8_t *img_buffer = NULL;
+  uint8_t *out_buffer = NULL;
+
+  *size = 0;
+
+  fosgra_get_info (fosfat, path, &w, &h, &bpp);
+
+  /* Load the image in the cache */
+  raw_size = bpp == 1 ? w * h / 8 : /* bpp == 4 */ w * h / 2;
+  img_buffer = fosgra_get_buffer (fosfat, path, 0, raw_size);
+
+  if (bpp == 1)
+    create_bmp1_buffer (img_buffer, w, h, &out_buffer, size);
+
+  if (bpp == 4)
+  {
+    uint32_t pal[16];
+
+    for (int idx = 0; idx < 16; ++idx)
+      pal[idx] = fosgra_color_get (fosfat, path, idx);
+
+    create_bmp4_buffer (img_buffer, pal, w, h, &out_buffer, size);
+  }
+
+  return out_buffer;
+}
+
+size_t
+fosgra_get_bmp_size (fosfat_t *fosfat, const char *path)
+{
+  uint8_t bpp = 0;
+  uint16_t w = 0, h = 0;
+  int bpr, pbpr, is, hs;
+
+  fosgra_get_info (fosfat, path, &w, &h, &bpp);
+
+  if (bpp == 1)
+    return get_bmp1_size (w, h, &bpr, &pbpr);
+  if (bpp == 4)
+    return get_bmp4_size (w, h, &bpr, &is, &hs);
+  return 0;
 }
 
 void

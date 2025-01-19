@@ -34,9 +34,11 @@ LIB_CPPFLAGS = -I../libfosfat $(CFG_CPPFLAGS) $(CPPFLAGS)
 LIB_LDFLAGS = -L../libfosfat -lfosfat $(CFG_LDFLAGS) $(LDFLAGS)
 
 SRCS =  fosgra.c \
+	bmp.c \
 
 EXTRADIST = \
 	fosgra.h \
+	bmp.h \
 
 OBJS = $(SRCS:.c=.o)
 
