@@ -38,7 +38,8 @@ else
   LIB_LDFLAGS = $(CFG_LDFLAGS) $(LDFLAGS)
 endif
 
-SRCS =  fosfat.c \
+SRCS =	fosfat.c \
+	ascii.c \
 
 EXTRADIST = \
 	fosfat.h \

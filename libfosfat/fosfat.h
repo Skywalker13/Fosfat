@@ -292,6 +292,16 @@ int fosfat_get_file (fosfat_t *fosfat,
 uint8_t *fosfat_get_buffer (fosfat_t *fosfat,
                             const char *path, int offset, int size);
 
+/******************************************************************************/
+
+/** New line */
+typedef enum newline {
+  ASCII_CR = 0x0D,       /*!< Carriage Return (Old Mac)   */
+  ASCII_LF = 0x0A        /*!< Line Feed       (Unix)      */
+} newline_t;
+
+char *fosfat_sma2iso8859 (char *buffer, unsigned int size, newline_t ret);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

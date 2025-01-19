@@ -24,7 +24,7 @@
 
 #include <stdlib.h>
 
-#include "ascii.h"
+#include "fosfat.h"
 
 
 /*
@@ -75,7 +75,7 @@ char_sma2iso8859 (unsigned char value, newline_t newline)
  * return the buffer
  */
 char *
-fos_sma2iso8859 (char *buffer, unsigned int size, newline_t newline)
+fosfat_sma2iso8859 (char *buffer, unsigned int size, newline_t newline)
 {
   unsigned int i = 0;
 

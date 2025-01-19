@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "ascii.h"
+#include "fosfat.h"
 
 #define BUFFER_SIZE 256
 
@@ -72,7 +72,7 @@ run_conv (const char *input, const char *output, newline_t newline)
   while ((lng = fread (buffer, 1, sizeof (buffer), in)))
   {
     size_t size;
-    if (fos_sma2iso8859 (buffer, (unsigned int) lng, newline))
+    if (fosfat_sma2iso8859 (buffer, (unsigned int) lng, newline))
     {
       size = fwrite (buffer, 1, lng, out);
       if (size != lng)

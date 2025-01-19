@@ -8,7 +8,7 @@ FOSREAD_SRCS = fosread.c
 FOSREAD_OBJS = $(FOSREAD_SRCS:.c=.o)
 FOSREAD_MAN = $(FOSREAD).1
 SMASCII = smascii
-SMASCII_SRCS = ascii.c smascii.c
+SMASCII_SRCS = smascii.c
 SMASCII_OBJS = $(SMASCII_SRCS:.c=.o)
 SMASCII_MAN = $(SMASCII).1
 FOSREC = fosrec
@@ -36,7 +36,6 @@ endif
 MANS = $(FOSREAD_MAN) $(SMASCII_MAN) $(FOSREC_MAN) $(FOSDD_MAN)
 
 EXTRADIST = \
-	ascii.h \
 	$(MANS)
 
 .SUFFIXES: .c .o
