@@ -82,7 +82,9 @@ get_filesize (fosfat_file_t *file, const char *path)
   char *it = NULL;
 
   if (g_bmp)
-    it = strstr (file->name, ".image\0") || strstr (file->name, ".color\0");
+    it = strstr (file->name, ".image\0");
+  if (g_bmp && !it)
+    it = strstr (file->name, ".color\0");
 
   if (!it || file->att.isdir || file->att.islink || file->att.isencoded
       || !fosgra_is_image (fosfat, path))
@@ -99,7 +101,9 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
   uint8_t *image_buffer;
 
   if (g_bmp)
-    it = strstr (file->name, ".image\0") || strstr (file->name, ".color\0");
+    it = strstr (file->name, ".image\0");
+  if (g_bmp && !it)
+    it = strstr (file->name, ".color\0");
 
   if (!it || file->att.isdir || file->att.islink || file->att.isencoded
       || !fosgra_is_image (fosfat, path))
