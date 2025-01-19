@@ -12,6 +12,8 @@
 	* fosmount: add a new -t option useful to convert some text files to
 	  the ISO-8859-1 charset.
 
+	* fosread: add recursive copy of a whole directory with the "get" mode.
+
 2024-10-08  Mathieu Schroeter <mathieu@schroetersa.ch>
 
 	* Release 1.0.1
