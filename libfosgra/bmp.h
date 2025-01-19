@@ -25,7 +25,7 @@
 /**
  * \file bmp.h
  *
- * bmp internal header.
+ * BMP internal header.
  */
 
 size_t fosgra_bmp1_sizes (int width, int height,
