@@ -81,20 +81,14 @@ trim_fosname (const char *path)
 static size_t
 get_filesize (fosfat_file_t *file, const char *path)
 {
-  char *it = NULL;
+  fosfat_ftype_t ftype = FOSFAT_FTYPE_OTHER;
 
   if (file->att.isdir || file->att.islink || file->att.isencoded)
     return file->size;
 
-  if (g_bmp)
-    it = strstr (file->name, ".image\0");
-  if (g_bmp && !it)
-    it = strstr (file->name, ".color\0");
+  ftype = fosfat_ftype (file->name);
 
-  if (!it)
-    return file->size;
-
-  if (fosgra_is_image (fosfat, path))
+  if (g_bmp && ftype == FOSFAT_FTYPE_IMAGE && fosgra_is_image (fosfat, path))
     return fosgra_bmp_get_size (fosfat, path);
 
   return file->size;
@@ -103,33 +97,14 @@ get_filesize (fosfat_file_t *file, const char *path)
 static uint8_t *
 get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
 {
-  char *it = NULL;
-  int is_image = 0;
-  int is_text = 0;
+  fosfat_ftype_t ftype = FOSFAT_FTYPE_OTHER;
 
   if (file->att.isdir || file->att.islink || file->att.isencoded)
     goto std;
 
-  if (g_bmp)
-    it = strstr (file->name, ".image\0");
-  if (g_bmp && !it)
-    it = strstr (file->name, ".color\0");
-  if (it)
-    is_image = 1;
+  ftype = fosfat_ftype (file->name);
 
-  if (!is_image)
-  {
-    if (g_txt)
-      it = strstr (file->name, ".news\0");
-    if (g_txt && !it)
-      it = strstr (file->name, ".a-lire\0");
-    is_text = 1;
-  }
-
-  if (!it)
-    goto std;
-
-  if (is_image && fosgra_is_image (fosfat, path))
+  if (g_bmp && ftype == FOSFAT_FTYPE_IMAGE && fosgra_is_image (fosfat, path))
   {
     size_t image_size = 0;
     uint8_t *image_buffer = fosgra_bmp_get_buffer (fosfat, path, &image_size);
@@ -139,7 +114,7 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
     return dec;
   }
 
-  if (is_text)
+  if (g_txt && ftype == FOSFAT_FTYPE_TEXT)
   {
     uint8_t *text_buffer = fosfat_get_buffer (fosfat, path, offset, size);
     fosfat_sma2iso8859 ((char *) text_buffer, size, FOSFAT_ASCII_LF);
@@ -345,22 +320,21 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
     char _path[256];
     struct stat *st;
     char *name;
+    fosfat_ftype_t ftype = FOSFAT_FTYPE_OTHER;
 
     snprintf (_path, sizeof (_path), "%s/%s", location, files->name);
     st = in_stat (files, _path);
 
+    ftype = fosfat_ftype (files->name);
+
     /* add identification for .IMAGE and .COLOR translated to BMP */
-    if (g_bmp
-        && (   strstr (files->name, ".image\0")
-            || strstr (files->name, ".color\0"))
-        && fosgra_is_image (fosfat, _path))
+    if (g_bmp && ftype == FOSFAT_FTYPE_IMAGE && fosgra_is_image (fosfat, _path))
     {
       name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
       sprintf (name, "%s." FOSGRAID ".bmp", files->name);
     }
-    else if (g_txt
-             && (strstr (files->name, ".news\0")
-               || strstr (files->name, ".a-lire\0")))
+    /* add identification for text files translated to ISO-8859-1 */
+    else if (g_txt && ftype == FOSFAT_FTYPE_TEXT)
     {
       name = calloc (1, strlen (files->name) + strlen (FOSGRAID) + 6);
       sprintf (name, "%s." FOSGRAID ".txt", files->name);
