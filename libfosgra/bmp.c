@@ -93,8 +93,9 @@ bmp_fill_dib_header (bmp_info_header_t *bih,
 }
 
 void
-fosgra_bmp1_buffer(const uint8_t *input,
-                   int width, int height, uint8_t **output, size_t *output_size)
+fosgra_bmp1_buffer (const uint8_t *input,
+                    int width, int height,
+                    uint8_t **output, size_t *output_size)
 {
   int bpr;
   int pbpr;
@@ -103,7 +104,7 @@ fosgra_bmp1_buffer(const uint8_t *input,
   size_t bmp_size = fosgra_bmp1_sizes (width, height, &bpr, &pbpr, &header_size);
 
   // Allocation du buffer BMP
-  *output = (uint8_t *)malloc(bmp_size);
+  *output = malloc (bmp_size);
   *output_size = bmp_size;
 
   // Remplissage de l'en-tête du fichier BMP
@@ -111,11 +112,13 @@ fosgra_bmp1_buffer(const uint8_t *input,
   bmp_fill_header (bfh, bmp_size, header_size);
 
   // Remplissage de l'en-tête DIB
-  bmp_info_header_t *bih = (bmp_info_header_t *)(*output + sizeof(bmp_file_header_t));
+  bmp_info_header_t *bih =
+    (bmp_info_header_t *) (*output + sizeof(bmp_file_header_t));
   bmp_fill_dib_header (bih, 1, width, height, 0);
 
   // Remplissage de la palette de couleurs
-  rgb_quad_t *palette = (rgb_quad_t *)(*output + sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t));
+  rgb_quad_t *palette = (rgb_quad_t *) (*output + sizeof(bmp_file_header_t)
+                                                + sizeof(bmp_info_header_t));
   palette[0].blue = 255;
   palette[0].green = 255;
   palette[0].red = 255;
@@ -126,11 +129,12 @@ fosgra_bmp1_buffer(const uint8_t *input,
   palette[1].reserved = 0;
 
   // Copie des données de l'image
-  uint8_t *image_data = *output + sizeof(bmp_file_header_t)
-                      + sizeof(bmp_info_header_t) + 2 * sizeof(rgb_quad_t);
-  for (int y = 0; y < height; y++) {
-    memcpy(image_data + y * pbpr, input + y * bpr, bpr);
-    memset(image_data + y * pbpr + bpr, 0, pbpr - bpr);
+  uint8_t *image_data = *output + sizeof (bmp_file_header_t)
+                      + sizeof (bmp_info_header_t) + 2 * sizeof (rgb_quad_t);
+  for (int y = 0; y < height; ++y)
+  {
+    memcpy (image_data + y * pbpr, input + y * bpr, bpr);
+    memset (image_data + y * pbpr + bpr, 0, pbpr - bpr);
   }
 }
 
@@ -139,15 +143,16 @@ fosgra_bmp4_sizes (int width, int height, int *bpr, int *image_size, int *header
 {
   *bpr        = (width + 1) / 2; /* Number of bytes per row */
   *image_size = *bpr * height; /* Image size in bytes */
-  int palette_size = 16 * sizeof(rgb_quad_t); /* Palette size */
-  *header_size = sizeof(bmp_file_header_t)
-               + sizeof(bmp_info_header_t) + palette_size;
+  int palette_size = 16 * sizeof (rgb_quad_t); /* Palette size */
+  *header_size = sizeof (bmp_file_header_t)
+               + sizeof (bmp_info_header_t) + palette_size;
   return *header_size + *image_size;
 }
 
 void
-fosgra_bmp4_buffer(const uint8_t *input, const uint32_t *pal,
-                   int width, int height, uint8_t **output, size_t *output_size)
+fosgra_bmp4_buffer (const uint8_t *input, const uint32_t *pal,
+                    int width, int height,
+                    uint8_t **output, size_t *output_size)
 {
   int bpr;
   int image_size;
@@ -157,20 +162,23 @@ fosgra_bmp4_buffer(const uint8_t *input, const uint32_t *pal,
     fosgra_bmp4_sizes (width, height, &bpr, &image_size, &header_size);
 
   // Allouer de la mémoire pour le buffer de sortie
-  *output = (uint8_t *)malloc(bmp_size);
+  *output = malloc (bmp_size);
   *output_size = bmp_size;
 
   // Remplir l'en-tête de fichier BMP
-  bmp_file_header_t *bfh = (bmp_file_header_t *)(*output);
+  bmp_file_header_t *bfh = (bmp_file_header_t *) (*output);
   bmp_fill_header (bfh, bmp_size, header_size);
 
   // Remplir l'en-tête DIB
-  bmp_info_header_t *bih = (bmp_info_header_t *)(*output + sizeof(bmp_file_header_t));
+  bmp_info_header_t *bih =
+    (bmp_info_header_t *) (*output + sizeof (bmp_file_header_t));
   bmp_fill_dib_header (bih, 4, width, height, image_size);
 
   // Remplir la palette
-  rgb_quad_t *palette = (rgb_quad_t *)(*output + sizeof(bmp_file_header_t) + sizeof(bmp_info_header_t));
-  for (int i = 0; i < 16; i++) {
+  rgb_quad_t *palette = (rgb_quad_t *) (*output + sizeof (bmp_file_header_t)
+                                                + sizeof (bmp_info_header_t));
+  for (int i = 0; i < 16; ++i)
+  {
     palette[i].blue  = pal[i] >> 16 & 0xFF;
     palette[i].green = pal[i] >>  8 & 0xFF;
     palette[i].red   = pal[i] >>  0 & 0xFF;
@@ -179,10 +187,10 @@ fosgra_bmp4_buffer(const uint8_t *input, const uint32_t *pal,
 
   // Copier les données de l'image
   uint8_t *image_data = *output + header_size;
-  for (int y = 0; y < height; y++) {
-    for (int x = 0; x < width; x += 2) {
+  for (int y = 0; y < height; ++y)
+    for (int x = 0; x < width; x += 2)
+    {
       uint8_t byte = input[y * bpr + x / 2];
       image_data[y * bpr + x / 2] = byte;
     }
-  }
 }
