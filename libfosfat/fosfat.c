@@ -2313,25 +2313,27 @@ fosfat_close (fosfat_t *fosfat)
 fosfat_ftype_t
 fosfat_ftype (const char *name)
 {
-  char *it = NULL;
+  void *it = NULL;
 
-  it =   strstr (name, ".image\0");
+  it =   memmem (name, strlen (name) + 1, ".image\0", 7);
   if (!it)
-    it = strstr (name, ".color\0");
+    it = memmem (name, strlen (name) + 1, ".color\0", 7);
   if (it)
     return FOSFAT_FTYPE_IMAGE;
 
-  it =   strstr (name, ".news\0");
+  it =   memmem (name, strlen (name) + 1, ".news\0", 6);
   if (!it)
-    it = strstr (name, ".a-lire\0");
+    it = memmem (name, strlen (name) + 1, ".a-lire\0", 8);
   if (!it)
-    it = strstr (name, ".c\0");
+    it = memmem (name, strlen (name) + 1, ".c\0", 3);
   if (!it)
-    it = strstr (name, ".h\0");
+    it = memmem (name, strlen (name) + 1, ".h\0", 3);
   if (!it)
-    it = strstr (name, ".asc\0");
+    it = memmem (name, strlen (name) + 1, ".asc\0", 5);
   if (!it)
-    it = strstr (name, ".asi\0");
+    it = memmem (name, strlen (name) + 1, ".asi\0", 5);
+  if (!it)
+    it = memmem (name, strlen (name) + 1, ".bas\0", 5);
   if (it)
     return FOSFAT_FTYPE_TEXT;
 
