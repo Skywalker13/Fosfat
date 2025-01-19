@@ -192,10 +192,7 @@ fosgra_bmp4_buffer (const uint8_t *input, const uint32_t *pal,
   uint8_t *image_data = output + header_size;
   for (int y = 0; y < height; ++y)
     for (int x = 0; x < width; x += 2)
-    {
-      uint8_t byte = input[y * bpr + x / 2];
-      image_data[y * bpr + x / 2] = byte;
-    }
+      image_data[y * bpr + x / 2] = input[y * bpr + x / 2];
 
   return output;
 }
