@@ -1,6 +1,6 @@
 /*
  * FOS fosread: tool in read-only for Smaky file system
- * Copyright (C) 2006-2008 Mathieu Schroeter <mathieu@schroetersa.ch>
+ * Copyright (C) 2006-2008,2025 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * Thanks to Pierre Arnaud for his help and the documentation
  *    And to Epsitec SA for the Smaky computers
