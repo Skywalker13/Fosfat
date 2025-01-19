@@ -60,8 +60,8 @@ typedef struct ginfo {
 " device                " HELP_DEVICE \
 " mode\n" \
 "   list                list the content of a node\n" \
-"   get                 copy a file from the Smaky's disk in a" \
-" local directory\n" \
+"   get                 copy a file (or a directory) from the Smaky's disk in\n" \
+"                       a local directory\n" \
 " node                  the tree with the file (or folder)" \
 " for 'get' or 'list'\n" \
 "                       example: foo/bar/toto.text\n" \
