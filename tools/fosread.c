@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <string.h> /* strcmp strcpy */
 #include <getopt.h>
+#include <sys/stat.h>
 
 #include "fosfat.h"
 
@@ -230,6 +231,65 @@ get_file (fosfat_t *fosfat, const char *path, const char *dst)
   return res;
 }
 
+static int
+get_dir (fosfat_t *fosfat, const char *loc, const char *dst)
+{
+  char *path;
+  fosfat_file_t *files, *first_file;
+
+  if (strcmp (loc, "/") && fosfat_islink (fosfat, loc))
+    path = fosfat_symlink (fosfat, loc);
+  else
+    path = strdup (loc);
+
+  if ((files = fosfat_list_dir (fosfat, path)))
+  {
+    char out[4096] = {0};
+    char in[256]  = {0};
+    first_file = files;
+
+    do
+    {
+      if (files->att.islink)
+        continue;
+
+      if (files->name[0] == '.')
+        continue;
+
+      snprintf (in , sizeof (in),  "%s/%s", loc, files->name);
+      snprintf (out, sizeof (out), "%s/%s", dst, files->name);
+
+      if (files->att.isdir)
+      {
+        char *it = strrchr (out, '.');
+        if (it)
+          *it = '\0'; /* drop .dir from the name */
+        mkdir (out, 0755);
+        get_dir (fosfat, in, out);
+      }
+      else
+      {
+        if (files->size > 0)
+          get_file (fosfat, in, out);
+        else
+          fprintf (stderr, "WARNING: skip empty file (0 bytes)\n");
+      }
+    } while ((files = files->next_file));
+
+    fosfat_free_listdir (first_file);
+  }
+  else
+  {
+    free (path);
+    fprintf (stderr, "ERROR: I can't found this path!\n");
+    return 0;
+  }
+
+  free (path);
+
+  return 1;
+}
+
 /* Print help. */
 static void
 print_info (void)
@@ -349,7 +409,10 @@ main (int argc, char **argv)
     /* Get a file from the disk */
     else if (!strcmp (mode, "get") && node)
     {
-      get_file (fosfat, node, path ? path : "./");
+      if (fosfat_isdir (fosfat, node))
+        get_dir (fosfat, node, path ? path : "./");
+      else
+        get_file (fosfat, node, path ? path : "./");
       free (node);
       free (path);
     }
