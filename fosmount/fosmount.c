@@ -48,7 +48,7 @@
 " -l --fos-logger       that will turn on the FOS logger\n" \
 " -d --fuse-debugger    that will turn on the FUSE debugger\n" \
 " -i --image-bmp        convert on the fly .IMAGE and .COLOR to .BMP\n" \
-" -t --text             convert on the fly .NEWS and .A-LIRE to .TXT\n" \
+" -t --text             convert on the fly some text files to .TXT\n" \
 " device                /dev/fd0 : floppy disk\n" \
 "                       /dev/sda : hard disk, etc\n" \
 " mountpoint            for example, /mnt/smaky\n" \
