@@ -368,7 +368,7 @@ fosgra_get_bmp_buffer (fosfat_t *fosfat, const char *path, size_t *size)
   img_buffer = fosgra_get_buffer (fosfat, path, 0, raw_size);
 
   if (bpp == 1)
-    create_bmp1_buffer (img_buffer, w, h, &out_buffer, size);
+    fosgra_bmp1_buffer (img_buffer, w, h, &out_buffer, size);
 
   if (bpp == 4)
   {
@@ -377,7 +377,7 @@ fosgra_get_bmp_buffer (fosfat_t *fosfat, const char *path, size_t *size)
     for (int idx = 0; idx < 16; ++idx)
       pal[idx] = fosgra_color_get (fosfat, path, idx);
 
-    create_bmp4_buffer (img_buffer, pal, w, h, &out_buffer, size);
+    fosgra_bmp4_buffer (img_buffer, pal, w, h, &out_buffer, size);
   }
 
   return out_buffer;
@@ -393,9 +393,9 @@ fosgra_get_bmp_size (fosfat_t *fosfat, const char *path)
   fosgra_get_info (fosfat, path, &w, &h, &bpp);
 
   if (bpp == 1)
-    return get_bmp1_size (w, h, &bpr, &pbpr, &hs);
+    return fosgra_bmp1_sizes (w, h, &bpr, &pbpr, &hs);
   if (bpp == 4)
-    return get_bmp4_size (w, h, &bpr, &is, &hs);
+    return fosgra_bmp4_sizes (w, h, &bpr, &is, &hs);
   return 0;
 }
 

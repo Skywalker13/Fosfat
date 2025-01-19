@@ -56,7 +56,7 @@ typedef struct {
 } __attribute__ ((packed)) rgb_quad_t;
 
 size_t
-get_bmp1_size (int width, int height, int *bpr, int *pbpr, int *header_size)
+fosgra_bmp1_sizes (int width, int height, int *bpr, int *pbpr, int *header_size)
 {
   *bpr  = (width + 7) / 8;    /* Number of bytes per row */
   *pbpr = (*bpr + 3) / 4 * 4; /* Alignment on 4 bytes */
@@ -83,14 +83,14 @@ bmp_fill_dib_header (bmp_info_header_t *bih,
 }
 
 void
-create_bmp1_buffer(const uint8_t *input,
+fosgra_bmp1_buffer(const uint8_t *input,
                    int width, int height, uint8_t **output, size_t *output_size)
 {
   int bpr;
   int pbpr;
   int header_size;
 
-  size_t bmp_size = get_bmp1_size (width, height, &bpr, &pbpr, &header_size);
+  size_t bmp_size = fosgra_bmp1_sizes (width, height, &bpr, &pbpr, &header_size);
 
   // Allocation du buffer BMP
   *output = (uint8_t *)malloc(bmp_size);
@@ -129,7 +129,7 @@ create_bmp1_buffer(const uint8_t *input,
 }
 
 size_t
-get_bmp4_size (int width, int height, int *bpr, int *image_size, int *header_size)
+fosgra_bmp4_sizes (int width, int height, int *bpr, int *image_size, int *header_size)
 {
   *bpr        = (width + 1) / 2; /* Number of bytes per row */
   *image_size = *bpr * height; /* Image size in bytes */
@@ -140,7 +140,7 @@ get_bmp4_size (int width, int height, int *bpr, int *image_size, int *header_siz
 }
 
 void
-create_bmp4_buffer(const uint8_t *input, const uint32_t *pal,
+fosgra_bmp4_buffer(const uint8_t *input, const uint32_t *pal,
                    int width, int height, uint8_t **output, size_t *output_size)
 {
   int bpr;
@@ -148,7 +148,7 @@ create_bmp4_buffer(const uint8_t *input, const uint32_t *pal,
   int header_size;
 
   size_t bmp_size =
-    get_bmp4_size (width, height, &bpr, &image_size, &header_size);
+    fosgra_bmp4_sizes (width, height, &bpr, &image_size, &header_size);
 
   // Allouer de la mémoire pour le buffer de sortie
   *output = (uint8_t *)malloc(bmp_size);
