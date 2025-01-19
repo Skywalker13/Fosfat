@@ -55,16 +55,6 @@ typedef struct {
   uint8_t reserved;
 } __attribute__ ((packed)) rgb_quad_t;
 
-size_t
-fosgra_bmp1_sizes (int width, int height, int *bpr, int *pbpr, int *header_size)
-{
-  *bpr  = (width + 7) / 8;    /* Number of bytes per row */
-  *pbpr = (*bpr + 3) / 4 * 4; /* Alignment on 4 bytes */
-  *header_size = sizeof(bmp_file_header_t)
-               + sizeof(bmp_info_header_t) + 2 * sizeof(rgb_quad_t);
-  return *header_size + *pbpr * height;
-}
-
 static void
 bmp_fill_header (bmp_file_header_t *bfh, size_t bmp_size, int header_size)
 {
@@ -92,6 +82,17 @@ bmp_fill_dib_header (bmp_info_header_t *bih,
   bih->clr_important    = 0;
 }
 
+size_t
+fosgra_bmp1_sizes (int width, int height,
+                   int *bpr, int *pbpr, int *header_size)
+{
+  *bpr  = (width + 7) / 8;    /* Number of bytes per row */
+  *pbpr = (*bpr + 3) / 4 * 4; /* Alignment on 4 bytes */
+  *header_size = sizeof(bmp_file_header_t)
+               + sizeof(bmp_info_header_t) + 2 * sizeof(rgb_quad_t);
+  return *header_size + *pbpr * height;
+}
+
 uint8_t *
 fosgra_bmp1_buffer (const uint8_t *input,
                     int width, int height, size_t *output_size)
@@ -101,7 +102,8 @@ fosgra_bmp1_buffer (const uint8_t *input,
   int header_size;
   uint8_t *output = NULL;
 
-  size_t bmp_size = fosgra_bmp1_sizes (width, height, &bpr, &pbpr, &header_size);
+  size_t bmp_size =
+    fosgra_bmp1_sizes (width, height, &bpr, &pbpr, &header_size);
 
   output = malloc (bmp_size);
   if (!output)
@@ -141,7 +143,8 @@ fosgra_bmp1_buffer (const uint8_t *input,
 }
 
 size_t
-fosgra_bmp4_sizes (int width, int height, int *bpr, int *image_size, int *header_size)
+fosgra_bmp4_sizes (int width, int height,
+                   int *bpr, int *image_size, int *header_size)
 {
   *bpr        = (width + 1) / 2; /* Number of bytes per row */
   *image_size = *bpr * height;   /* Image size in bytes */
