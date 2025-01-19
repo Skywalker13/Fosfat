@@ -63,17 +63,6 @@ static fosfat_t *fosfat;
 static int g_bmp = 0;
 
 
-static int
-count_nb_dec (int dec)
-{
-  int size = 1;
-
-  while (dec /= 10)
-    size++;
-
-  return size;
-}
-
 static char *
 trim_fosname (const char *path)
 {
