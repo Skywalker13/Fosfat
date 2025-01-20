@@ -301,7 +301,7 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
 {
   int ret = -ENOENT;
   char *location;
-  fosfat_file_t *files, *first_file;
+  fosfat_file_t *file, *first_file;
 
   (void) offset;
   (void) fi;
@@ -313,11 +313,11 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
   filler (buf, "..", NULL, 0, 0);
 
   /* Files and directories */
-  files = fosfat_list_dir (fosfat, location);
-  if (!files)
+  file = fosfat_list_dir (fosfat, location);
+  if (!file)
     goto out;
 
-  first_file = files;
+  first_file = file;
 
   do
   {
@@ -326,25 +326,25 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
     char *name;
     fosfat_ftype_t ftype = FOSFAT_FTYPE_OTHER;
 
-    snprintf (_path, sizeof (_path), "%s/%s", location, files->name);
-    st = in_stat (files, _path);
+    snprintf (_path, sizeof (_path), "%s/%s", location, file->name);
+    st = in_stat (file, _path);
 
-    ftype = fosfat_ftype (files->name);
+    ftype = fosfat_ftype (file->name);
 
     /* add identification for .IMAGE and .COLOR translated to BMP */
     if (g_bmp && ftype == FOSFAT_FTYPE_IMAGE && fosgra_is_image (fosfat, _path))
     {
-      name = calloc (1, strlen (files->name) + strlen (FLYID) + 6);
-      sprintf (name, "%s." FLYID ".bmp", files->name);
+      name = calloc (1, strlen (file->name) + strlen (FLYID) + 6);
+      sprintf (name, "%s." FLYID ".bmp", file->name);
     }
     /* add identification for text files translated to ISO-8859-1 */
     else if (g_txt && ftype == FOSFAT_FTYPE_TEXT)
     {
-      name = calloc (1, strlen (files->name) + strlen (FLYID) + 6);
-      sprintf (name, "%s." FLYID ".txt", files->name);
+      name = calloc (1, strlen (file->name) + strlen (FLYID) + 6);
+      sprintf (name, "%s." FLYID ".txt", file->name);
     }
     else
-      name = strdup (files->name);
+      name = strdup (file->name);
 
     if (strstr (name, ".dir"))
       *(name + strlen (name) - 4) = '\0';
@@ -354,7 +354,7 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
     free (st);
     free (name);
   }
-  while ((files = files->next_file));
+  while ((file = file->next_file));
 
   fosfat_free_listdir (first_file);
   ret = 0;
