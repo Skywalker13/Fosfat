@@ -1,4 +1,4 @@
-.\" 
+.\"
 .TH "FOSREAD" "1" "July 2009" "fosread" "User Commands"
 .SH "NAME"
 fosread \- FOS reader
@@ -7,40 +7,46 @@ fosread \- FOS reader
 [\fIoptions\fR] \fIdevice mode \fR[\fInode\fR] [\fIpath\fR]
 .SH "DESCRIPTION"
 Tool for a read\-only access on Smaky FOS.
-.TP 
+.TP
 \fB\-h\fR \fB\-\-help\fR
 Display help message.
-.TP 
+.TP
 \fB\-v\fR \fB\-\-version\fR
 Show version.
-.TP 
+.TP
 \fB\-a\fR \fB\-\-harddisk\fR
 Force an hard disk instead of the autodetection.
-.TP 
+.TP
 \fB\-f\fR \fB\-\-floppydisk\fR
 Force a floppy disk instead of the autodetection.
-.TP 
+.TP
 \fB\-l\fR \fB\-\-fos\-logger\fR
 Turn ON the FOS logger.
-.TP 
+.TP
 \fB\-u\fR \fB\-\-undelete\fR
 enable the undelete mode, even deleted files will be listed and sometimes restorable with \fBget\fR mode.
-.TP 
+.TP
+\fB\-i\fR \fB\-\-image\-bmp\fR
+Convert on the fly .IMAGE to .BMP (The BMP file format).
+.TP
+\fB\-t\fR \fB\-\-text\fR
+Convert on the fly some text files to .TXT (ISO-8859-1).
+.TP
 \fBdevice\fR
 /dev/fd0 for floppy disk
-.br 
+.br
 /dev/sda for hard disk, etc, ...
-.TP 
+.TP
 \fBmode\fR
 \fBlist\fR : list the content of a node
-.br 
+.br
 \fBget\fR  : copy a file from the Smaky disk in a local directory
-.TP 
+.TP
 \fBnode\fR
 The tree with the file (or folder) for \fBget\fR or \fBlist\fR.
-.br 
+.br
 example: foo/bar/toto.text
-.TP 
+.TP
 \fBpath\fR
 You can specify a path to save the file (with \fBget\fR mode).
 .SH "AUTHOR"
