@@ -246,31 +246,31 @@ static int
 get_dir (fosfat_t *fosfat, const char *loc, const char *dst)
 {
   char *path;
-  fosfat_file_t *files, *first_file;
+  fosfat_file_t *file, *first_file;
 
   if (strcmp (loc, "/") && fosfat_islink (fosfat, loc))
     path = fosfat_symlink (fosfat, loc);
   else
     path = strdup (loc);
 
-  if ((files = fosfat_list_dir (fosfat, path)))
+  if ((file = fosfat_list_dir (fosfat, path)))
   {
     char out[4096] = {0};
     char in[256]  = {0};
-    first_file = files;
+    first_file = file;
 
     do
     {
-      if (files->att.islink)
+      if (file->att.islink)
         continue;
 
-      if (files->name[0] == '.')
+      if (file->name[0] == '.')
         continue;
 
-      snprintf (in , sizeof (in),  "%s/%s", loc, files->name);
-      snprintf (out, sizeof (out), "%s/%s", dst, files->name);
+      snprintf (in , sizeof (in),  "%s/%s", loc, file->name);
+      snprintf (out, sizeof (out), "%s/%s", dst, file->name);
 
-      if (files->att.isdir)
+      if (file->att.isdir)
       {
         char *it = strrchr (out, '.');
         if (it)
@@ -280,12 +280,12 @@ get_dir (fosfat_t *fosfat, const char *loc, const char *dst)
       }
       else
       {
-        if (files->size > 0)
+        if (file->size > 0)
           get_file (fosfat, in, out);
         else
           fprintf (stderr, "WARNING: skip empty file (0 bytes)\n");
       }
-    } while ((files = files->next_file));
+    } while ((file = file->next_file));
 
     fosfat_free_listdir (first_file);
   }
