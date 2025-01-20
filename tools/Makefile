@@ -20,7 +20,7 @@ FOSDD_SRCS = fosdd.c
 FOSDD_OBJS = $(FOSDD_SRCS:.c=.o)
 FOSDD_MAN = $(FOSDD).1
 
-APPS_CPPFLAGS = -I../libfosfat $(CFG_CPPFLAGS) $(CPPFLAGS)
+APPS_CPPFLAGS = -I../libfosfat -I../libfosgra $(CFG_CPPFLAGS) $(CPPFLAGS)
 ifeq ($(BUILD_MINGW32),yes)
   STDCXX_LDFLAGS =
   ifeq ($(BUILD_STATIC),yes)
@@ -28,9 +28,9 @@ ifeq ($(BUILD_MINGW32),yes)
     STDCXX_LDFLAGS = -lstdc++
   endif
   endif
-  APPS_LDFLAGS = -L../libfosfat -L../libw32disk -lfosfat -lw32disk $(CFG_LDFLAGS) $(LDFLAGS) $(STDCXX_LDFLAGS)
+  APPS_LDFLAGS = -L../libfosfat -L../libfosgra -L../libw32disk -lfosfat -lfosgra -lw32disk $(CFG_LDFLAGS) $(LDFLAGS) $(STDCXX_LDFLAGS)
 else
-  APPS_LDFLAGS = -L../libfosfat -lfosfat $(CFG_LDFLAGS) $(LDFLAGS)
+  APPS_LDFLAGS = -L../libfosfat -L../libfosgra -lfosfat -lfosgra $(CFG_LDFLAGS) $(LDFLAGS)
 endif
 
 MANS = $(FOSREAD_MAN) $(SMASCII_MAN) $(FOSREC_MAN) $(FOSDD_MAN)

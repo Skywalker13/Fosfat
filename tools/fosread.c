@@ -29,6 +29,7 @@
 #include <sys/stat.h> /* mkdir */
 
 #include "fosfat.h"
+#include "fosgra.h"
 
 
 typedef struct ginfo {
@@ -57,7 +58,9 @@ typedef struct ginfo {
 " -f --floppydisk       force a floppy disk (default autodetect)\n" \
 " -l --fos-logger       that will turn on the FOS logger\n" \
 " -u --undelete         enable the undelete mode, even deleted files will\n" \
-"                       be listed and sometimes restorable with 'get' mode.\n\n" \
+"                       be listed and sometimes restorable with 'get' mode.\n" \
+" -i --image-bmp        convert .IMAGE and .COLOR to .BMP\n" \
+" -t --text             convert some text files to .TXT\n\n" \
 " device                " HELP_DEVICE \
 " mode\n" \
 "   list                list the content of a node\n" \
@@ -71,6 +74,12 @@ typedef struct ginfo {
 "\nPlease, report bugs to <mathieu@schroetersa.ch>.\n"
 
 #define VERSION_TEXT "fosread-" LIBFOSFAT_VERSION_STR "\n"
+
+
+#define FLYID "@"
+
+static int g_bmp = 0;
+static int g_txt = 0;
 
 
 static inline int
@@ -216,7 +225,8 @@ static int
 get_file (fosfat_t *fosfat, const char *path, const char *dst)
 {
   int res = 0;
-  char *new_file;
+  char *new_file, *name = NULL;
+  fosfat_ftype_t ftype = FOSFAT_FTYPE_OTHER;
 
   if (!strcasecmp (dst, "./"))
     new_file = strdup ((strrchr (path, '/') ? strrchr (path, '/') + 1 : path));
@@ -225,20 +235,83 @@ get_file (fosfat_t *fosfat, const char *path, const char *dst)
 
   if (!fosfat_islink (fosfat, path) && !fosfat_isdir (fosfat, path))
   {
-    printf ("File \"%s\" is copying ...\n", path);
+    FILE *fp = NULL;
+    uint8_t *buffer = NULL;
+    size_t size = 0;
+    int is_bmp = 0;
+    int is_txt = 0;
 
-    if (fosfat_get_file (fosfat, path, new_file, 1))
+    printf ("File \"%s\" is copying ...\n", path);
+    ftype = fosfat_ftype (path);
+
+    is_bmp = g_bmp && ftype == FOSFAT_FTYPE_IMAGE
+                   && fosgra_is_image (fosfat, path);
+    is_txt = g_txt && ftype == FOSFAT_FTYPE_TEXT;
+
+    if (is_bmp)
+    {
+      name = calloc (1, strlen (new_file) + strlen (FLYID) + 6);
+      sprintf (name, "%s." FLYID ".bmp", new_file);
+    }
+    else if (is_txt)
+    {
+      name = calloc (1, strlen (new_file) + strlen (FLYID) + 6);
+      sprintf (name, "%s." FLYID ".txt", new_file);
+    }
+    else
+      name = strdup (new_file);
+
+    if (is_bmp || is_txt)
+    {
+      fp = fopen (name, "wb");
+      if (!fp)
+      {
+        fprintf (stderr, "ERROR: I can't write file: %s\n", name);
+        goto out;
+      }
+    }
+
+    if (g_bmp && ftype == FOSFAT_FTYPE_IMAGE)
+      buffer = fosgra_bmp_get_buffer (fosfat, path, &size);
+
+    if (g_txt && ftype == FOSFAT_FTYPE_TEXT)
+    {
+      fosfat_file_t *file = fosfat_get_stat (fosfat, path);
+      size = file->size;
+      free (file);
+      buffer = fosfat_get_buffer (fosfat, path, 0, size);
+      fosfat_sma2iso8859 ((char *) buffer, size, FOSFAT_ASCII_LF);
+    }
+
+    if (fp && buffer)
+    {
+      size_t nb = fwrite (buffer, 1, size, fp);
+      if (nb == size)
+        res = 1;
+      else
+        fprintf (stderr, "ERROR: file is truncated: %s\n", name);
+    }
+
+    if (fp)
+      fclose (fp);
+    if (buffer)
+      free (buffer);
+
+    if (res == 0 && fosfat_get_file (fosfat, path, name, 1))
     {
       res = 1;
       printf ("Okay..\n");
     }
-    else
+    else if (res == 0)
       fprintf (stderr, "ERROR: I can't copy the file!\n");
   }
   else
     fprintf (stderr, "ERROR: I can't copy a directory or a link!\n");
 
+out:
   free (new_file);
+  if (name)
+    free (name);
   return res;
 }
 
@@ -325,7 +398,7 @@ main (int argc, char **argv)
   fosfat_t *fosfat;
   global_info_t *ginfo = NULL;
 
-  const char *const short_options = "afhluv";
+  const char *const short_options = "afhluitv";
 
   const struct option long_options[] = {
     { "harddisk",     no_argument, NULL, 'a' },
@@ -333,6 +406,8 @@ main (int argc, char **argv)
     { "help",         no_argument, NULL, 'h' },
     { "fos-logger",   no_argument, NULL, 'l' },
     { "undelete",     no_argument, NULL, 'u' },
+    { "image-bmp",    no_argument, NULL, 'i' },
+    { "text",         no_argument, NULL, 't' },
     { "version",      no_argument, NULL, 'v' },
     { NULL,           0,           NULL,  0  }
   };
@@ -363,6 +438,12 @@ main (int argc, char **argv)
     case 'u':           /* -u or --undelete */
       undelete = 1;
       break ;
+    case 'i':           /* -i or --image-bmp */
+      g_bmp = 1;
+      break ;
+    case 't':           /* -t or --text */
+      g_txt = 1;
+      break;
     case -1:            /* end */
       break ;
     }
