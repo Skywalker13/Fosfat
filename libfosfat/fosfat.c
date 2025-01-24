@@ -2258,7 +2258,9 @@ fosfat_open (const char *dev, fosfat_disk_t disk, unsigned int flag)
     break;
 
   case FOSFAT_ED:
-    foslog (FOSLOG_ERROR, "disk auto detection for \"%s\" has failed", dev);
+    foslog (FOSLOG_ERROR,
+            "disk auto detection for \"%s\" has failed; you can try to specify"
+            " (force) the disk type", dev);
 
   default:
     goto err;
