@@ -27,6 +27,15 @@ this action must be performed by 'fosread'.
 Look the help with each application for the command line. Or look on the
 website.
 
+This project supports FOS formatted disk used by the Smaky 8, Smaky 100,
+and more. The SAMOS support for Smaky 6 formatted disks is in progress.
+About the FOS disks, a tool (fosdd) can be used to convert a disk image
+to a floppy image and vice-versa. It can be very useful to convert a disk
+image to floppy image if you want to mount the image with the Smaky Infini.
+
+Fosfat includes an image library named Fosgra (libfosgra) which can be used
+to convert .IMAGE and .COLOR files to usual BMP file format.
+
 
 BUILD
 ~~~~~
