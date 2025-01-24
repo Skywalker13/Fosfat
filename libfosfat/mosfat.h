@@ -22,6 +22,10 @@
 #ifndef MOSFAT_H
 #define MOSFAT_H
 
+/** Mosfat handle on a disk. */
+typedef struct mosfat_s mosfat_t;
 
+mosfat_t *mosfat_open (const char *dev);
+void mosfat_close (mosfat_t *mosfat);
 
 #endif /* MOSFAT_H */

@@ -19,7 +19,14 @@
  *
  */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <inttypes.h>
+
+#include "mosfat.h"
+
+
+#define MOSFAT_DEV            void
 
 /*
  * File entry size : 24 bytes
@@ -64,3 +71,45 @@ typedef struct mosfat_file_s {
 typedef struct mosfat_directory_s {
   mosfat_file_t files[32];
 } __attribute__ ((__packed__)) mosfat_directory_t;
+
+/* Main mosfat structure */
+struct mosfat_s {
+  MOSFAT_DEV  *dev;            /* file disk image or physical device    */
+  int          isfile;         /* if it's a file                        */
+};
+
+
+/*
+ * Open the device.
+ *
+ * That hides the fopen processing.
+ *
+ * dev          the device name
+ * return the device handle
+ */
+mosfat_t *
+mosfat_open (const char *dev)
+{
+  return NULL;
+}
+
+/*
+ * Close the device.
+ *
+ * That hides the fclose processing.
+ *
+ * mosfat       handle
+ */
+void
+mosfat_close(mosfat_t *mosfat)
+{
+  if (!mosfat)
+    return;
+
+  // foslog (FOSLOG_NOTICE, "device is closing ...");
+
+  if (mosfat->dev)
+    fclose (mosfat->dev);
+
+  free (mosfat);
+}
