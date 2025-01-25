@@ -24,6 +24,7 @@
 #include <inttypes.h>
 
 #include "mosfat.h"
+#include "fosfat_internal.h"
 
 
 #define MOSFAT_DEV            void
@@ -90,6 +91,26 @@ struct mosfat_s {
 mosfat_t *
 mosfat_open (const char *dev)
 {
+  mosfat_t *mosfat = NULL;
+
+  if (!dev)
+    return NULL;
+
+  mosfat = calloc (1, sizeof (mosfat_t));
+  if (!mosfat)
+    return NULL;
+
+  mosfat->isfile = 1;
+  mosfat->dev = fopen (dev, "rb");
+  if (!mosfat->dev)
+    goto err_dev;
+
+  foslog (FOSLOG_NOTICE, "mosfat is ready");
+
+  return mosfat;
+
+ err_dev:
+  free (mosfat);
   return NULL;
 }
 
@@ -106,7 +127,7 @@ mosfat_close(mosfat_t *mosfat)
   if (!mosfat)
     return;
 
-  // foslog (FOSLOG_NOTICE, "device is closing ...");
+  foslog (FOSLOG_NOTICE, "device is closing ...");
 
   if (mosfat->dev)
     fclose (mosfat->dev);
