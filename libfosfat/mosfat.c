@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
+#include "fosfat.h"
 #include "mosfat.h"
 #include "fosfat_internal.h"
 
