@@ -119,6 +119,7 @@ mosfat_read_dr (mosfat_t *mosfat, uint16_t block)
     return dr;
 
   free (dr);
+  return NULL;
 }
 
 /*
