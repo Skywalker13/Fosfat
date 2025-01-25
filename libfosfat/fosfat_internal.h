@@ -33,6 +33,7 @@
 
 /* Block size (256 bytes) */
 #define FOSFAT_BLK      256
+#define MOSFAT_BLK      256
 
 /* Data Block (256 bytes) */
 typedef struct block_data_s {
@@ -47,6 +48,8 @@ typedef enum foslog {
   FOSLOG_WARNING,              /* Warning log                           */
   FOSLOG_NOTICE                /* Notice log                            */
 } foslog_t;
+
+typedef struct fosfat_s fosfat_t;
 
 
 fosfat_data_t *fosfat_read_d (fosfat_t *fosfat, uint32_t block);

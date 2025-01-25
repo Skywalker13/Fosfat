@@ -51,8 +51,8 @@
  * |____EXT____|___BBLOC___|___EBLOC___|_ATT_|_OPEN|
  * |VALID|___BEGIN___|___START___|_DAY_|MONTH|_YEAR|
  */
-typedef struct mosfat_file_s {
-  uint8_t  name[8];    /* ASCII file name               */
+typedef struct mosfat_f_s {
+  int8_t   name[8];    /* ASCII file name               */
   uint8_t  ext[2];     /* ASCII file extension          */
   uint16_t bbloc;      /* Bloc where begin the file     */
   uint16_t ebloc;      /* End bloc of the file          */
@@ -64,21 +64,61 @@ typedef struct mosfat_file_s {
   uint16_t day;        /* Date (day)                    */
   uint16_t month;      /* Date (month)                  */
   uint16_t year;       /* Date (year)                   */
-} __attribute__ ((__packed__)) mosfat_file_t;
+} __attribute__ ((__packed__)) mosfat_f_t;
 
 /*
  * Directory : 768 bytes
  */
-typedef struct mosfat_directory_s {
-  mosfat_file_t files[32];
-} __attribute__ ((__packed__)) mosfat_directory_t;
+typedef struct mosfat_dr_s {
+  mosfat_f_t files[32];
+} __attribute__ ((__packed__)) mosfat_dr_t;
 
 /* Main mosfat structure */
 struct mosfat_s {
-  MOSFAT_DEV  *dev;            /* file disk image or physical device    */
-  int          isfile;         /* if it's a file                        */
+  MOSFAT_DEV *dev;            /* file disk image or physical device    */
+  int         isfile;         /* if it's a file                        */
 };
 
+
+/*
+ * Translate a block number to an address.
+ *
+ * block        the block's number given by the disk
+ * fosboot      offset in the MOS address
+ * return the address of this block on the disk
+ */
+static inline uint16_t
+blk2add (uint16_t block)
+{
+  return (block * MOSFAT_BLK);
+}
+
+static void *
+mosfat_read_dr (mosfat_t *mosfat, uint16_t block)
+{
+  mosfat_dr_t *dr;
+  int read = 0;
+
+  if (!mosfat || !mosfat->dev)
+    return NULL;
+
+  /* Move the pointer on the block */
+  if (fseek (mosfat->dev, blk2add (block), SEEK_SET))
+    return NULL;
+
+
+  dr = malloc (sizeof (mosfat_dr_t));
+  if (!dr)
+    return NULL;
+
+  read = fread ((mosfat_dr_t *) dr,
+                1, (size_t) sizeof (mosfat_dr_t), mosfat->dev)
+         == (size_t) sizeof (mosfat_dr_t);
+  if (read)
+    return dr;
+
+  free (dr);
+}
 
 /*
  * Open the device.

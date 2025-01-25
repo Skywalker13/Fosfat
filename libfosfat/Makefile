@@ -39,10 +39,12 @@ else
 endif
 
 SRCS =	fosfat.c \
+	mosfat.c \
 	ascii.c \
 
 EXTRADIST = \
 	fosfat.h \
+	mosfat.h \
 
 OBJS = $(SRCS:.c=.o)
 

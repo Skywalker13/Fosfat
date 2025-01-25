@@ -294,6 +294,39 @@ uint8_t *fosfat_get_buffer (fosfat_t *fosfat,
 
 /******************************************************************************/
 
+#define MOSFAT_NAMELGT  12
+
+/** Time. */
+typedef struct {
+  short int year;
+  short int month;
+  short int day;
+} mosfat_time_t;
+
+/** Attributes for a file (or dir).*/
+typedef struct {
+  int isdir : 1;
+} mosfat_att_t;
+
+/** List of files in a directory. */
+typedef struct mfile_info_s {
+  char name[MOSFAT_NAMELGT];  /*!< File name.         */
+  int size;                   /*!< File size.         */
+  mosfat_att_t att;           /*!< File attributes.   */
+  mosfat_time_t time;         /*!< File date.         */
+  /* Linked list */
+  struct mfile_info_s *next_file;
+} mosfat_file_t;
+
+/** Mosfat handle on a disk. */
+typedef struct mosfat_s mosfat_t;
+
+
+mosfat_t *mosfat_open (const char *dev);
+void mosfat_close (mosfat_t *mosfat);
+
+/******************************************************************************/
+
 /** New line */
 typedef enum fostfat_newline {
   FOSFAT_ASCII_CR = 0x0D,       /*!< Carriage Return (Old Mac)   */
