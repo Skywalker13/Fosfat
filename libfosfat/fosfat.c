@@ -73,13 +73,6 @@ typedef enum search_type {
   S_BLF                        /* Search BL File                        */
 } fosfat_search_t;
 
-/* foslog type */
-typedef enum foslog {
-  FOSLOG_ERROR,                /* Error log                             */
-  FOSLOG_WARNING,              /* Warning log                           */
-  FOSLOG_NOTICE                /* Notice log                            */
-} foslog_t;
-
 /* Block 0 (256 bytes) */
 typedef struct block_0_s {
   uint8_t sys[44];             /* SYSTEM folder                         */
@@ -405,7 +398,7 @@ fosfat_logger (int state)
 /*
  * Print function for the internal FOS logger.
  */
-static void
+void
 foslog (foslog_t type, const char *msg, ...)
 {
   va_list va;

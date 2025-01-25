@@ -41,7 +41,15 @@ typedef struct block_data_s {
   struct  block_data_s *next_data;
 } fosfat_data_t;
 
+/* foslog type */
+typedef enum foslog {
+  FOSLOG_ERROR,                /* Error log                             */
+  FOSLOG_WARNING,              /* Warning log                           */
+  FOSLOG_NOTICE                /* Notice log                            */
+} foslog_t;
+
 
 fosfat_data_t *fosfat_read_d (fosfat_t *fosfat, uint32_t block);
+void foslog (foslog_t type, const char *msg, ...);
 
 #endif /* FOSFAT_H */
