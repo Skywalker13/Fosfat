@@ -73,7 +73,7 @@ my_mkdir (const char *pathname)
 static void
 print_date (mosfat_time_t *time)
 {
-  printf (" %4i-%02i-%02i", time->year, time->month, time->day);
+  printf (" %02x-%02x-%02x", time->year, time->month, time->day);
 }
 
 /*
@@ -119,10 +119,8 @@ list_dir (mosfat_t *mosfat, const char *loc)
   {
     first_file = files;
     printf ("path: %s\n\n", path);
-    printf ("        size creation         last change");
-    printf ("      last view        filename\n");
-    printf ("        ---- --------         -----------");
-    printf ("      ---------        --------\n");
+    printf ("      size date     filename\n");
+    printf ("      ---- -------- --------\n");
 
     do
     {
