@@ -37,8 +37,6 @@
 #include "fosfat.h"
 #include "fosfat_internal.h"
 
-#define MAX_SPLIT             64
-
 #define FOSFAT_NBL            4
 #define FOSFAT_Y2K            70
 

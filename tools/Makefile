@@ -7,6 +7,10 @@ FOSREAD = fosread
 FOSREAD_SRCS = fosread.c
 FOSREAD_OBJS = $(FOSREAD_SRCS:.c=.o)
 FOSREAD_MAN = $(FOSREAD).1
+MOSREAD = mosread
+MOSREAD_SRCS = mosread.c
+MOSREAD_OBJS = $(MOSREAD_SRCS:.c=.o)
+MOSREAD_MAN =
 SMASCII = smascii
 SMASCII_SRCS = smascii.c
 SMASCII_OBJS = $(SMASCII_SRCS:.c=.o)
@@ -33,7 +37,7 @@ else
   APPS_LDFLAGS = -L../libfosfat -L../libfosgra -lfosfat -lfosgra $(CFG_LDFLAGS) $(LDFLAGS)
 endif
 
-MANS = $(FOSREAD_MAN) $(SMASCII_MAN) $(FOSREC_MAN) $(FOSDD_MAN)
+MANS = $(FOSREAD_MAN) $(MOSREAD_MAN) $(SMASCII_MAN) $(FOSREC_MAN) $(FOSDD_MAN)
 
 EXTRADIST = \
 	$(MANS)
@@ -47,6 +51,8 @@ all: apps
 
 $(FOSREAD): $(FOSREAD_OBJS)
 	$(CC) $(FOSREAD_OBJS) $(APPS_LDFLAGS) -o $(FOSREAD)
+$(MOSREAD): $(MOSREAD_OBJS)
+	$(CC) $(MOSREAD_OBJS) $(APPS_LDFLAGS) -o $(MOSREAD)
 $(SMASCII): $(SMASCII_OBJS)
 	$(CC) $(SMASCII_OBJS) $(APPS_LDFLAGS) -o $(SMASCII)
 $(FOSREC): $(FOSREC_OBJS)
@@ -56,11 +62,12 @@ $(FOSDD): $(FOSDD_OBJS)
 
 apps-dep:
 	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(FOSREAD_SRCS) 1>.depend
+	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(MOSREAD_SRCS) 1>>.depend
 	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(SMASCII_SRCS) 1>>.depend
 	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(FOSREC_SRCS) 1>>.depend
 	$(CC) -MM $(CFLAGS) $(APPS_CPPFLAGS) $(FOSDD_SRCS) 1>>.depend
 
-apps-all: $(FOSREAD) $(SMASCII) $(FOSREC) $(FOSDD)
+apps-all: $(FOSREAD) $(MOSREAD) $(SMASCII) $(FOSREC) $(FOSDD)
 
 apps: apps-dep
 	$(MAKE) apps-all
@@ -68,6 +75,7 @@ apps: apps-dep
 clean:
 	rm -f *.o
 	rm -f $(FOSREAD)
+	rm -f $(MOSREAD)
 	rm -f $(SMASCII)
 	rm -f $(FOSREC)
 	rm -f $(FOSDD)
@@ -78,6 +86,7 @@ install: install-apps install-man
 install-apps: apps
 	$(INSTALL) -d $(bindir)
 	$(INSTALL) -c -m 755 $(FOSREAD) $(bindir)
+	$(INSTALL) -c -m 755 $(MOSREAD) $(bindir)
 	$(INSTALL) -c -m 755 $(SMASCII) $(bindir)
 	$(INSTALL) -c -m 755 $(FOSREC) $(bindir)
 	$(INSTALL) -c -m 755 $(FOSDD) $(bindir)
@@ -93,6 +102,7 @@ uninstall: uninstall-apps uninstall-man
 
 uninstall-apps:
 	rm -f $(bindir)/$(FOSREAD)
+	rm -f $(bindir)/$(MOSREAD)
 	rm -f $(bindir)/$(SMASCII)
 	rm -f $(bindir)/$(FOSREC)
 	rm -f $(bindir)/$(FOSDD)
@@ -106,7 +116,7 @@ uninstall-man:
 .PHONY: *clean *install* apps*
 
 dist-all:
-	cp $(EXTRADIST) $(FOSREAD_SRCS) $(SMASCII_SRCS) $(FOSREC_SRCS) $(FOSDD_SRCS) Makefile $(DIST)
+	cp $(EXTRADIST) $(FOSREAD_SRCS) $(MOSREAD_SRCS) $(SMASCII_SRCS) $(FOSREC_SRCS) $(FOSDD_SRCS) Makefile $(DIST)
 
 .PHONY: dist dist-all
 

@@ -21,10 +21,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <inttypes.h>
 
 #include "fosfat.h"
-#include "mosfat.h"
 #include "fosfat_internal.h"
 
 
@@ -62,9 +62,9 @@ typedef struct mosfat_f_s {
   uint8_t  valid;      /* Valid bytes in the last bloc  */
   uint16_t begin;      /* Memory position               */
   uint16_t start;      /* Start address                 */
-  uint16_t day;        /* Date (day)                    */
-  uint16_t month;      /* Date (month)                  */
-  uint16_t year;       /* Date (year)                   */
+  uint8_t  day;        /* Date (day)                    */
+  uint8_t  month;      /* Date (month)                  */
+  uint8_t  year;       /* Date (year)                   */
 } __attribute__ ((__packed__)) mosfat_f_t;
 
 /*
@@ -94,7 +94,7 @@ blk2add (uint16_t block)
   return (block * MOSFAT_BLK);
 }
 
-static void *
+static mosfat_dr_t *
 mosfat_read_dr (mosfat_t *mosfat, uint16_t block)
 {
   mosfat_dr_t *dr;
@@ -106,7 +106,6 @@ mosfat_read_dr (mosfat_t *mosfat, uint16_t block)
   /* Move the pointer on the block */
   if (fseek (mosfat->dev, blk2add (block), SEEK_SET))
     return NULL;
-
 
   dr = malloc (sizeof (mosfat_dr_t));
   if (!dr)
@@ -120,6 +119,102 @@ mosfat_read_dr (mosfat_t *mosfat, uint16_t block)
 
   free (dr);
   return NULL;
+}
+
+mosfat_file_t *
+mosfat_list_dir (mosfat_t *mosfat, const char *location)
+{
+  int nb = 0;
+  char *tmp, *path;
+  char dir[MAX_SPLIT][MOSFAT_NAMELGT];
+  const mosfat_dr_t *dr;
+  mosfat_file_t *first = NULL;
+  mosfat_file_t *file = NULL;
+
+  if (!mosfat || !location)
+    return NULL;
+
+  /* Read the first directory */
+  dr = mosfat_read_dr (mosfat, 0);
+  if (!dr)
+    return NULL;
+
+  /* If location is "" or "/" then it's the first block */
+  //if (location[0] == '\0' || (location[0] == '/' && location[1] == '\0'))
+
+  path = strdup (location);
+
+  /* Split the path into a table */
+  if ((tmp = strtok ((char *) path, "/")))
+  {
+    snprintf (dir[nb], sizeof (dir[nb]), "%s", tmp);
+    while ((tmp = strtok (NULL, "/")) && nb < MAX_SPLIT - 1)
+      snprintf (dir[++nb], sizeof (dir[nb]), "%s", tmp);
+  }
+  else
+    snprintf (dir[nb], sizeof (dir[nb]), "%s", path);
+  nb++;
+
+  /* Loop for all directories in the path */
+  for (int i = 0; dr && i < nb; i++)
+    for (size_t j = 0; j < countof (dr->files); ++j)
+    {
+      char lname[8] = {0};
+      char name[MOSFAT_NAMELGT] = {0};
+      char *it;
+      char ext[3] = {0};
+      const mosfat_f_t *f = &dr->files[j];
+      if (f->name[0] == '\0')
+        continue;
+
+      it = strchr ((char *) f->name, ' ');
+      if (!it)
+        it = strchr ((char *) f->name, '\r');
+      if (!it)
+        it = strchr ((char *) f->name, '\t');
+      if (!it)
+        it = strchr ((char *) f->name, '/');
+      if (!it)
+        it = strchr ((char *) f->name, '\0');
+      if (!it)
+        it = strchr ((char *) f->name, '[');
+      // FIXME: it == NULL
+      memcpy (lname, f->name, it - (char *) f->name);
+
+      ext[0] = f->ext[0];
+      ext[1] = f->ext[1];
+      snprintf (name, sizeof (name), "%s.%s", lname, ext);
+
+      if (!strcasecmp (name, dir[i]))
+      {
+        dr = mosfat_read_dr (mosfat, f->bbloc);
+        break;
+      }
+
+      if (i < nb - 1)
+        continue;
+
+      if (file)
+      {
+        file->next_file = calloc (1, sizeof (mosfat_file_t));
+        file = file->next_file;
+      }
+      else
+        file = calloc (1, sizeof (mosfat_file_t));
+      // FIXME: file == NULL
+
+      snprintf (file->name, sizeof (file->name), "%s", name);
+      file->size = (f->ebloc - f->bbloc) * MOSFAT_BLK - f->valid;
+      file->time.year  = f->year;  // FIXME: convert to HEX
+      file->time.month = f->month; // FIXME: convert to HEX
+      file->time.day   = f->day;   // FIXME: convert to HEX
+
+      if (!first)
+        first = file;
+    }
+
+  free (path);
+  return first;
 }
 
 /*

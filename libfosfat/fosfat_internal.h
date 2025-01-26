@@ -35,6 +35,8 @@
 #define FOSFAT_BLK      256
 #define MOSFAT_BLK      256
 
+#define MAX_SPLIT             64
+
 /* Data Block (256 bytes) */
 typedef struct block_data_s {
   uint8_t data[256];           /* Data                                  */
@@ -48,6 +50,8 @@ typedef enum foslog {
   FOSLOG_WARNING,              /* Warning log                           */
   FOSLOG_NOTICE                /* Notice log                            */
 } foslog_t;
+
+#define countof(array) (sizeof (array) / sizeof (array[0]))
 
 
 fosfat_data_t *fosfat_read_d (fosfat_t *fosfat, uint32_t block);

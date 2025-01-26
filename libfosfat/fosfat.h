@@ -324,6 +324,7 @@ typedef struct mosfat_s mosfat_t;
 
 mosfat_t *mosfat_open (const char *dev);
 void mosfat_close (mosfat_t *mosfat);
+mosfat_file_t *mosfat_list_dir (mosfat_t *mosfat, const char *location);
 
 /******************************************************************************/
 
