@@ -216,6 +216,7 @@ mosfat_list_dir (mosfat_t *mosfat, const char *location)
       file->time.year  = hex2int (f->year);
       file->time.month = hex2int (f->month);
       file->time.day   = hex2int (f->day);
+      file->att.isdir = ext[0] == 'D' && ext[1] == 'R';
 
       if (!first)
         first = file;
