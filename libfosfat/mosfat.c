@@ -121,6 +121,14 @@ mosfat_read_dr (mosfat_t *mosfat, uint16_t block)
   return NULL;
 }
 
+static inline int
+hex2int (uint8_t hex)
+{
+  int high = (hex >> 4) * 10;
+  int low = hex & 0x0F;
+  return high + low;
+}
+
 mosfat_file_t *
 mosfat_list_dir (mosfat_t *mosfat, const char *location)
 {
@@ -205,9 +213,9 @@ mosfat_list_dir (mosfat_t *mosfat, const char *location)
 
       snprintf (file->name, sizeof (file->name), "%s", name);
       file->size = (f->ebloc - f->bbloc) * MOSFAT_BLK - f->valid;
-      file->time.year  = f->year;  // FIXME: convert to HEX
-      file->time.month = f->month; // FIXME: convert to HEX
-      file->time.day   = f->day;   // FIXME: convert to HEX
+      file->time.year  = hex2int (f->year);
+      file->time.month = hex2int (f->month);
+      file->time.day   = hex2int (f->day);
 
       if (!first)
         first = file;

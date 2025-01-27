@@ -73,7 +73,7 @@ my_mkdir (const char *pathname)
 static void
 print_date (mosfat_time_t *time)
 {
-  printf (" %02x-%02x-%02x", time->year, time->month, time->day);
+  printf (" %02u-%02u-%02u", time->year, time->month, time->day);
 }
 
 /*
