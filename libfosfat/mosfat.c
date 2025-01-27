@@ -212,7 +212,7 @@ mosfat_list_dir (mosfat_t *mosfat, const char *location)
       // FIXME: file == NULL
 
       snprintf (file->name, sizeof (file->name), "%s", name);
-      file->size = (f->ebloc - f->bbloc) * MOSFAT_BLK - f->valid;
+      file->size = (f->ebloc - 1 - f->bbloc) * MOSFAT_BLK + f->valid;
       file->time.year  = hex2int (f->year);
       file->time.month = hex2int (f->month);
       file->time.day   = hex2int (f->day);
