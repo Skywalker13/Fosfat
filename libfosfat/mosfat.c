@@ -62,9 +62,9 @@ typedef struct mosfat_f_s {
   uint8_t  valid;      /* Valid bytes in the last bloc  */
   uint16_t begin;      /* Memory position               */
   uint16_t start;      /* Start address                 */
-  uint8_t  day;        /* Date (day)                    */
-  uint8_t  month;      /* Date (month)                  */
-  uint8_t  year;       /* Date (year)                   */
+  uint8_t  day;        /* Creation date (day)           */
+  uint8_t  month;      /* Creation date (month)         */
+  uint8_t  year;       /* Creation date (year)          */
 } __attribute__ ((__packed__)) mosfat_f_t;
 
 /*
