@@ -126,7 +126,8 @@ hex2int (uint8_t hex)
 {
   int high = (hex >> 4) * 10;
   int low = hex & 0x0F;
-  return high + low;
+  int res = high + low;
+  return res > 99 ? 0 : res;
 }
 
 mosfat_file_t *
