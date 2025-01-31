@@ -176,7 +176,9 @@ mosfat_list_dr (mosfat_t *mosfat,
       ext[1] = f->ext[1];
       snprintf (name, sizeof (name), "%s.%s", lname, ext);
 
-      if (!strcasecmp (name, dir[i]))
+      if (!strcasecmp (name, dir[i])
+          && ((ext[0] == 'D' && ext[1] == 'R')
+           || (ext[0] == 'd' && ext[1] == 'r')))
         return mosfat_list_dr (mosfat, dir, i + 1, nb + 1, f->bbloc);
 
       if (i < nb - 1)
