@@ -130,44 +130,25 @@ hex2int (uint8_t hex)
 }
 
 mosfat_file_t *
-mosfat_list_dir (mosfat_t *mosfat, const char *location)
+mosfat_list_dr (mosfat_t *mosfat,
+                 const char dir[MAX_SPLIT][MOSFAT_NAMELGT], int iterator, int nb, uint16_t block)
 {
-  int nb = 0;
-  char *tmp, *path;
-  char dir[MAX_SPLIT][MOSFAT_NAMELGT];
   const mosfat_dr_t *dr;
   mosfat_file_t *first = NULL;
   mosfat_file_t *file = NULL;
 
-  if (!mosfat || !location)
+  if (!mosfat || !dir)
     return NULL;
 
-  /* Read the first directory */
-  dr = mosfat_read_dr (mosfat, 0);
+  dr = mosfat_read_dr (mosfat, block);
   if (!dr)
     return NULL;
 
-  /* If location is "" or "/" then it's the first block */
-  //if (location[0] == '\0' || (location[0] == '/' && location[1] == '\0'))
-
-  path = strdup (location);
-
-  /* Split the path into a table */
-  if ((tmp = strtok ((char *) path, "/")))
-  {
-    snprintf (dir[nb], sizeof (dir[nb]), "%s", tmp);
-    while ((tmp = strtok (NULL, "/")) && nb < MAX_SPLIT - 1)
-      snprintf (dir[++nb], sizeof (dir[nb]), "%s", tmp);
-  }
-  else
-    snprintf (dir[nb], sizeof (dir[nb]), "%s", path);
-  nb++;
-
   /* Loop for all directories in the path */
-  for (int i = 0; dr && i < nb; i++)
+  for (int i = iterator; dr && i < nb; i++)
     for (size_t j = 0; j < countof (dr->files); ++j)
     {
-      char lname[8] = {0};
+      char lname[9] = {0};
       char name[MOSFAT_NAMELGT] = {0};
       char *it;
       char ext[3] = {0};
@@ -175,18 +156,19 @@ mosfat_list_dir (mosfat_t *mosfat, const char *location)
       if (f->name[0] == '\0')
         continue;
 
-      it = strchr ((char *) f->name, ' ');
+      it = memchr (f->name, ' ', sizeof (f->name));
       if (!it)
-        it = strchr ((char *) f->name, '\r');
+        it = memchr (f->name, '\r', sizeof (f->name));
       if (!it)
-        it = strchr ((char *) f->name, '\t');
+        it = memchr (f->name, '\t', sizeof (f->name));
       if (!it)
-        it = strchr ((char *) f->name, '/');
+        it = memchr (f->name, '/', sizeof (f->name));
       if (!it)
-        it = strchr ((char *) f->name, '\0');
+        it = memchr (f->name, '\0', sizeof (f->name));
       if (!it)
-        it = strchr ((char *) f->name, '[');
-      // FIXME: it == NULL
+        it = memchr (f->name, '[', sizeof (f->name));
+      if (!it)
+        it = (char *) f->name + sizeof (f->name);
       memcpy (lname, f->name, it - (char *) f->name);
 
       ext[0] = f->ext[0];
@@ -194,10 +176,7 @@ mosfat_list_dir (mosfat_t *mosfat, const char *location)
       snprintf (name, sizeof (name), "%s.%s", lname, ext);
 
       if (!strcasecmp (name, dir[i]))
-      {
-        dr = mosfat_read_dr (mosfat, f->bbloc);
-        break;
-      }
+        return mosfat_list_dr (mosfat, dir, i + 1, nb + 1, f->bbloc);
 
       if (i < nb - 1)
         continue;
@@ -222,8 +201,34 @@ mosfat_list_dir (mosfat_t *mosfat, const char *location)
         first = file;
     }
 
-  free (path);
   return first;
+}
+
+mosfat_file_t *
+mosfat_list_dir (mosfat_t *mosfat, const char *location)
+{
+  int nb = 0;
+  char *tmp, *path;
+  char dir[MAX_SPLIT][MOSFAT_NAMELGT];
+
+  if (!mosfat || !location)
+    return NULL;
+
+  /* If location is "" or "/" then it's the first block */
+  //if (location[0] == '\0' || (location[0] == '/' && location[1] == '\0'))
+
+  /* Split the path into a table */
+  if ((tmp = strtok ((char *) location, "/")))
+  {
+    snprintf (dir[nb], sizeof (dir[nb]), "%s", tmp);
+    while ((tmp = strtok (NULL, "/")) && nb < MAX_SPLIT - 1)
+      snprintf (dir[++nb], sizeof (dir[nb]), "%s", tmp);
+  }
+  else
+    snprintf (dir[nb], sizeof (dir[nb]), "%s", location);
+  nb++;
+
+  return mosfat_list_dr (mosfat, dir, 0, nb, 0);
 }
 
 /*
