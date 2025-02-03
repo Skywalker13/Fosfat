@@ -122,7 +122,7 @@ mosfat_read_dr (mosfat_t *mosfat, uint16_t block)
 }
 
 static inline int
-hex2int (uint8_t hex)
+bcd2int (uint8_t hex)
 {
   int high = (hex >> 4) * 10;
   int low = hex & 0x0F;
@@ -195,9 +195,9 @@ mosfat_list_dr (mosfat_t *mosfat,
 
       snprintf (file->name, sizeof (file->name), "%s", name);
       file->size = (f->ebloc - 1 - f->bbloc) * MOSFAT_BLK + f->valid;
-      file->time.year  = hex2int (f->year);
-      file->time.month = hex2int (f->month);
-      file->time.day   = hex2int (f->day);
+      file->time.year  = bcd2int (f->year);
+      file->time.month = bcd2int (f->month);
+      file->time.day   = bcd2int (f->day);
       file->att.isdir = ext[0] == 'D' && ext[1] == 'R';
 
       if (!first)
