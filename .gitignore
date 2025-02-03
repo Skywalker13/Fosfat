@@ -8,7 +8,7 @@ config.log
 config.mak
 fosmount/fosmount
 tools/fosdd
-tools/fosread
+tools/[fm]osread
 tools/fosrec
 tools/smascii
 DOCS/doxygen
