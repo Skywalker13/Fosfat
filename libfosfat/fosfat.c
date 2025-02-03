@@ -284,27 +284,6 @@ lc (char *data)
 }
 
 /*
- * Hex to dec convertion.
- *
- * Convert an integer in base 10 with the value shown in base 16, in an
- * integer with the value shown in base 10.
- *
- * val          the value
- * return the new integer
- */
-static int
-h2d (int val)
-{
-  char conv[16];
-  int res = 0;
-
-  snprintf (conv, sizeof (conv), "%X", val);
-  res = atoi (conv);
-
-  return res;
-}
-
-/*
  * Convert the year to y2k.
  *
  * y            year on two digits
@@ -1672,26 +1651,26 @@ fosfat_stat (fosfat_blf_t *file)
   stat->att.isdel     = !fosfat_in_isnotdel (file);
 
   /* Creation date */
-  stat->time_c.year   = y2k (h2d (file->cd[2]));
-  stat->time_c.month  = h2d (file->cd[1]);
-  stat->time_c.day    = h2d (file->cd[0]);
-  stat->time_c.hour   = h2d (file->ch[0]);
-  stat->time_c.minute = h2d (file->ch[1]);
-  stat->time_c.second = h2d (file->ch[2]);
+  stat->time_c.year   = y2k (bcd2int (file->cd[2]));
+  stat->time_c.month  = bcd2int (file->cd[1]);
+  stat->time_c.day    = bcd2int (file->cd[0]);
+  stat->time_c.hour   = bcd2int (file->ch[0]);
+  stat->time_c.minute = bcd2int (file->ch[1]);
+  stat->time_c.second = bcd2int (file->ch[2]);
   /* Writing date */
-  stat->time_w.year   = y2k (h2d (file->wd[2]));
-  stat->time_w.month  = h2d (file->wd[1]);
-  stat->time_w.day    = h2d (file->wd[0]);
-  stat->time_w.hour   = h2d (file->wh[0]);
-  stat->time_w.minute = h2d (file->wh[1]);
-  stat->time_w.second = h2d (file->wh[2]);
+  stat->time_w.year   = y2k (bcd2int (file->wd[2]));
+  stat->time_w.month  = bcd2int (file->wd[1]);
+  stat->time_w.day    = bcd2int (file->wd[0]);
+  stat->time_w.hour   = bcd2int (file->wh[0]);
+  stat->time_w.minute = bcd2int (file->wh[1]);
+  stat->time_w.second = bcd2int (file->wh[2]);
   /* Use date */
-  stat->time_r.year   = y2k (h2d (file->rd[2]));
-  stat->time_r.month  = h2d (file->rd[1]);
-  stat->time_r.day    = h2d (file->rd[0]);
-  stat->time_r.hour   = h2d (file->rh[0]);
-  stat->time_r.minute = h2d (file->rh[1]);
-  stat->time_r.second = h2d (file->rh[2]);
+  stat->time_r.year   = y2k (bcd2int (file->rd[2]));
+  stat->time_r.month  = bcd2int (file->rd[1]);
+  stat->time_r.day    = bcd2int (file->rd[0]);
+  stat->time_r.hour   = bcd2int (file->rh[0]);
+  stat->time_r.minute = bcd2int (file->rh[1]);
+  stat->time_r.second = bcd2int (file->rh[2]);
 
   /* Name */
   if (stat->att.isdel)

@@ -121,15 +121,6 @@ mosfat_read_dr (mosfat_t *mosfat, uint16_t block)
   return NULL;
 }
 
-static inline int
-bcd2int (uint8_t hex)
-{
-  int high = (hex >> 4) * 10;
-  int low = hex & 0x0F;
-  int res = high + low;
-  return res > 99 ? 0 : res;
-}
-
 mosfat_file_t *
 mosfat_list_dr (mosfat_t *mosfat,
                  const char dir[MAX_SPLIT][MOSFAT_NAMELGT], int iterator, int nb, uint16_t block)

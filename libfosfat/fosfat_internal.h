@@ -57,4 +57,21 @@ typedef enum foslog {
 fosfat_data_t *fosfat_read_d (fosfat_t *fosfat, uint32_t block);
 void foslog (foslog_t type, const char *msg, ...);
 
+/*
+ * Hex (BCD) to dec convertion.
+ *
+ * Convert an integer in base 10 with the value shown in base 16, in an
+ * integer with the value shown in base 10.
+ *
+ * val          the value
+ * return the new integer
+ */
+static inline int bcd2int (uint8_t hex)
+{
+  int high = (hex >> 4) * 10;
+  int low = hex & 0x0F;
+  int res = high + low;
+  return res > 99 ? 0 : res;
+}
+
 #endif /* FOSFAT_H */
