@@ -120,6 +120,32 @@ mosfat_read_dr (mosfat_t *mosfat, uint16_t block)
   return NULL;
 }
 
+static uint8_t *
+mosfat_read_data (mosfat_t *mosfat, uint16_t block, size_t size)
+{
+  uint8_t *data;
+  int read = 0;
+
+  if (!mosfat || !mosfat->dev)
+    return NULL;
+
+  /* Move the pointer on the block */
+  if (fseek (mosfat->dev, blk2add (block), SEEK_SET))
+    return NULL;
+
+  data = calloc (1, size);
+  if (!data)
+    return NULL;
+
+  read = fread ((uint8_t *) data, 1, (size_t) size, mosfat->dev)
+         == (size_t) size;
+  if (read)
+    return data;
+
+  free (data);
+  return NULL;
+}
+
 mosfat_file_t *
 mosfat_list_dr (mosfat_t *mosfat,
                  const char dir[MAX_SPLIT][MOSFAT_NAMELGT], int iterator, int nb, uint16_t block)
@@ -185,6 +211,7 @@ mosfat_list_dr (mosfat_t *mosfat,
 
       snprintf (file->name, sizeof (file->name), "%s", name);
       file->size = (f->ebloc - 1 - f->bbloc) * MOSFAT_BLK + f->valid;
+      file->bloc = f->bbloc;
       file->time.year  = bcd2int (f->year);
       file->time.month = bcd2int (f->month);
       file->time.day   = bcd2int (f->day);
@@ -240,6 +267,86 @@ mosfat_free_listdir (mosfat_file_t *var)
     ld = ld->next_file;
     free (free_ld);
   }
+}
+
+/*
+ * Get a file and put this in a location on the PC.
+ *
+ * This function create a copy from src to dst. An output variable can be
+ * used to print the current size for each PTS.
+ *
+ * fosfat       handle
+ * src          source on the Smaky disk
+ * dst          destination on your PC
+ * output       TRUE to print the size
+ * return a boolean (true for success)
+ */
+int
+mosfat_get_file (mosfat_t *mosfat, const char *src,
+                 const char *dst, int output)
+{
+  int res = 0;
+  uint8_t *data;
+  char *path;
+  mosfat_file_t *file, *first_file;
+  size_t size = 0;
+
+  if (!mosfat || !src || !dst)
+    return 0;
+
+  path = strdup (src);
+
+  if ((file = mosfat_list_dir (mosfat, path)))
+  {
+    char out[4096] = {0};
+    char in[256]  = {0};
+    first_file = file;
+
+    do
+    {
+      const char *name = strrchr (src, '/');
+      if (name)
+        *name++;
+      else
+        name = src;
+
+      if (!strcasecmp (file->name, name))
+      {
+        data = mosfat_read_data (mosfat, file->bloc, file->size);
+        size = file->size;
+        break;
+      }
+    } while ((file = file->next_file));
+
+    mosfat_free_listdir (first_file);
+  }
+
+  free (path);
+
+  if (data)
+  {
+    FILE *fp;
+
+    fp = fopen (dst, "w");
+    if (!fp)
+    {
+      res = 0;
+      goto out;
+    }
+
+    fwrite (data, 1, size, fp);
+    res = 1;
+  }
+
+  if (!res)
+    foslog (FOSLOG_WARNING, "file \"%s\" cannot be copied", src);
+  else
+    foslog (FOSLOG_NOTICE, "get file \"%s\" and save to \"%s\"", src, dst);
+
+ out:
+  if (data)
+    free (data);
+  return res;
 }
 
 /*

@@ -150,7 +150,6 @@ get_file (mosfat_t *mosfat, const char *path, const char *dst)
 {
   int res = 0;
   char *new_file, *name = NULL;
-  fosfat_ftype_t ftype = FOSFAT_FTYPE_OTHER;
 
   if (!strcasecmp (dst, "./"))
     new_file = strdup ((strrchr (path, '/') ? strrchr (path, '/') + 1 : path));
@@ -159,34 +158,15 @@ get_file (mosfat_t *mosfat, const char *path, const char *dst)
 
   if (!mosfat_isdir (mosfat, path))
   {
-    FILE *fp = NULL;
-    uint8_t *buffer = NULL;
-    size_t size = 0;
-
     printf ("File \"%s\" is copying ...\n", path);
-    ftype = fosfat_ftype (path);
     name = strdup (new_file);
 
-    if (fp && buffer)
-    {
-      size_t nb = fwrite (buffer, 1, size, fp);
-      if (nb == size)
-        res = 1;
-      else
-        fprintf (stderr, "ERROR: file is truncated: %s\n", name);
-    }
-
-    if (fp)
-      fclose (fp);
-    if (buffer)
-      free (buffer);
-
-    /*if (res == 0 && mosfat_get_file (mosfat, path, name, 1))
+    if (res == 0 && mosfat_get_file (mosfat, path, name, 1))
     {
       res = 1;
       printf ("Okay..\n");
     }
-    else if (res == 0)*/
+    else if (res == 0)
       fprintf (stderr, "ERROR: I can't copy the file!\n");
   }
   else

@@ -314,6 +314,7 @@ typedef struct mfile_info_s {
   int size;                   /*!< File size.         */
   mosfat_att_t att;           /*!< File attributes.   */
   mosfat_time_t time;         /*!< File date.         */
+  uint16_t bloc;
   /* Linked list */
   struct mfile_info_s *next_file;
 } mosfat_file_t;
@@ -327,6 +328,8 @@ void mosfat_close (mosfat_t *mosfat);
 mosfat_file_t *mosfat_list_dir (mosfat_t *mosfat, const char *location);
 void mosfat_free_listdir (mosfat_file_t *var);
 int mosfat_isdir (mosfat_t *mosfat, const char *location);
+int mosfat_get_file (mosfat_t *mosfat, const char *src,
+                     const char *dst, int output);
 
 /******************************************************************************/
 
