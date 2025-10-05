@@ -86,12 +86,7 @@ print_file (mosfat_file_t *file)
 {
   char filename[MOSFAT_NAMELGT];
 
-  if (file->att.isdir)
-    snprintf (filename, strrchr (file->name, '.') - file->name + 1,
-              "%s", file->name);
-  else
-    strncpy (filename, file->name, MOSFAT_NAMELGT - 1);
-
+  strncpy (filename, file->name, MOSFAT_NAMELGT - 1);
   filename[MOSFAT_NAMELGT - 1] = '\0';
 
   printf ("%c %8i", file->att.isdir ? 'd' : '-', file->size);
@@ -322,16 +317,7 @@ main (int argc, char **argv)
     else if (i == optind + 1)
       mode = strdup (argv[optind + 1]);
     else if (i == optind + 2)
-    {
-      if (!strstr (argv[optind + 2], "."))
-      {
-        char n[16] = {0};
-        snprintf (n, sizeof (n), "%s.DR", argv[optind + 2]);
-        node = strdup (n);
-      }
-      else
-        node = strdup (argv[optind + 2]);
-    }
+      node = strdup (argv[optind + 2]);
     else if (i == optind + 3)
       path = strdup (argv[optind + 3]);
   }
