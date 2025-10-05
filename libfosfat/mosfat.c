@@ -211,7 +211,7 @@ mosfat_list_dr (mosfat_t *mosfat,
 
       snprintf (file->name, sizeof (file->name), "%s", name);
       file->size = (f->ebloc - 1 - f->bbloc) * MOSFAT_BLK + f->valid;
-      file->bloc = f->bbloc;
+      file->bloc = block + f->bbloc;
       file->time.year  = bcd2int (f->year);
       file->time.month = bcd2int (f->month);
       file->time.day   = bcd2int (f->day);
