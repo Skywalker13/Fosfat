@@ -226,6 +226,27 @@ mosfat_list_dir (mosfat_t *mosfat, const char *location)
 }
 
 /*
+ * Free a List Dir variable.
+ *
+ * This function must be used after all mosfat_list_dir()!
+ *
+ * var          pointer on the description block
+ */
+void
+mosfat_free_listdir (mosfat_file_t *var)
+{
+  mosfat_file_t *ld, *free_ld;
+
+  ld = var;
+  while (ld)
+  {
+    free_ld = ld;
+    ld = ld->next_file;
+    free (free_ld);
+  }
+}
+
+/*
  * Test if the file is a directory.
  *
  * This function uses a string location.

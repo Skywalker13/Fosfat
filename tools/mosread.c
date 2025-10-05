@@ -128,7 +128,7 @@ list_dir (mosfat_t *mosfat, const char *loc)
     } while ((files = files->next_file));
 
     printf ("\nd:directory\n");
-    //mosfat_free_listdir (first_file);
+    mosfat_free_listdir (first_file);
   }
   else
   {
@@ -243,7 +243,7 @@ get_dir (mosfat_t *mosfat, const char *loc, const char *dst)
       }
     } while ((file = file->next_file));
 
-    //mosfat_free_listdir (first_file);
+    mosfat_free_listdir (first_file);
   }
   else
   {
