@@ -208,9 +208,6 @@ mosfat_list_dir (mosfat_t *mosfat, const char *location)
   if (!mosfat || !location)
     return NULL;
 
-  /* If location is "" or "/" then it's the first block */
-  //if (location[0] == '\0' || (location[0] == '/' && location[1] == '\0'))
-
   /* Split the path into a table */
   if ((tmp = strtok ((char *) location, "/")))
   {
