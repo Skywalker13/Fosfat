@@ -28,6 +28,8 @@
 #include <getopt.h>
 
 #include "fosfat.h"
+#include "fosfat_internal.h"
+
 
 #define HELP_TEXT \
 "Tool to search deleted files on a Smaky disk. fosfat-" LIBFOSFAT_VERSION_STR "\n\n" \
@@ -65,6 +67,7 @@ search_deleted (fosfat_t *fosfat, const char *location, const char *dest)
     if (list->att.isdir)
     {
       snprintf (path, sizeof (path), "%s/%s", location, list->name);
+      remove_dup_slashes (path);
       search_deleted (fosfat, path, dest);
     }
     else if (list->att.isdel)
@@ -74,6 +77,8 @@ search_deleted (fosfat_t *fosfat, const char *location, const char *dest)
 
       snprintf (path, sizeof (path), "%s/%s", location, list->name);
       snprintf (path2, sizeof (path2), "%s/%08u_%s", dest, cnt, list->name);
+      remove_dup_slashes (path);
+      remove_dup_slashes (path2);
 
       res = fosfat_get_file (fosfat, path, path2, 0);
       if (res)

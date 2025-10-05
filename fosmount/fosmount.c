@@ -32,6 +32,7 @@
 #include <getopt.h>
 
 #include "fosfat.h"
+#include "fosfat_internal.h"
 #include "fosgra.h"
 
 /* Rights */
@@ -327,6 +328,7 @@ fos_readdir (const char *path, void *buf, fuse_fill_dir_t filler,
     fosfat_ftype_t ftype = FOSFAT_FTYPE_OTHER;
 
     snprintf (_path, sizeof (_path), "%s/%s", location, file->name);
+    remove_dup_slashes (_path);
     st = in_stat (file, _path);
 
     ftype = fosfat_ftype (file->name);

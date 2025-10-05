@@ -29,6 +29,7 @@
 #include <sys/stat.h> /* mkdir */
 
 #include "fosfat.h"
+#include "fosfat_internal.h"
 #include "fosgra.h"
 
 
@@ -342,6 +343,8 @@ get_dir (fosfat_t *fosfat, const char *loc, const char *dst)
 
       snprintf (in , sizeof (in),  "%s/%s", loc, file->name);
       snprintf (out, sizeof (out), "%s/%s", dst, file->name);
+      remove_dup_slashes (in);
+      remove_dup_slashes (out);
 
       if (file->att.isdir)
       {

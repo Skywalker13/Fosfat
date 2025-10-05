@@ -74,4 +74,18 @@ static inline int bcd2int (uint8_t hex)
   return res > 99 ? 0 : res;
 }
 
+static inline void remove_dup_slashes (char *s)
+{
+  char *r = s;
+  char *w = s;
+  while (*r)
+  {
+    *w++ = *r++;
+    if (*(r-1) == '/' && *r == '/')
+      while (*r == '/')
+        r++;
+  }
+  *w = '\0';
+}
+
 #endif /* FOSFAT_H */
