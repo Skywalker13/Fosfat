@@ -88,8 +88,8 @@ fosgra_bmp1_sizes (int width, int height,
 {
   *bpr  = (width + 7) / 8;    /* Number of bytes per row */
   *pbpr = (*bpr + 3) / 4 * 4; /* Alignment on 4 bytes */
-  *header_size = sizeof(bmp_file_header_t)
-               + sizeof(bmp_info_header_t) + 2 * sizeof(rgb_quad_t);
+  *header_size = sizeof (bmp_file_header_t)
+               + sizeof (bmp_info_header_t) + 2 * sizeof (rgb_quad_t);
   return *header_size + *pbpr * height;
 }
 
@@ -117,12 +117,12 @@ fosgra_bmp1_buffer (const uint8_t *input,
 
   /* DIB header */
   bmp_info_header_t *bih =
-    (bmp_info_header_t *) (output + sizeof(bmp_file_header_t));
+    (bmp_info_header_t *) (output + sizeof (bmp_file_header_t));
   bmp_fill_dib_header (bih, 1, width, height, 0);
 
   /* Monochrome palette (black and white) */
-  rgb_quad_t *palette = (rgb_quad_t *) (output + sizeof(bmp_file_header_t)
-                                               + sizeof(bmp_info_header_t));
+  rgb_quad_t *palette = (rgb_quad_t *) (output + sizeof (bmp_file_header_t)
+                                               + sizeof (bmp_info_header_t));
   for (int i = 0; i < 2; ++i)
   {
     palette[i].blue  = 0xFF * !i;
