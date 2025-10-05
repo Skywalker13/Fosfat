@@ -13,23 +13,24 @@ FOSFAT
 ~~~~~~
 
 Fosfat is a library for a read-only access on Smaky FOS
-(File Operating System). Floppy disk and hard disk are supported.
+(File Operating System) and SAMOS (Smaky And Micro-floppy Operating System).
+Binary dump disk image, floppy disk and hard disk are supported.
 
-Some tools are available to work with a Smaky FOS formatted disk. The first
-tool 'fosread' can work directly with your device but it is limited for an
-console use.
+Some tools are available to work with a Smaky FOS and MOS formatted disk.
+The first tool 'fosread' (and 'mosread') can work directly with your device but
+it is limited for a console use.
 The tool 'fosmount' uses FUSE to mount in read-only your device in your
 tree. And you can convert the smaky's text files with smascii. You can
 compile 'fosmount' with >=fuse-3.x.
 'fosrec' can be used to restore all deleted files. To restore only one file,
-this action must be performed by 'fosread'.
+this action must be performed by 'fosread' ('mosread').
 
 Look the help with each application for the command line. Or look on the
 website.
 
 This project supports FOS formatted disk used by the Smaky 8, Smaky 100,
-and more. The SAMOS support for Smaky 6 formatted disks is in progress.
-About the FOS disks, a tool (fosdd) can be used to convert a disk image
+and more and the SAMOS support for Smaky 6 formatted disks.
+About the FOS disks, a tool ('fosdd') can be used to convert a disk image
 to a floppy image and vice-versa. It can be very useful to convert a disk
 image to floppy image if you want to mount the image with the Smaky Infini.
 
@@ -46,11 +47,11 @@ BUILD
    make
    make install
 
-   It will install 'fosdd', 'fosread', 'fosmount', 'fosrec', 'smascii',
-   libfosgra and libfosfat in your local directory.
+   It will install 'fosdd', 'fosread', 'mosread', 'fosmount', 'fosrec',
+   'smascii', libfosgra and libfosfat in your local directory.
    Use `./configure --help` for more informations.
 
- * For Window$ (only fosdd, fosread, fosrec and smascii)
+ * For Window$ (only fosdd, fosread, mosread, fosrec and smascii)
 
    # 32 bit
    ./configure --cross-compile --cross-prefix=i686-w64-mingw32-
@@ -58,14 +59,14 @@ BUILD
    ./configure --cross-compile --cross-prefix=x86_64-w64-mingw32-
    make
 
-   It will compile all DLLs and binaries for win32 with MinGW32.
+   It will compile all DLLs and binaries for win32 with MinGW.
 
 
 The public includes are fosfat.h and fosgra.h.
 For more informations, consult the comments in the sources.
 
 You can found others informations on the website :
-http://fosfat.schroetersa.ch
+https://fosfat.schroetersa.ch
 
 
 AUTHOR
