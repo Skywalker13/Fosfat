@@ -202,7 +202,7 @@ get_dir (mosfat_t *mosfat, const char *loc, const char *dst)
       {
         char *it = strrchr (out, '.');
         if (it)
-          *it = '\0'; /* drop .dir from the name */
+          *it = '\0'; /* drop .DR from the name */
         my_mkdir (out);
         get_dir (mosfat, in, out);
       }
