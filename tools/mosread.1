@@ -1,0 +1,45 @@
+.\"
+.TH "MOSREAD" "1" "January 2025" "mosread" "User Commands"
+.SH "NAME"
+mosread \- SAMOS reader
+.SH "SYNOPSIS"
+.B mosread
+[\fIoptions\fR] \fIdevice mode \fR[\fInode\fR] [\fIpath\fR]
+.SH "DESCRIPTION"
+Tool for a read\-only access on Smaky SAMOS.
+.TP
+\fB\-h\fR \fB\-\-help\fR
+Display help message.
+.TP
+\fB\-v\fR \fB\-\-version\fR
+Show version.
+.TP
+\fB\-l\fR \fB\-\-mos\-logger\fR
+Turn ON the MOS logger.
+.TP
+\fBdevice\fR
+/dev/fd0 for floppy disk
+.br
+/dev/sda for hard disk, etc, ...
+.TP
+\fBmode\fR
+\fBlist\fR : list the content of a node
+.br
+\fBget\fR  : copy a file (or a directory) from the Smaky disk in a local directory
+.TP
+\fBnode\fR
+The tree with the file (or directory) for \fBget\fR or \fBlist\fR.
+.br
+example: foo/bar/toto.sr
+.TP
+\fBpath\fR
+You can specify a path to save the file (with \fBget\fR mode).
+.SH "AUTHOR"
+Written by Mathieu Schroeter <mathieu@schroetersa.ch>.
+.SH "REPORTING BUGS"
+Report bugs to <\fImathieu@schroetersa.ch\fP>.
+.SH "COPYRIGHT"
+Copyright \(co 2025 Mathieu Schroeter
+
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
