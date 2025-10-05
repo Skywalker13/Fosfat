@@ -172,7 +172,6 @@ get_file (mosfat_t *mosfat, const char *path, const char *dst)
   else
     fprintf (stderr, "ERROR: I can't copy a directory or a link!\n");
 
- out:
   free (new_file);
   if (name)
     free (name);

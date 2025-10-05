@@ -228,7 +228,7 @@ mosfat_file_t *
 mosfat_list_dir (mosfat_t *mosfat, const char *location)
 {
   int nb = 0;
-  char *tmp, *path;
+  char *tmp;
   char dir[MAX_SPLIT][MOSFAT_NAMELGT];
 
   if (!mosfat || !location)
@@ -284,7 +284,7 @@ int
 mosfat_get_file (mosfat_t *mosfat, const char *src, const char *dst)
 {
   int res = 0;
-  uint8_t *data;
+  uint8_t *data = NULL;
   char *path;
   mosfat_file_t *file, *first_file;
   size_t size = 0;
@@ -296,15 +296,13 @@ mosfat_get_file (mosfat_t *mosfat, const char *src, const char *dst)
 
   if ((file = mosfat_list_dir (mosfat, path)))
   {
-    char out[4096] = {0};
-    char in[256]  = {0};
     first_file = file;
 
     do
     {
       const char *name = strrchr (src, '/');
       if (name)
-        *name++;
+        name++;
       else
         name = src;
 
