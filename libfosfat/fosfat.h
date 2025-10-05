@@ -314,7 +314,7 @@ typedef struct mfile_info_s {
   int size;                   /*!< File size.         */
   mosfat_att_t att;           /*!< File attributes.   */
   mosfat_time_t time;         /*!< File date.         */
-  uint16_t bloc;
+  uint16_t bloc;              /*!< Begin block.       */
   /* Linked list */
   struct mfile_info_s *next_file;
 } mosfat_file_t;
@@ -323,13 +323,69 @@ typedef struct mfile_info_s {
 typedef struct mosfat_s mosfat_t;
 
 
+/**
+ * \brief Load a device compatible Smaky SAMOS.
+ *
+ * The device can be a file or a disk. mosfat_close() must always be called to
+ * free the memory.
+ *
+ * Specify the location on /dev/... or on a file
+ *
+ * \param[in] dev        device or location.
+ * \return NULL if error or return the disk handle.
+ */
 mosfat_t *mosfat_open (const char *dev);
+
+/**
+ * \brief Free the memory and close the device properly.
+ *
+ * \param[in] mosfat     disk handle.
+ */
 void mosfat_close (mosfat_t *mosfat);
+
+/**
+ * \brief Get file/dir list of a directory in a linked list.
+ *
+ * When the list is no longer used, mosfat_free_listdir() must always be
+ * called to free the memory.
+ *
+ * \param[in] mosfat     disk handle.
+ * \param[in] location   directory to list.
+ * \return NULL if error or return the first file in the directory.
+ */
 mosfat_file_t *mosfat_list_dir (mosfat_t *mosfat, const char *location);
+
+/**
+ * \brief Free the memory for an linked list created by mosfat_list_dir().
+ *
+ * \param[in] var        first file of the linked list.
+ */
 void mosfat_free_listdir (mosfat_file_t *var);
+
+/**
+ * \brief Get boolean information on a specific file or folder.
+ *
+ * Test if the location is a directory.
+ *
+ * \param[in] mosfat     disk handle.
+ * \param[in] location   file or directory to test.
+ * \return a boolean, 0 for false.
+ */
 int mosfat_isdir (mosfat_t *mosfat, const char *location);
-int mosfat_get_file (mosfat_t *mosfat, const char *src,
-                     const char *dst, int output);
+
+/**
+ * \brief Get a file from a location and put this on the user hard drive.
+ *
+ * You can't get a directory with this function, you must recursively list
+ * the directory with mosfat_list_dir() and use mosfat_get_file() with each
+ * file entry.
+ *
+ * \param[in] fosfat     disk handle.
+ * \param[in] src        source location on the FOS disk.
+ * \param[in] dst        destination location on the user hard drive.
+ * \return a boolean, 0 for error.
+ */
+int mosfat_get_file (mosfat_t *mosfat, const char *src, const char *dst);
 
 /******************************************************************************/
 

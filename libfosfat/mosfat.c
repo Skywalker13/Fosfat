@@ -278,12 +278,10 @@ mosfat_free_listdir (mosfat_file_t *var)
  * fosfat       handle
  * src          source on the Smaky disk
  * dst          destination on your PC
- * output       TRUE to print the size
  * return a boolean (true for success)
  */
 int
-mosfat_get_file (mosfat_t *mosfat, const char *src,
-                 const char *dst, int output)
+mosfat_get_file (mosfat_t *mosfat, const char *src, const char *dst)
 {
   int res = 0;
   uint8_t *data;

@@ -161,7 +161,7 @@ get_file (mosfat_t *mosfat, const char *path, const char *dst)
     printf ("File \"%s\" is copying ...\n", path);
     name = strdup (new_file);
 
-    if (mosfat_get_file (mosfat, path, name, 1))
+    if (mosfat_get_file (mosfat, path, name))
     {
       res = 1;
       printf ("Okay..\n");
