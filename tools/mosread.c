@@ -322,7 +322,16 @@ main (int argc, char **argv)
     else if (i == optind + 1)
       mode = strdup (argv[optind + 1]);
     else if (i == optind + 2)
-      node = strdup (argv[optind + 2]);
+    {
+      if (!strstr (argv[optind + 2], "."))
+      {
+        char n[16] = {0};
+        snprintf (n, sizeof (n), "%s.DR", argv[optind + 2]);
+        node = strdup (n);
+      }
+      else
+        node = strdup (argv[optind + 2]);
+    }
     else if (i == optind + 3)
       path = strdup (argv[optind + 3]);
   }
