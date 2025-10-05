@@ -1,6 +1,6 @@
 /*
  * FOS libfosfat: API for Smaky file system
- * Copyright (C) 2023 Mathieu Schroeter <mathieu@schroetersa.ch>
+ * Copyright (C) 2023-2025 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * Thanks to Pierre Arnaud for his help and the documentation
  *    And to Epsitec SA for the Smaky computers
@@ -74,6 +74,7 @@ static inline int bcd2int (uint8_t hex)
   return res > 99 ? 0 : res;
 }
 
+/* Replace //a//b by /a/b */
 static inline void remove_dup_slashes (char *s)
 {
   char *r = s;
