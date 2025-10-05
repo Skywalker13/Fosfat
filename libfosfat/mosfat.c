@@ -226,6 +226,27 @@ mosfat_list_dir (mosfat_t *mosfat, const char *location)
 }
 
 /*
+ * Test if the file is a directory.
+ *
+ * This function uses a string location.
+ *
+ * fosfat       handle
+ * location     file in the path
+ * return a boolean (true for success)
+ */
+int
+mosfat_isdir (mosfat_t *mosfat, const char *location)
+{
+  if (!mosfat || !location)
+    return 0;
+
+  if (!strcmp (location, "/"))
+    return 1;
+
+  //FOSFAT_IS_DIR (mosfat, location)
+}
+
+/*
  * Open the device.
  *
  * That hides the fopen processing.
