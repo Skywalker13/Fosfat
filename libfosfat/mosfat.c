@@ -261,7 +261,10 @@ mosfat_isdir (mosfat_t *mosfat, const char *location)
   if (!strcmp (location, "/"))
     return 1;
 
-  //FOSFAT_IS_DIR (mosfat, location)
+  const size_t len = strlen (location);
+  return location[len - 3] == '.'
+     && (location[len - 2] == 'D' || location[len - 2] == 'd')
+     && (location[len - 1] == 'R' || location[len - 1] == 'r');
 }
 
 /*
