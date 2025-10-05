@@ -35,11 +35,11 @@
 "                       /dev/sda : hard disk, etc\n"
 
 #define HELP_TEXT \
-"Tool for a read-only access on a Smaky disk. fosfat-" LIBFOSFAT_VERSION_STR "\n\n" \
-"Usage: fosread [options] device mode [node] [path]\n\n" \
+"Tool for a read-only access on a Smaky MOS disk. mosfat-" LIBFOSFAT_VERSION_STR "\n\n" \
+"Usage: mosread [options] device mode [node] [path]\n\n" \
 " -h --help             this help\n" \
 " -v --version          version\n" \
-" -l --fos-logger       that will turn on the FOS logger\n\n" \
+" -l --mos-logger       that will turn on the MOS logger\n\n" \
 " device                " HELP_DEVICE \
 " mode\n" \
 "   list                list the content of a node\n" \
@@ -47,7 +47,7 @@
 "                       a local directory\n" \
 " node                  the tree with the file (or folder)" \
 " for 'get' or 'list'\n" \
-"                       example: foo/bar/toto.text\n" \
+"                       example: foo.dr/bar.dr/toto.tx\n" \
 " path                  you can specify a path to save" \
 " the file (with get mode)\n" \
 "\nPlease, report bugs to <mathieu@schroetersa.ch>.\n"
@@ -98,7 +98,7 @@ print_file (mosfat_file_t *file)
 /*
  * List the content of a directory.
  *
- * fosfat       handle
+ * mosfat       handle
  * path         where in the tree
  * return true if it is ok
  */
@@ -140,7 +140,7 @@ list_dir (mosfat_t *mosfat, const char *loc)
 /*
  * Copy a file from the disk.
  *
- * fosfat       handle
+ * mosfat       handle
  * path         where in the tree
  * dst          where in local
  * return true if it is ok
@@ -277,7 +277,7 @@ main (int argc, char **argv)
 
   const struct option long_options[] = {
     { "help",         no_argument, NULL, 'h' },
-    { "fos-logger",   no_argument, NULL, 'l' },
+    { "mos-logger",   no_argument, NULL, 'l' },
     { "version",      no_argument, NULL, 'v' },
     { NULL,           0,           NULL,  0  }
   };
@@ -296,7 +296,7 @@ main (int argc, char **argv)
     case 'v':           /* -v or --version */
       print_version ();
       return -1;
-    case 'l':           /* -l or --fos-logger */
+    case 'l':           /* -l or --mos-logger */
       fosfat_logger (1);
       break ;
     case -1:            /* end */
