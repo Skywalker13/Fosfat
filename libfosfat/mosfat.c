@@ -328,14 +328,11 @@ mosfat_get_file (mosfat_t *mosfat, const char *src,
     FILE *fp;
 
     fp = fopen (dst, "w");
-    if (!fp)
+    if (fp)
     {
-      res = 0;
-      goto out;
+      fwrite (data, 1, size, fp);
+      res = 1;
     }
-
-    fwrite (data, 1, size, fp);
-    res = 1;
   }
 
   if (!res)
@@ -343,7 +340,6 @@ mosfat_get_file (mosfat_t *mosfat, const char *src,
   else
     foslog (FOSLOG_NOTICE, "get file \"%s\" and save to \"%s\"", src, dst);
 
- out:
   if (data)
     free (data);
   return res;

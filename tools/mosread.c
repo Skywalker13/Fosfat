@@ -161,12 +161,12 @@ get_file (mosfat_t *mosfat, const char *path, const char *dst)
     printf ("File \"%s\" is copying ...\n", path);
     name = strdup (new_file);
 
-    if (res == 0 && mosfat_get_file (mosfat, path, name, 1))
+    if (mosfat_get_file (mosfat, path, name, 1))
     {
       res = 1;
       printf ("Okay..\n");
     }
-    else if (res == 0)
+    if (res == 0)
       fprintf (stderr, "ERROR: I can't copy the file!\n");
   }
   else
