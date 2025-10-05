@@ -18,6 +18,9 @@
 	  command. It enables the possibility to convert these files on Windows
 	  like in the case of fosmount for Linux.
 
+	* mosread: now tool to read and extract content of SAMOS disks and
+	  images.
+
 2024-10-08  Mathieu Schroeter <mathieu@schroetersa.ch>
 
 	* Release 1.0.1
