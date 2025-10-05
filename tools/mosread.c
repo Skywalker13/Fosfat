@@ -195,9 +195,6 @@ get_dir (mosfat_t *mosfat, const char *loc, const char *dst)
 
     do
     {
-      if (file->name[0] == '.')
-        continue;
-
       snprintf (in , sizeof (in),  "%s/%s", loc, file->name);
       snprintf (out, sizeof (out), "%s/%s", dst, file->name);
 
