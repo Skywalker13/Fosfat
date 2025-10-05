@@ -85,10 +85,9 @@ struct mosfat_s {
  * Translate a block number to an address.
  *
  * block        the block's number given by the disk
- * fosboot      offset in the MOS address
  * return the address of this block on the disk
  */
-static inline uint16_t
+static inline uint32_t
 blk2add (uint16_t block)
 {
   return (block * MOSFAT_BLK);
