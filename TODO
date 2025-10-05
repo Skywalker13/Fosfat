@@ -1,7 +1,5 @@
 TODO
 ~~~~
 
-* Integrate the text converter in Fosread.
-* Provide the .IMAGE and .COLOR conversions with fosread.
 * Fix libfosfat in order to be multi-thread safe. It can improve significantly
   the performances with the FUSE extension.
