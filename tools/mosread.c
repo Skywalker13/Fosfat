@@ -151,7 +151,7 @@ list_dir (mosfat_t *mosfat, const char *loc)
  * return true if it is ok
  */
 static int
-get_file (fosfat_t *fosfat, const char *path, const char *dst)
+get_file (mosfat_t *mosfat, const char *path, const char *dst)
 {
   int res = 0;
   char *new_file, *name = NULL;
@@ -162,7 +162,7 @@ get_file (fosfat_t *fosfat, const char *path, const char *dst)
   else
     new_file = strdup (dst);
 
-  if (!fosfat_islink (fosfat, path) && !fosfat_isdir (fosfat, path))
+  if (!mosfat_isdir (mosfat, path))
   {
     FILE *fp = NULL;
     uint8_t *buffer = NULL;
@@ -186,12 +186,12 @@ get_file (fosfat_t *fosfat, const char *path, const char *dst)
     if (buffer)
       free (buffer);
 
-    if (res == 0 && fosfat_get_file (fosfat, path, name, 1))
+    /*if (res == 0 && mosfat_get_file (mosfat, path, name, 1))
     {
       res = 1;
       printf ("Okay..\n");
     }
-    else if (res == 0)
+    else if (res == 0)*/
       fprintf (stderr, "ERROR: I can't copy the file!\n");
   }
   else
@@ -205,17 +205,14 @@ get_file (fosfat_t *fosfat, const char *path, const char *dst)
 }
 
 static int
-get_dir (fosfat_t *fosfat, const char *loc, const char *dst)
+get_dir (mosfat_t *mosfat, const char *loc, const char *dst)
 {
   char *path;
-  fosfat_file_t *file, *first_file;
+  mosfat_file_t *file, *first_file;
 
-  if (strcmp (loc, "/") && fosfat_islink (fosfat, loc))
-    path = fosfat_symlink (fosfat, loc);
-  else
-    path = strdup (loc);
+  path = strdup (loc);
 
-  if ((file = fosfat_list_dir (fosfat, path)))
+  if ((file = mosfat_list_dir (mosfat, path)))
   {
     char out[4096] = {0};
     char in[256]  = {0};
@@ -223,9 +220,6 @@ get_dir (fosfat_t *fosfat, const char *loc, const char *dst)
 
     do
     {
-      if (file->att.islink)
-        continue;
-
       if (file->name[0] == '.')
         continue;
 
@@ -238,18 +232,18 @@ get_dir (fosfat_t *fosfat, const char *loc, const char *dst)
         if (it)
           *it = '\0'; /* drop .dir from the name */
         my_mkdir (out);
-        get_dir (fosfat, in, out);
+        get_dir (mosfat, in, out);
       }
       else
       {
         if (file->size > 0)
-          get_file (fosfat, in, out);
+          get_file (mosfat, in, out);
         else
           fprintf (stderr, "WARNING: skip empty file (0 bytes)\n");
       }
     } while ((file = file->next_file));
 
-    fosfat_free_listdir (first_file);
+    //mosfat_free_listdir (first_file);
   }
   else
   {
@@ -362,7 +356,7 @@ main (int argc, char **argv)
     /* Get a file from the disk */
     else if (!strcmp (mode, "get") && node)
     {
-      if (fosfat_isdir (mosfat, node))
+      if (mosfat_isdir (mosfat, node))
         get_dir (mosfat, node, path ? path : "./");
       else
         get_file (mosfat, node, path ? path : "./");
