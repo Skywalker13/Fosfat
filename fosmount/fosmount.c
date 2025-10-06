@@ -172,21 +172,21 @@ in_stat (fosfat_file_t *file, const char *path)
   time.tm_hour = file->time_r.hour;
   time.tm_min  = file->time_r.minute;
   time.tm_sec  = file->time_r.second;
-  st->st_atime = mktime(&time);
+  st->st_atime = mktime (&time);
   time.tm_year = file->time_w.year - 1900;
   time.tm_mon  = file->time_w.month - 1;
   time.tm_mday = file->time_w.day;
   time.tm_hour = file->time_w.hour;
   time.tm_min  = file->time_w.minute;
   time.tm_sec  = file->time_w.second;
-  st->st_mtime = mktime(&time);
+  st->st_mtime = mktime (&time);
   time.tm_year = file->time_c.year - 1900;
   time.tm_mon  = file->time_c.month - 1;
   time.tm_mday = file->time_c.day;
   time.tm_hour = file->time_c.hour;
   time.tm_min  = file->time_c.minute;
   time.tm_sec  = file->time_c.second;
-  st->st_ctime = mktime(&time);
+  st->st_ctime = mktime (&time);
 
   return st;
 }
