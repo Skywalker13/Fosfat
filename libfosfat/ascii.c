@@ -1,6 +1,6 @@
 /*
- * FOS ascii: Smaky's ASCII to Extended ASCII (ISO-8859-1) converter
- * Copyright (C) 2007-2010 Mathieu Schroeter <mathieu@schroetersa.ch>
+ * FOS ascii: Smaky's ASCII to Extended ASCII (ISO-8859-1) and UTF-8 converter
+ * Copyright (C) 2007-2010,2025 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * Thanks to Pierre Arnaud for his help and the documentation
  *    And to Epsitec SA for the Smaky computers
@@ -67,7 +67,7 @@ char_sma2iso8859 (unsigned char value, fosfat_newline_t newline)
 }
 
 /*
- * Convert a buffer of chars.
+ * Convert a buffer of chars to ISO-8859-1.
  *
  * buffer       pointer on the buffer
  * size         the length
@@ -87,4 +87,63 @@ fosfat_sma2iso8859 (char *buffer, unsigned int size, fosfat_newline_t newline)
   }
 
   return NULL;
+}
+
+/*
+ * Convert ISO-8859-1 char to UTF-8.
+ *
+ * value        the ISO-8859-1 char
+ * dest         destination buffer (must have at least 2 bytes available)
+ * return number of bytes written (1 or 2)
+ */
+static inline int
+char_iso8859_to_utf8 (unsigned char value, unsigned char *dest)
+{
+  if (value < 0x80) /* ASCII: 1 byte */
+  {
+    dest[0] = value;
+    return 1;
+  }
+
+  /* Latin-1 extended: 2 bytes */
+  dest[0] = 0xC0 | (value >> 6);
+  dest[1] = 0x80 | (value & 0x3F);
+  return 2;
+}
+
+/*
+ * Convert a buffer of chars to UTF-8.
+ * Maximum size needed: size * 2
+ *
+ * src          source buffer (Smaky encoding)
+ * src_size     source buffer length
+ * dest         destination buffer (UTF-8)
+ * dest_size    destination buffer size
+ * newline      CR or LF
+ * return number of bytes written to dest, or 0 on error
+ */
+unsigned int
+fosfat_sma2utf8 (const char *src, unsigned int src_size,
+                 char *dest, unsigned int dest_size, fosfat_newline_t newline)
+{
+  unsigned int i;
+  unsigned int dest_pos = 0;
+  unsigned char iso_char;
+  int bytes_written;
+
+  if (!src || !dest || !src_size || !dest_size)
+    return 0;
+
+  for (i = 0; i < src_size; i++)
+  {
+    iso_char = char_sma2iso8859 ((unsigned char)src[i], newline);
+    if (dest_pos + 2 > dest_size)
+      return 0; /* Not enough space */
+
+    bytes_written =
+      char_iso8859_to_utf8 (iso_char, (unsigned char *) (dest + dest_pos));
+    dest_pos += bytes_written;
+  }
+
+  return dest_pos;
 }
