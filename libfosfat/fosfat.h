@@ -396,7 +396,10 @@ typedef enum fostfat_newline {
 } fosfat_newline_t;
 
 char *fosfat_sma2iso8859 (char *buffer,
-                          unsigned int size, fosfat_newline_t ret);
+                          unsigned int size, fosfat_newline_t newline);
+unsigned int fosfat_sma2utf8 (const char *src, unsigned int src_size,
+                              char *dest, unsigned int dest_size,
+                              fosfat_newline_t newline);
 
 typedef enum fosfat_ftype {
   FOSFAT_FTYPE_OTHER = 0,

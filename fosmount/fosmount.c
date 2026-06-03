@@ -34,6 +34,7 @@
 #include "fosfat.h"
 #include "fosfat_internal.h"
 #include "fosgra.h"
+#include "utils.h"
 
 /* Rights */
 #define FOS_DIR             0555
@@ -54,7 +55,7 @@
 " -l --fos-logger       that will turn on the FOS logger\n" \
 " -d --fuse-debugger    that will turn on the FUSE debugger\n" \
 " -i --image-bmp        convert on the fly .IMAGE and .COLOR to .BMP\n" \
-" -t --text             convert on the fly some text files to .TXT\n" \
+" -t --text             convert on the fly some text files to .TXT (UTF-8)\n" \
 " device                " HELP_DEVICE \
 " mountpoint            for example, /mnt/smaky\n" \
 "\nPlease, report bugs to <mathieu@schroetersa.ch>.\n"
@@ -96,6 +97,19 @@ get_filesize (fosfat_file_t *file, const char *path)
   if (g_bmp && ftype == FOSFAT_FTYPE_IMAGE && fosgra_is_image (fosfat, path))
     return fosgra_bmp_get_size (fosfat, path);
 
+  if (g_txt && ftype == FOSFAT_FTYPE_TEXT)
+  {
+    size_t size = 0;
+    uint8_t *text_buffer = fosfat_get_buffer (fosfat, path, 0, file->size);
+    uint8_t *buffer = calloc (2, file->size);
+    fosfat_sma2utf8 ((const char *) text_buffer, file->size,
+                     (char *) buffer, file->size * 2, FOSFAT_ASCII_LF);
+    free (text_buffer);
+    size = strlen ((char *) buffer);
+    free (buffer);
+    return size;
+  }
+
   return file->size;
 }
 
@@ -121,9 +135,15 @@ get_buffer (fosfat_file_t *file, const char *path, off_t offset, size_t size)
 
   if (g_txt && ftype == FOSFAT_FTYPE_TEXT)
   {
-    uint8_t *text_buffer = fosfat_get_buffer (fosfat, path, offset, size);
-    fosfat_sma2iso8859 ((char *) text_buffer, size, FOSFAT_ASCII_LF);
-    return text_buffer;
+    uint8_t *text_buffer = fosfat_get_buffer (fosfat, path, 0, file->size);
+    uint8_t *dec = calloc (2, file->size);
+    uint8_t *buffer = calloc (2, file->size);
+    fosfat_sma2utf8 ((const char *) text_buffer, file->size,
+                     (char *) buffer, file->size * 2, FOSFAT_ASCII_LF);
+    free (text_buffer);
+    memcpy (dec, buffer + offset, size);
+    free (buffer);
+    return dec;
   }
 
 std:
