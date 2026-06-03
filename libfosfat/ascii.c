@@ -136,7 +136,7 @@ fosfat_sma2utf8 (const char *src, unsigned int src_size,
 
   for (i = 0; i < src_size; i++)
   {
-    iso_char = char_sma2iso8859 ((unsigned char)src[i], newline);
+    iso_char = char_sma2iso8859 ((unsigned char) src[i], newline);
     if (dest_pos + 2 > dest_size)
       return 0; /* Not enough space */
 
