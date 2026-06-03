@@ -1,9 +1,11 @@
 *.o
 *.a
 *.so
+*.so.*
 *.pc
 *.depend
 *.exe
+*.dll
 config.log
 config.mak
 fosmount/fosmount
