@@ -2340,17 +2340,18 @@ fosfat_set_file_time (const char *filename, time_t ts)
 {
   HANDLE hFile;
   FILETIME ft;
-  SYSTEMTIME st;
-  struct tm *timeinfo;
+  SYSTEMTIME st = {0};
+  struct tm timeinfo;
 
-  timeinfo = localtime (&ts);
+  if (localtime_s (&timeinfo, &ts))
+    return -1;
 
-  st.wYear   = timeinfo->tm_year + 1900;
-  st.wMonth  = timeinfo->tm_mon + 1;
-  st.wDay    = timeinfo->tm_mday;
-  st.wHour   = timeinfo->tm_hour;
-  st.wMinute = timeinfo->tm_min;
-  st.wSecond = timeinfo->tm_sec;
+  st.wYear   = timeinfo.tm_year + 1900;
+  st.wMonth  = timeinfo.tm_mon + 1;
+  st.wDay    = timeinfo.tm_mday;
+  st.wHour   = timeinfo.tm_hour;
+  st.wMinute = timeinfo.tm_min;
+  st.wSecond = timeinfo.tm_sec;
   st.wMilliseconds = 0;
 
   if (!SystemTimeToFileTime (&st, &ft))
