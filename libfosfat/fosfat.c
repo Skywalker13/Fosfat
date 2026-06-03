@@ -29,8 +29,12 @@
 #include <ctype.h>      /* tolower */
 #include <string.h>     /* strcasecmp strncasecmp strdup strlen strtok
                            memcmp memcpy strcasestr */
+#include <time.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 #ifdef _WIN32
+#include <windows.h>
 #include <w32disk.h>
 #endif /* _WIN32 */
 
@@ -2329,3 +2333,57 @@ fosfat_ftype (const char *name)
 
   return FOSFAT_FTYPE_OTHER;
 }
+
+#ifdef _WIN32
+int
+fosfat_set_file_time (const char *filename, time_t ts)
+{
+  HANDLE hFile;
+  FILETIME ft;
+  SYSTEMTIME st;
+  struct tm *timeinfo;
+
+  timeinfo = localtime (&ts);
+
+  st.wYear   = timeinfo->tm_year + 1900;
+  st.wMonth  = timeinfo->tm_mon + 1;
+  st.wDay    = timeinfo->tm_mday;
+  st.wHour   = timeinfo->tm_hour;
+  st.wMinute = timeinfo->tm_min;
+  st.wSecond = timeinfo->tm_sec;
+  st.wMilliseconds = 0;
+
+  if (!SystemTimeToFileTime (&st, &ft))
+    return -1;
+
+  hFile = CreateFileA (filename, FILE_WRITE_ATTRIBUTES,
+                       FILE_SHARE_READ | FILE_SHARE_WRITE,
+                       NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+  if (hFile == INVALID_HANDLE_VALUE)
+    return -1;
+
+  if (!SetFileTime (hFile, &ft, &ft, &ft))
+  {
+    CloseHandle (hFile);
+    return -1;
+  }
+
+  CloseHandle (hFile);
+  return 0;
+}
+#endif /* _WIN32 */
+
+#ifdef __linux
+int
+fosfat_set_file_time (const char *filename, time_t ts)
+{
+  struct timespec times[2];
+
+  times[0].tv_sec = ts; // atime
+  times[0].tv_nsec = 0;
+  times[1].tv_sec = ts; // mtime
+  times[1].tv_nsec = 0;
+
+  return utimensat (AT_FDCWD, filename, times, 0);
+}
+#endif /* __linux */

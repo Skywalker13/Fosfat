@@ -56,6 +56,7 @@ typedef enum foslog {
 
 fosfat_data_t *fosfat_read_d (fosfat_t *fosfat, uint32_t block);
 void foslog (foslog_t type, const char *msg, ...);
+int fosfat_set_file_time (const char *filename, time_t ts);
 
 /*
  * Hex (BCD) to dec convertion.
