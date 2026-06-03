@@ -23,6 +23,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
+#include <fcntl.h>
+#include <time.h>       /* mktime */
+#include <sys/stat.h>
 
 #include "fosfat.h"
 #include "fosfat_internal.h"
@@ -284,10 +287,8 @@ int
 mosfat_get_file (mosfat_t *mosfat, const char *src, const char *dst)
 {
   int res = 0;
-  uint8_t *data = NULL;
   char *path;
   mosfat_file_t *file, *first_file;
-  size_t size = 0;
 
   if (!mosfat || !src || !dst)
     return 0;
@@ -308,8 +309,28 @@ mosfat_get_file (mosfat_t *mosfat, const char *src, const char *dst)
 
       if (!strcasecmp (file->name, name))
       {
-        data = mosfat_read_data (mosfat, file->bloc, file->size);
-        size = file->size;
+        FILE *fp;
+        uint8_t *data = mosfat_read_data (mosfat, file->bloc, file->size);
+
+        fp = fopen (dst, "w");
+        if (fp)
+        {
+          struct tm time = {0};
+          time_t ts = 0;
+
+          time.tm_year = file->time.year;
+          time.tm_mon  = file->time.month;
+          time.tm_mday = file->time.day;
+          time.tm_isdst = -1;
+          ts = mktime (&time);
+
+          fwrite (data, 1, file->size, fp);
+          fclose (fp);
+          fosfat_set_file_time (dst, ts);
+          res = 1;
+        }
+
+        free (data);
         break;
       }
     } while ((file = file->next_file));
@@ -319,25 +340,10 @@ mosfat_get_file (mosfat_t *mosfat, const char *src, const char *dst)
 
   free (path);
 
-  if (data)
-  {
-    FILE *fp;
-
-    fp = fopen (dst, "w");
-    if (fp)
-    {
-      fwrite (data, 1, size, fp);
-      res = 1;
-    }
-  }
-
   if (!res)
     foslog (FOSLOG_WARNING, "file \"%s\" cannot be copied", src);
   else
     foslog (FOSLOG_NOTICE, "get file \"%s\" and save to \"%s\"", src, dst);
-
-  if (data)
-    free (data);
   return res;
 }
 
