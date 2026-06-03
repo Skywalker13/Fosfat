@@ -29,6 +29,7 @@
 
 #include "fosfat.h"
 #include "fosfat_internal.h"
+#include "utils.h"
 
 
 #define HELP_TEXT \

@@ -27,7 +27,7 @@
 
 #include "fosfat.h"
 #include "fosfat_internal.h"
-
+#include "utils.h"
 
 #undef HELP_DEVICE
 #define HELP_DEVICE \

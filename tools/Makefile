@@ -24,7 +24,7 @@ FOSDD_SRCS = fosdd.c
 FOSDD_OBJS = $(FOSDD_SRCS:.c=.o)
 FOSDD_MAN = $(FOSDD).1
 
-APPS_CPPFLAGS = -I../libfosfat -I../libfosgra $(CFG_CPPFLAGS) $(CPPFLAGS)
+APPS_CPPFLAGS = -I../libfosfat -I../libfosgra -I./ $(CFG_CPPFLAGS) $(CPPFLAGS)
 ifeq ($(BUILD_MINGW32),yes)
   STDCXX_LDFLAGS =
   ifeq ($(BUILD_STATIC),yes)

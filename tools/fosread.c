@@ -31,6 +31,7 @@
 #include "fosfat.h"
 #include "fosfat_internal.h"
 #include "fosgra.h"
+#include "utils.h"
 
 
 typedef struct ginfo {
