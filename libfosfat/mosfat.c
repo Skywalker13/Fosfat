@@ -1,6 +1,6 @@
 /*
  * FOS libfosfat: API for Smaky file system
- * Copyright (C) 2025 Mathieu Schroeter <mathieu@schroetersa.ch>
+ * Copyright (C) 2025-2026 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * This file is part of Fosfat.
  *

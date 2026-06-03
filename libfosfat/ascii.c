@@ -1,6 +1,6 @@
 /*
  * FOS ascii: Smaky's ASCII to Extended ASCII (ISO-8859-1) and UTF-8 converter
- * Copyright (C) 2007-2010,2025 Mathieu Schroeter <mathieu@schroetersa.ch>
+ * Copyright (C) 2007-2010,2025-2026 Mathieu Schroeter <mathieu@schroetersa.ch>
  *
  * Thanks to Pierre Arnaud for his help and the documentation
  *    And to Epsitec SA for the Smaky computers
